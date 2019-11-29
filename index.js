@@ -1,4 +1,9 @@
+const helpers = require('./helpers.js');
+
 const nwUtilsBuilder = {
+  log: function (message, error) {
+    helpers.log(message, this.settings, error);
+  },
 
   // ////////////////////////// //
   //          SETTINGS          //
@@ -26,44 +31,53 @@ const nwUtilsBuilder = {
     tasks: []
   },
   /**
-   * Validates the Junk array in each section
-   * @param  {string} section 'global', 'win', 'lin', 'osx'
+   * Validates the Junk setting
+   * @param  {object} settings  Settings object passed in by the user
    */
-  validateJunk: function (settings, section) {
+  validateJunk: function (settings) {
     if (
-      settings[section] &&
-      settings[section].junk &&
-      Array.isArray(settings[section].junk)
+      settings.global &&
+      settings.global.junk &&
+      Array.isArray(settings.global.junk) &&
+      settings.global.junk.length
     ) {
-      if (settings[section].combineWithExisting) {
-        settings[section].junk.forEach((item) => {
-          this.settings[section].junk.push(item);
-        });
-        // de-dupe
-        this.settings[section].junk = Array.from(new Set(this.settings[section].junk));
+      const allItemsAreStrings = settings.global.junk.every(function (item) {
+        return typeof(item) === 'string';
+      });
+
+      if (allItemsAreStrings) {
+        const deduped = Array.from(new Set(settings.global.junk));
+        return deduped;
       } else {
-        this.settings[section].junk = settings[section].junk;
+        this.log('Junk must be an array of strings, an empty array, or undefined');
       }
+    }
+    return [];
+  },
+  validateGlobalBoolean: function (settings, name) {
+    if (settings.global && typeof(settings.global[name]) === 'boolean') {
+      return settings.global[name];
+    } else {
+      this.log('The global ' + name + ' setting must be a type of boolean.');
     }
   },
   /**
-   * Validates an individual settings object, combining it with the existing settings in this.settings
-   * @param  {object} settings A setting object passed in by the user
+   * Validates and applies settings passed in by the the user to this.settings.
+   * @param  {object} settings  A setting object passed in by the user
    */
-  validateAndMergeSettings: function (settings) {
+  validateGlobalSettings: function (settings) {
     if (!settings) {
       return;
     }
-    this.sections.forEach((section) => {
-      this.validateJunk(settings, section);
-    });
+    this.settings.global.verbose = this.validateGlobalBoolean(settings, 'verbose');
+    this.settings.global.junk = this.validateJunk(settings);
   },
   /**
    * Loops over all settings objects passed in to combine them in this.settings
    * @param  {object} arguments The JS arguments object of all arguments passed in
    */
   buildSettingsObject: function (settings) {
-    this.validateAndMergeSettings(settings);
+    this.validateGlobalSettings(settings);
   },
 
   // ////////////////////////// //
