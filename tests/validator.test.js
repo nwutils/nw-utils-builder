@@ -385,4 +385,76 @@ describe('Validator', () => {
       });
     });
   });
+
+  describe('validateNwVersion', () => {
+    test('No settings.nwVersion', () => {
+      const result = validator.validateNwVersion({});
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual(null);
+    });
+
+    test('settings.nwVersion is not a string', () => {
+      const result = validator.validateNwVersion({ nwVersion: 3 });
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'The nwVersion setting must be a string.');
+
+      expect(result)
+        .toEqual(null);
+    });
+
+    test('settings.nwVersion is match', () => {
+      const result = validator.validateNwVersion({ nwVersion: 'match' });
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual('match');
+    });
+
+    test('settings.nwVersion is latest', () => {
+      const result = validator.validateNwVersion({ nwVersion: 'latest' });
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual('latest');
+    });
+
+    test('settings.nwVersion is V1.2.3', () => {
+      const result = validator.validateNwVersion({ nwVersion: 'V1.2.3' });
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual('v1.2.3');
+    });
+
+    test('settings.nwVersion is 1.2.3', () => {
+      const result = validator.validateNwVersion({ nwVersion: '1.2.3' });
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual('v1.2.3');
+    });
+
+    test('settings.nwVersion is adsf', () => {
+      const result = validator.validateNwVersion({ nwVersion: 'adsf' });
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'The nwVersion setting must be a string of a valid version number ("v0.42.5"), "latest", or "match".');
+
+      expect(result)
+        .toEqual(null);
+    });
+  });
 });

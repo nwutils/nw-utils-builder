@@ -1,3 +1,5 @@
+const semver = require('semver');
+
 const helpers = require('./helpers.js');
 
 // "Reaping all the sins into the Heart of the Validator" - Burgalveist
@@ -84,10 +86,35 @@ const validator = {
     }
     return null;
   },
+  validateNwVersion: function (settings) {
+    let version = this.validateString(settings, 'nwVersion');
+
+    if (version) {
+      version = version.toLowerCase();
+      if (
+        version === 'match' ||
+        version === 'latest'
+      ) {
+        return version;
+      }
+
+      // '0.0.0' => '0.0.0'
+      // 'v0.0.0' => '0.0.0'
+      // 'asdf' => null
+      let validVersion = semver.valid(version);
+      if (validVersion) {
+        return 'v' + validVersion;
+      }
+
+      this.log('The nwVersion setting must be a string of a valid version number ("v0.42.5"), "latest", or "match".');
+    }
+
+    return null;
+  },
   applyGlobalSetting: function (settings, name, method) {
-    // value = this.validateBoolean(settings.global, 'verbox');
+    // value = this.validateBoolean(settings.global, 'verbose');
     let value = this[method](settings.global, name);
-    if (typeof(value) !== 'undefined') {
+    if (value !== null) {
       this.settings.global[name] = value;
     }
   },
@@ -109,10 +136,19 @@ const validator = {
       verbose: 'Boolean',
       concurrent: 'Boolean',
       mirror: 'String',
-      junk: 'ArrayOfStrings',
+      nwVersion: 'NwVersion',
+      // nwFlavor
+      // platform
+      // arch
+      files: 'ArrayOfStrings',
       excludes: 'ArrayOfStrings',
+      // outputType
+      // outputPattern
       strippedManifestProperties: 'ArrayOfStrings',
-      files: 'ArrayOfStrings'
+      junk: 'ArrayOfStrings'
+      // icon
+      // unIcon
+
     };
 
     for (let key of validationMap) {

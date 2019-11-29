@@ -16,7 +16,8 @@
     "eslint": "^6.7.1",
     "eslint-config-tjw-base": "^1.0.0",
     "eslint-config-tjw-jest": "^1.0.0",
-    "jest": "^24.9.0"
+    "jest": "^24.9.0",
+    "semver": "^6.3.0"
   },
   "repository": "https://github.com/nwutils/nw-utils-builder",
   "author": "The Jared Wilcurt",
