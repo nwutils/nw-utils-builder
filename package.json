@@ -1,0 +1,13 @@
+{
+  "name": "nw-utils-builder",
+  "version": "0.0.1",
+  "description": "Automated build tool for NW.js",
+  "main": "index.js",
+  "scripts": {
+  },
+  "devDependencies": {
+  },
+  "repository": "https://github.com/nwutils/nw-utils-builder",
+  "author": "The Jared Wilcurt",
+  "license": "MIT"
+}
