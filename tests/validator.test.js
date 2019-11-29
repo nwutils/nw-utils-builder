@@ -27,10 +27,12 @@ describe('Validator', () => {
     });
   });
 
-  test('Default settings snapshot', () => {
-    expect(validator.settings)
-      .toMatchSnapshot();
-  });
+  describe('Global default settings', () => {
+    test('Snapshot', () => {
+      expect(validator.settings)
+        .toMatchSnapshot();
+    });
+  })
 
   describe('validateGlobalArrayOfStrings', () => {
     describe('No settings.global', () => {
