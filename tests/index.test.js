@@ -1,4 +1,4 @@
-const nwBuilder = require('../index.js');
+const nwBuilder = require('../src/index.js');
 
 describe('nw-utils-builder', () => {
   test('Global default settings', () => {
