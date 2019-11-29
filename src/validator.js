@@ -31,62 +31,94 @@ const validator = {
    * @param  {object} settings  Settings object passed in by the user
    * @param  {string} section   'junk', 'files', 'excludes', 'strippedManifestProperties'
    */
-  validateGlobalArrayOfStrings: function (settings, section) {
+  validateArrayOfStrings: function (setting, name) {
+    const message = 'The ' + name + ' setting must be an array of strings, an empty array, or undefined.';
     if (
-      settings.global &&
-      settings.global[section] &&
-      Array.isArray(settings.global[section]) &&
-      settings.global[section].length
+      Object.prototype.hasOwnProperty.call(setting, name) &&
+      !Array.isArray(setting[name])
     ) {
-      const allItemsAreStrings = settings.global[section].every(function (item) {
+      this.log(message);
+      return null;
+    }
+
+    if (
+      Object.prototype.hasOwnProperty.call(setting, name) &&
+      Array.isArray(setting[name]) &&
+      !setting[name].length
+    ) {
+      return [];
+    }
+
+    if (
+      Object.prototype.hasOwnProperty.call(setting, name) &&
+      Array.isArray(setting[name]) &&
+      setting[name].length
+    ) {
+      const allItemsAreStrings = setting[name].every(function (item) {
         return typeof(item) === 'string';
       });
 
       if (allItemsAreStrings) {
-        const deduped = Array.from(new Set(settings.global[section]));
+        const deduped = Array.from(new Set(setting[name]));
         return deduped;
-      } else {
-        this.log('The global ' + section + ' setting must be an array of strings, an empty array, or undefined');
       }
+      this.log(message);
     }
-    return this.settings.global[section];
+    return null;
   },
-  validateGlobalBoolean: function (settings, name) {
-    if (settings.global) {
-      if (typeof(settings.global[name]) === 'boolean') {
-        return settings.global[name];
+  validateBoolean: function (setting, name) {
+    if (Object.prototype.hasOwnProperty.call(setting, name)) {
+      if (typeof(setting[name]) === 'boolean') {
+        return setting[name];
       }
-      this.log('The global ' + name + ' setting must be a type of boolean.');
+      this.log('The ' + name + ' setting must be a type of boolean.');
     }
-    return this.settings.global[name];
+    return null;
   },
-  validateGlobalString: function (settings, name) {
-    if (
-      settings.global &&
-      settings.global[name]
-    ) {
-      if (typeof(settings.global[name]) === 'string') {
-        return settings.global[name];
+  validateString: function (setting, name) {
+    if (Object.prototype.hasOwnProperty.call(setting, name)) {
+      if (typeof(setting[name]) === 'string') {
+        return setting[name];
       }
-      this.log('The global ' + name + ' setting must be a string.');
+      this.log('The ' + name + ' setting must be a string.');
     }
-    return this.settings.global[name];
+    return null;
+  },
+  applyGlobalSetting: function (settings, name, method) {
+    // value = this.validateBoolean(settings.global, 'verbox');
+    let value = this[method](settings.global, name);
+    if (typeof(value) !== 'undefined') {
+      this.settings.global[name] = value;
+    }
   },
   /**
    * Validates and applies settings passed in by the the user to this.settings.
    * @param  {object} settings  A setting object passed in by the user
    */
   validateGlobalSettings: function (settings) {
-    if (!settings) {
+    if (
+      !settings ||
+      !settings.global ||
+      typeof(settings.global) !== 'object' ||
+      Array.isArray(settings.global)
+    ) {
       return;
     }
-    this.settings.global.verbose = this.validateGlobalBoolean(settings, 'verbose');
-    this.settings.global.concurrent = this.validateGlobalBoolean(settings, 'concurrent');
-    this.settings.global.mirror = this.validateGlobalString(settings, 'mirror');
-    this.settings.global.junk = this.validateGlobalArrayOfStrings(settings, 'junk');
-    this.settings.global.excludes = this.validateGlobalArrayOfStrings(settings, 'excludes');
-    this.settings.global.strippedManifestProperties = this.validateGlobalArrayOfStrings(settings, 'strippedManifestProperties');
-    this.settings.global.files = this.validateGlobalArrayOfStrings(settings, 'files');
+
+    const validationMap = {
+      verbose: 'Boolean',
+      concurrent: 'Boolean',
+      mirror: 'String',
+      junk: 'ArrayOfStrings',
+      excludes: 'ArrayOfStrings',
+      strippedManifestProperties: 'ArrayOfStrings',
+      files: 'ArrayOfStrings'
+    };
+
+    for (let key of validationMap) {
+      // this.applyGlobalSetting(settings, 'verbose', 'validateBoolean');
+      this.applyGlobalSetting(settings, key, 'validate' + validationMap[key]);
+    }
   },
   /**
    * Loops over all settings objects passed in to combine them in this.settings

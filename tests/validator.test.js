@@ -34,244 +34,253 @@ describe('Validator', () => {
     });
   });
 
-  describe('validateGlobalArrayOfStrings', () => {
-    describe('No settings.global', () => {
-      const settings = {};
-
-      test('junk', () => {
-        expect(validator.validateGlobalArrayOfStrings(settings, 'junk'))
-          .toEqual([]);
-      });
-
-      test('files', () => {
-        expect(validator.validateGlobalArrayOfStrings(settings, 'files'))
-          .toEqual(['**/*']);
-      });
-
-      test('asdf', () => {
-        expect(validator.validateGlobalArrayOfStrings(settings, 'asdf'))
-          .toEqual(undefined);
-      });
-    });
-
-    describe('No settings.global[section]', () => {
-      const settings = {
-        global: {}
-      };
-
-      test('junk', () => {
-        expect(validator.validateGlobalArrayOfStrings(settings, 'junk'))
-          .toEqual([]);
-      });
-
-      test('files', () => {
-        expect(validator.validateGlobalArrayOfStrings(settings, 'files'))
-          .toEqual(['**/*']);
-      });
-
-      test('asdf', () => {
-        expect(validator.validateGlobalArrayOfStrings(settings, 'asdf'))
-          .toEqual(undefined);
-      });
-    });
-
-    describe('settings.global[section] is not an array', () => {
-      function settings () {
-        let setting = { global: {} };
-        setting.global['section'] = 'String';
-        return setting;
-      }
-
-      test('junk', () => {
-        expect(validator.validateGlobalArrayOfStrings(settings('junk'), 'junk'))
-          .toEqual([]);
-      });
-
-      test('files', () => {
-        expect(validator.validateGlobalArrayOfStrings(settings('files'), 'files'))
-          .toEqual(['**/*']);
-      });
-
-      test('asdf', () => {
-        expect(validator.validateGlobalArrayOfStrings(settings('asdf'), 'asdf'))
-          .toEqual(undefined);
-      });
-    });
-
-    describe('settings.global[section] is an empty array', () => {
-      function settings () {
-        let setting = { global: {} };
-        setting.global['section'] = [];
-        return setting;
-      }
-
-      test('junk', () => {
-        expect(validator.validateGlobalArrayOfStrings(settings('junk'), 'junk'))
-          .toEqual([]);
-      });
-
-      test('files', () => {
-        expect(validator.validateGlobalArrayOfStrings(settings('files'), 'files'))
-          .toEqual(['**/*']);
-      });
-
-      test('asdf', () => {
-        expect(validator.validateGlobalArrayOfStrings(settings('asdf'), 'asdf'))
-          .toEqual(undefined);
-      });
-    });
-
-    describe('settings.global[section] is array of numbers', () => {
+  describe('validateArrayOfStrings', () => {
+    describe('settings[section] is not an array', () => {
       function settings (section) {
-        let setting = { global: {} };
-        setting.global[section] = [10, 20, 30];
+        let setting = {};
+        setting[section] = 'String';
         return setting;
       }
 
       test('junk', () => {
-        const result = validator.validateGlobalArrayOfStrings(settings('junk'), 'junk');
+        const result = validator.validateArrayOfStrings(settings('junk'), 'junk');
 
         expect(console.log)
-          .toHaveBeenCalledWith(title, 'The global junk setting must be an array of strings, an empty array, or undefined');
+          .toHaveBeenCalledWith(title, 'The junk setting must be an array of strings, an empty array, or undefined.');
+
+        expect(result)
+          .toEqual(null);
+      });
+
+      test('files', () => {
+        const result = validator.validateArrayOfStrings(settings('files'), 'files');
+
+        expect(console.log)
+          .toHaveBeenCalledWith(title, 'The files setting must be an array of strings, an empty array, or undefined.');
+
+        expect(result)
+          .toEqual(null);
+      });
+
+      test('asdf', () => {
+        const result = validator.validateArrayOfStrings(settings('asdf'), 'asdf');
+
+        expect(console.log)
+          .toHaveBeenCalledWith(title, 'The asdf setting must be an array of strings, an empty array, or undefined.');
+
+        expect(result)
+          .toEqual(null);
+      });
+    });
+
+    describe('settings[section] is an empty array', () => {
+      function settings (section) {
+        let setting = {};
+        setting[section] = [];
+        return setting;
+      }
+
+      test('junk', () => {
+        const result = validator.validateArrayOfStrings(settings('junk'), 'junk');
+
+        expect(console.log)
+          .not.toHaveBeenCalled();
 
         expect(result)
           .toEqual([]);
       });
 
       test('files', () => {
-        const result = validator.validateGlobalArrayOfStrings(settings('files'), 'files');
+        const result = validator.validateArrayOfStrings(settings('files'), 'files');
 
         expect(console.log)
-          .toHaveBeenCalledWith(title, 'The global files setting must be an array of strings, an empty array, or undefined');
+          .not.toHaveBeenCalled();
 
         expect(result)
-          .toEqual(['**/*']);
+          .toEqual([]);
       });
 
       test('asdf', () => {
-        const result = validator.validateGlobalArrayOfStrings(settings('asdf'), 'asdf');
+        const result = validator.validateArrayOfStrings(settings('asdf'), 'asdf');
 
         expect(console.log)
-          .toHaveBeenCalledWith(title, 'The global asdf setting must be an array of strings, an empty array, or undefined');
+          .not.toHaveBeenCalled();
 
         expect(result)
-          .toEqual(undefined);
+          .toEqual([]);
+      });
+    });
+
+    describe('settings[section] is array of numbers', () => {
+      function settings (section) {
+        let setting = {};
+        setting[section] = [10, 20, 30];
+        return setting;
+      }
+
+      test('junk', () => {
+        const result = validator.validateArrayOfStrings(settings('junk'), 'junk');
+
+        expect(console.log)
+          .toHaveBeenCalledWith(title, 'The junk setting must be an array of strings, an empty array, or undefined.');
+
+        expect(result)
+          .toEqual(null);
+      });
+
+      test('files', () => {
+        const result = validator.validateArrayOfStrings(settings('files'), 'files');
+
+        expect(console.log)
+          .toHaveBeenCalledWith(title, 'The files setting must be an array of strings, an empty array, or undefined.');
+
+        expect(result)
+          .toEqual(null);
+      });
+
+      test('asdf', () => {
+        const result = validator.validateArrayOfStrings(settings('asdf'), 'asdf');
+
+        expect(console.log)
+          .toHaveBeenCalledWith(title, 'The asdf setting must be an array of strings, an empty array, or undefined.');
+
+        expect(result)
+          .toEqual(null);
       });
     });
 
     describe('Return deduped array', () => {
       function settings (section) {
-        let setting = { global: {} };
-        setting.global[section] = ['10', '20', '10', '10', '40', '20', '30'];
+        let setting = {};
+        setting[section] = ['A', 'B', 'A', 'A', 'D', 'B', 'C'];
         return setting;
       }
 
       test('junk', () => {
-        expect(validator.validateGlobalArrayOfStrings(settings('junk'), 'junk'))
-          .toEqual(['10', '20', '40', '30']);
+        const result = validator.validateArrayOfStrings(settings('junk'), 'junk');
+
+        expect(console.log)
+          .not.toHaveBeenCalled();
+
+        expect(result)
+          .toEqual(['A', 'B', 'D', 'C']);
       });
 
       test('files', () => {
-        expect(validator.validateGlobalArrayOfStrings(settings('files'), 'files'))
-          .toEqual(['10', '20', '40', '30']);
+        const result = validator.validateArrayOfStrings(settings('files'), 'files');
+
+        expect(console.log)
+          .not.toHaveBeenCalled();
+
+        expect(result)
+          .toEqual(['A', 'B', 'D', 'C']);
       });
 
       test('asdf', () => {
-        expect(validator.validateGlobalArrayOfStrings(settings('asdf'), 'asdf'))
-          .toEqual(['10', '20', '40', '30']);
+        const result = validator.validateArrayOfStrings(settings('asdf'), 'asdf');
+
+        expect(console.log)
+          .not.toHaveBeenCalled();
+
+        expect(result)
+          .toEqual(['A', 'B', 'D', 'C']);
+      });
+    });
+
+    describe('No settings[section]', () => {
+      const settings = {};
+
+      test('junk', () => {
+        const result = validator.validateArrayOfStrings(settings, 'junk');
+
+        expect(console.log)
+          .not.toHaveBeenCalled();
+
+        expect(result)
+          .toEqual(null);
+      });
+
+      test('files', () => {
+        const result = validator.validateArrayOfStrings(settings, 'files');
+
+        expect(console.log)
+          .not.toHaveBeenCalled();
+
+        expect(result)
+          .toEqual(null);
+      });
+
+      test('asdf', () => {
+        const result = validator.validateArrayOfStrings(settings, 'asdf');
+
+        expect(console.log)
+          .not.toHaveBeenCalled();
+
+        expect(result)
+          .toEqual(null);
       });
     });
   });
 
-  describe('validateGlobalBoolean', () => {
-    describe('No settings.global', () => {
+  describe('validateBoolean', () => {
+    describe('No settings[section]', () => {
       const settings = {};
 
       test('verbose', () => {
-        const result = validator.validateGlobalBoolean(settings, 'verbose');
+        const result = validator.validateBoolean(settings, 'verbose');
 
         expect(console.log)
           .not.toHaveBeenCalled();
 
         expect(result)
-          .toEqual(true);
+          .toEqual(null);
       });
 
       test('asdf', () => {
-        const result = validator.validateGlobalBoolean(settings, 'asdf');
+        const result = validator.validateBoolean(settings, 'asdf');
 
         expect(console.log)
           .not.toHaveBeenCalled();
 
         expect(result)
-          .toEqual(undefined);
+          .toEqual(null);
       });
     });
 
-    describe('No settings.global[section]', () => {
-      const settings = {
-        global: {}
-      };
-
-      test('verbose', () => {
-        const result = validator.validateGlobalBoolean(settings, 'verbose');
-
-        expect(console.log)
-          .toHaveBeenCalledWith(title, 'The global verbose setting must be a type of boolean.');
-
-        expect(result)
-          .toEqual(true);
-      });
-
-      test('asdf', () => {
-        const result = validator.validateGlobalBoolean(settings, 'asdf');
-
-        expect(console.log)
-          .toHaveBeenCalledWith(title, 'The global asdf setting must be a type of boolean.');
-
-        expect(result)
-          .toEqual(undefined);
-      });
-    });
-
-    describe('settings.global[section] is not a boolean', () => {
+    describe('settings[section] is not a boolean', () => {
       function settings (section) {
-        const setting = {
-          global: {}
-        };
-        setting.global[section] = 0;
+        const setting = {};
+        setting[section] = 0;
         return setting;
       }
 
       test('verbose', () => {
-        const result = validator.validateGlobalBoolean(settings('verbose'), 'verbose');
+        const result = validator.validateBoolean(settings('verbose'), 'verbose');
 
         expect(console.log)
-          .toHaveBeenCalledWith(title, 'The global verbose setting must be a type of boolean.');
+          .toHaveBeenCalledWith(title, 'The verbose setting must be a type of boolean.');
 
         expect(result)
-          .toEqual(true);
+          .toEqual(null);
       });
 
       test('asdf', () => {
-        const result = validator.validateGlobalBoolean(settings('asdf'), 'asdf');
+        const result = validator.validateBoolean(settings('asdf'), 'asdf');
 
         expect(console.log)
-          .toHaveBeenCalledWith(title, 'The global asdf setting must be a type of boolean.');
+          .toHaveBeenCalledWith(title, 'The asdf setting must be a type of boolean.');
 
         expect(result)
-          .toEqual(undefined);
+          .toEqual(null);
       });
     });
 
-    describe('settings.global[section] is a boolean', () => {
+    describe('settings[section] is a boolean', () => {
       test('verbose', () => {
         const settings = {
-          global: {
-            verbose: false
-          }
+          verbose: false
         };
-        const result = validator.validateGlobalBoolean(settings, 'verbose');
+        const result = validator.validateBoolean(settings, 'verbose');
 
         expect(console.log)
           .not.toHaveBeenCalled();
@@ -282,11 +291,9 @@ describe('Validator', () => {
 
       test('asdf', () => {
         const settings = {
-          global: {
-            asdf: true
-          }
+          asdf: true
         };
-        const result = validator.validateGlobalBoolean(settings, 'asdf');
+        const result = validator.validateBoolean(settings, 'asdf');
 
         expect(console.log)
           .not.toHaveBeenCalled();
@@ -297,98 +304,68 @@ describe('Validator', () => {
     });
   });
 
-  describe('validateGlobalString', () => {
-    describe('No settings.global', () => {
+  describe('validateString', () => {
+    describe('No settings[section]', () => {
       const settings = {};
 
       test('mirror', () => {
-        const result = validator.validateGlobalString(settings, 'mirror');
+        const result = validator.validateString(settings, 'mirror');
 
         expect(console.log)
           .not.toHaveBeenCalled();
 
         expect(result)
-          .toEqual('https://dl.nwjs.io/');
+          .toEqual(null);
       });
 
       test('asdf', () => {
-        const result = validator.validateGlobalString(settings, 'asdf');
+        const result = validator.validateString(settings, 'asdf');
 
         expect(console.log)
           .not.toHaveBeenCalled();
 
         expect(result)
-          .toEqual(undefined);
+          .toEqual(null);
       });
     });
 
-    describe('No settings.global[name]', () => {
-      const settings = {
-        global: {}
-      };
-
-      test('mirror', () => {
-        const result = validator.validateGlobalString(settings, 'mirror');
-
-        expect(console.log)
-          .not.toHaveBeenCalled();
-
-        expect(result)
-          .toEqual('https://dl.nwjs.io/');
-      });
-
-      test('asdf', () => {
-        const result = validator.validateGlobalString(settings, 'asdf');
-
-        expect(console.log)
-          .not.toHaveBeenCalled();
-
-        expect(result)
-          .toEqual(undefined);
-      });
-    });
-
-    describe('settings.global[name] is not a string', () => {
-      function settings (name) {
-        const setting = {
-          global: {}
-        };
-        setting.global[name] = 4;
+    describe('settings[section] is not a string', () => {
+      function settings (section) {
+        const setting = {};
+        setting[section] = 4;
         return setting;
       }
 
       test('mirror', () => {
-        const result = validator.validateGlobalString(settings('mirror'), 'mirror');
+        const result = validator.validateString(settings('mirror'), 'mirror');
 
         expect(console.log)
-          .toHaveBeenCalledWith(title, 'The global mirror setting must be a string.');
+          .toHaveBeenCalledWith(title, 'The mirror setting must be a string.');
 
         expect(result)
-          .toEqual('https://dl.nwjs.io/');
+          .toEqual(null);
       });
 
       test('asdf', () => {
-        const result = validator.validateGlobalString(settings('asdf'), 'asdf');
+        const result = validator.validateString(settings('asdf'), 'asdf');
 
         expect(console.log)
-          .toHaveBeenCalledWith(title, 'The global asdf setting must be a string.');
+          .toHaveBeenCalledWith(title, 'The asdf setting must be a string.');
 
         expect(result)
-          .toEqual(undefined);
+          .toEqual(null);
       });
     });
 
-    describe('settings.global[name] is a string', () => {
-      function settings (name) {
-        const setting = {
-          global: {}
-        };
-        setting.global[name] = 'qwer';
+    describe('settings[section] is a string', () => {
+      function settings (section) {
+        const setting = {};
+        setting[section] = 'qwer';
         return setting;
       }
 
       test('mirror', () => {
-        const result = validator.validateGlobalString(settings('mirror'), 'mirror');
+        const result = validator.validateString(settings('mirror'), 'mirror');
 
         expect(console.log)
           .not.toHaveBeenCalled();
@@ -398,7 +375,7 @@ describe('Validator', () => {
       });
 
       test('asdf', () => {
-        const result = validator.validateGlobalString(settings('asdf'), 'asdf');
+        const result = validator.validateString(settings('asdf'), 'asdf');
 
         expect(console.log)
           .not.toHaveBeenCalled();
