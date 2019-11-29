@@ -5,10 +5,10 @@
 
 ## nw-utils-builder
 
-[![Build Status](https://travis-ci.org/nwutils/nw-utils-builder.svg?branch=master)](https://travis-ci.org/nwutils/nw-utils-builder) ![Test Coverage: 34.38%](https://img.shields.io/badge/Test%20Coverage-34.38%25-red.svg?logo=jest) ![Lint Coverage: 100%](https://img.shields.io/badge/Lint%20Coverage-100%25-brightgreen.svg?logo=eslint)
+[![Build Status](https://travis-ci.org/nwutils/nw-utils-builder.svg?branch=master)](https://travis-ci.org/nwutils/nw-utils-builder) [![Test Coverage](https://coveralls.io/repos/github/nwutils/nw-utils-builder/badge.svg)](https://coveralls.io/github/nwutils/nw-utils-builder) ![Lint Coverage: 100%](https://img.shields.io/badge/Lint%20Coverage-100%25-brightgreen.svg?logo=eslint)
 
 <!--
-![Node Support >=1.0.0](https://img.shields.io/badge/Node-%3E%3D1.0.0-brightgreen.svg?logo=node.js)
+![Node Support >=4.0.0](https://img.shields.io/badge/Node-%3E%3D4.0.0-brightgreen.svg?logo=node.js)
 -->
 
 
@@ -43,3 +43,4 @@
    * [ ] 7z
    * [ ] nsis
    * [ ] nsis7z
+* [ ] Find minimum supported Node version for this repo
