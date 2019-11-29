@@ -1,0 +1,14 @@
+.git/
+node_modules/
+tests/
+.editorconfig
+.eslintrc.js
+.gitattributes
+.gitignore
+.npmignore
+.travis.yml
+CODE_OF_CONDUCT.md
+jest.config.js
+manual-testing.js
+package-lock.json
+README.md
