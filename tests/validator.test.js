@@ -32,7 +32,7 @@ describe('Validator', () => {
       expect(validator.settings)
         .toMatchSnapshot();
     });
-  })
+  });
 
   describe('validateGlobalArrayOfStrings', () => {
     describe('No settings.global', () => {
@@ -80,7 +80,7 @@ describe('Validator', () => {
         let setting = { global: {} };
         setting.global['section'] = 'String';
         return setting;
-      };
+      }
 
       test('junk', () => {
         expect(validator.validateGlobalArrayOfStrings(settings('junk'), 'junk'))
@@ -103,7 +103,7 @@ describe('Validator', () => {
         let setting = { global: {} };
         setting.global['section'] = [];
         return setting;
-      };
+      }
 
       test('junk', () => {
         expect(validator.validateGlobalArrayOfStrings(settings('junk'), 'junk'))
@@ -126,7 +126,7 @@ describe('Validator', () => {
         let setting = { global: {} };
         setting.global[section] = [10, 20, 30];
         return setting;
-      };
+      }
 
       test('junk', () => {
         const result = validator.validateGlobalArrayOfStrings(settings('junk'), 'junk');
@@ -164,7 +164,7 @@ describe('Validator', () => {
         let setting = { global: {} };
         setting.global[section] = ['10', '20', '10', '10', '40', '20', '30'];
         return setting;
-      };
+      }
 
       test('junk', () => {
         expect(validator.validateGlobalArrayOfStrings(settings('junk'), 'junk'))
@@ -191,7 +191,7 @@ describe('Validator', () => {
         const result = validator.validateGlobalBoolean(settings, 'verbose');
 
         expect(console.log)
-          .toHaveBeenCalledWith(title, 'The global verbose setting must be a type of boolean.');
+          .not.toHaveBeenCalled();
 
         expect(result)
           .toEqual(true);
@@ -201,7 +201,7 @@ describe('Validator', () => {
         const result = validator.validateGlobalBoolean(settings, 'asdf');
 
         expect(console.log)
-          .toHaveBeenCalledWith(title, 'The global asdf setting must be a type of boolean.');
+          .not.toHaveBeenCalled();
 
         expect(result)
           .toEqual(undefined);
@@ -241,7 +241,7 @@ describe('Validator', () => {
         };
         setting.global[section] = 0;
         return setting;
-      };
+      }
 
       test('verbose', () => {
         const result = validator.validateGlobalBoolean(settings('verbose'), 'verbose');
@@ -266,12 +266,12 @@ describe('Validator', () => {
 
     describe('settings.global[section] is a boolean', () => {
       test('verbose', () => {
-        const setting = {
+        const settings = {
           global: {
             verbose: false
           }
         };
-        const result = validator.validateGlobalBoolean(setting, 'verbose');
+        const result = validator.validateGlobalBoolean(settings, 'verbose');
 
         expect(console.log)
           .not.toHaveBeenCalled();
@@ -281,12 +281,12 @@ describe('Validator', () => {
       });
 
       test('asdf', () => {
-        const setting = {
+        const settings = {
           global: {
             asdf: true
           }
         };
-        const result = validator.validateGlobalBoolean(setting, 'asdf');
+        const result = validator.validateGlobalBoolean(settings, 'asdf');
 
         expect(console.log)
           .not.toHaveBeenCalled();

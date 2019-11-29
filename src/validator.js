@@ -52,10 +52,12 @@ const validator = {
     return this.settings.global[section];
   },
   validateGlobalBoolean: function (settings, name) {
-    if (settings.global && typeof(settings.global[name]) === 'boolean') {
-      return settings.global[name];
+    if (settings.global) {
+      if (typeof(settings.global[name]) === 'boolean') {
+        return settings.global[name];
+      }
+      this.log('The global ' + name + ' setting must be a type of boolean.');
     }
-    this.log('The global ' + name + ' setting must be a type of boolean.');
     return this.settings.global[name];
   },
   /**
