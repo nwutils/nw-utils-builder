@@ -8,9 +8,11 @@
     "fix": "eslint --fix --config=.eslintrc.js index.js tests/**/*.js",
     "debug": "node --inspect-brk test.js",
     "test": "jest --coverage --runInBand",
-    "validate": "npm run lint && npm test"
+    "coverage": "jest --coverage --runInBand --coverageReporters=text-lcov | coveralls",
+    "validate": "npm run lint && npm run coverage"
   },
   "devDependencies": {
+    "coveralls": "^3.0.9",
     "eslint": "^6.7.1",
     "eslint-config-tjw-base": "^1.0.0",
     "eslint-config-tjw-jest": "^1.0.0",
