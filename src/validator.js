@@ -60,6 +60,18 @@ const validator = {
     }
     return this.settings.global[name];
   },
+  validateGlobalString: function (settings, name) {
+    if (
+      settings.global &&
+      settings.global[name]
+    ) {
+      if (typeof(settings.global[name]) === 'string') {
+        return settings.global[name];
+      }
+      this.log('The global ' + name + ' setting must be a string.');
+    }
+    return this.settings.global[name];
+  },
   /**
    * Validates and applies settings passed in by the the user to this.settings.
    * @param  {object} settings  A setting object passed in by the user
@@ -70,6 +82,7 @@ const validator = {
     }
     this.settings.global.verbose = this.validateGlobalBoolean(settings, 'verbose');
     this.settings.global.concurrent = this.validateGlobalBoolean(settings, 'concurrent');
+    this.settings.global.mirror = this.validateGlobalString(settings, 'mirror');
     this.settings.global.junk = this.validateGlobalArrayOfStrings(settings, 'junk');
     this.settings.global.excludes = this.validateGlobalArrayOfStrings(settings, 'excludes');
     this.settings.global.strippedManifestProperties = this.validateGlobalArrayOfStrings(settings, 'strippedManifestProperties');

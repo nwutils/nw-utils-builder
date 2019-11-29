@@ -296,4 +296,116 @@ describe('Validator', () => {
       });
     });
   });
+
+  describe('validateGlobalString', () => {
+    describe('No settings.global', () => {
+      const settings = {};
+
+      test('mirror', () => {
+        const result = validator.validateGlobalString(settings, 'mirror');
+
+        expect(console.log)
+          .not.toHaveBeenCalled();
+
+        expect(result)
+          .toEqual('https://dl.nwjs.io/');
+      });
+
+      test('asdf', () => {
+        const result = validator.validateGlobalString(settings, 'asdf');
+
+        expect(console.log)
+          .not.toHaveBeenCalled();
+
+        expect(result)
+          .toEqual(undefined);
+      });
+    });
+
+    describe('No settings.global[name]', () => {
+      const settings = {
+        global: {}
+      };
+
+      test('mirror', () => {
+        const result = validator.validateGlobalString(settings, 'mirror');
+
+        expect(console.log)
+          .not.toHaveBeenCalled();
+
+        expect(result)
+          .toEqual('https://dl.nwjs.io/');
+      });
+
+      test('asdf', () => {
+        const result = validator.validateGlobalString(settings, 'asdf');
+
+        expect(console.log)
+          .not.toHaveBeenCalled();
+
+        expect(result)
+          .toEqual(undefined);
+      });
+    });
+
+    describe('settings.global[name] is not a string', () => {
+      function settings (name) {
+        const setting = {
+          global: {}
+        };
+        setting.global[name] = 4;
+        return setting;
+      }
+
+      test('mirror', () => {
+        const result = validator.validateGlobalString(settings('mirror'), 'mirror');
+
+        expect(console.log)
+          .toHaveBeenCalledWith(title, 'The global mirror setting must be a string.');
+
+        expect(result)
+          .toEqual('https://dl.nwjs.io/');
+      });
+
+      test('asdf', () => {
+        const result = validator.validateGlobalString(settings('asdf'), 'asdf');
+
+        expect(console.log)
+          .toHaveBeenCalledWith(title, 'The global asdf setting must be a string.');
+
+        expect(result)
+          .toEqual(undefined);
+      });
+    });
+
+    describe('settings.global[name] is a string', () => {
+      function settings (name) {
+        const setting = {
+          global: {}
+        };
+        setting.global[name] = 'qwer';
+        return setting;
+      }
+
+      test('mirror', () => {
+        const result = validator.validateGlobalString(settings('mirror'), 'mirror');
+
+        expect(console.log)
+          .not.toHaveBeenCalled();
+
+        expect(result)
+          .toEqual('qwer');
+      });
+
+      test('asdf', () => {
+        const result = validator.validateGlobalString(settings('asdf'), 'asdf');
+
+        expect(console.log)
+          .not.toHaveBeenCalled();
+
+        expect(result)
+          .toEqual('qwer');
+      });
+    });
+  });
 });
