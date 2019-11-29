@@ -54,9 +54,9 @@ const validator = {
   validateGlobalBoolean: function (settings, name) {
     if (settings.global && typeof(settings.global[name]) === 'boolean') {
       return settings.global[name];
-    } else {
-      this.log('The global ' + name + ' setting must be a type of boolean.');
     }
+    this.log('The global ' + name + ' setting must be a type of boolean.');
+    return this.settings.global[name];
   },
   /**
    * Validates and applies settings passed in by the the user to this.settings.
@@ -67,6 +67,7 @@ const validator = {
       return;
     }
     this.settings.global.verbose = this.validateGlobalBoolean(settings, 'verbose');
+    this.settings.global.concurrent = this.validateGlobalBoolean(settings, 'concurrent');
     this.settings.global.junk = this.validateGlobalArrayOfStrings(settings, 'junk');
     this.settings.global.excludes = this.validateGlobalArrayOfStrings(settings, 'excludes');
     this.settings.global.strippedManifestProperties = this.validateGlobalArrayOfStrings(settings, 'strippedManifestProperties');

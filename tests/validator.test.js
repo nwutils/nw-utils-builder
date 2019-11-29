@@ -1,4 +1,5 @@
 const validator = require('../src/validator.js');
+const title = 'NW-UTILS-BUILDER:';
 
 describe('Validator', () => {
   let consoleLog;
@@ -124,7 +125,6 @@ describe('Validator', () => {
         setting.global[section] = [10, 20, 30];
         return setting;
       };
-      const title = 'NW-UTILS-BUILDER:';
 
       test('junk', () => {
         const result = validator.validateGlobalArrayOfStrings(settings('junk'), 'junk');
@@ -163,7 +163,6 @@ describe('Validator', () => {
         setting.global[section] = ['10', '20', '10', '10', '40', '20', '30'];
         return setting;
       };
-      const title = 'NW-UTILS-BUILDER:';
 
       test('junk', () => {
         expect(validator.validateGlobalArrayOfStrings(settings('junk'), 'junk'))
@@ -178,6 +177,120 @@ describe('Validator', () => {
       test('asdf', () => {
         expect(validator.validateGlobalArrayOfStrings(settings('asdf'), 'asdf'))
           .toEqual(['10', '20', '40', '30']);
+      });
+    });
+  });
+
+  describe('validateGlobalBoolean', () => {
+    describe('No settings.global', () => {
+      const settings = {};
+
+      test('verbose', () => {
+        const result = validator.validateGlobalBoolean(settings, 'verbose');
+
+        expect(console.log)
+          .toHaveBeenCalledWith(title, 'The global verbose setting must be a type of boolean.');
+
+        expect(result)
+          .toEqual(true);
+      });
+
+      test('asdf', () => {
+        const result = validator.validateGlobalBoolean(settings, 'asdf');
+
+        expect(console.log)
+          .toHaveBeenCalledWith(title, 'The global asdf setting must be a type of boolean.');
+
+        expect(result)
+          .toEqual(undefined);
+      });
+    });
+
+    describe('No settings.global[section]', () => {
+      const settings = {
+        global: {}
+      };
+
+      test('verbose', () => {
+        const result = validator.validateGlobalBoolean(settings, 'verbose');
+
+        expect(console.log)
+          .toHaveBeenCalledWith(title, 'The global verbose setting must be a type of boolean.');
+
+        expect(result)
+          .toEqual(true);
+      });
+
+      test('asdf', () => {
+        const result = validator.validateGlobalBoolean(settings, 'asdf');
+
+        expect(console.log)
+          .toHaveBeenCalledWith(title, 'The global asdf setting must be a type of boolean.');
+
+        expect(result)
+          .toEqual(undefined);
+      });
+    });
+
+    describe('settings.global[section] is not a boolean', () => {
+      function settings (section) {
+        const setting = {
+          global: {}
+        };
+        setting.global[section] = 0;
+        return setting;
+      };
+
+      test('verbose', () => {
+        const result = validator.validateGlobalBoolean(settings('verbose'), 'verbose');
+
+        expect(console.log)
+          .toHaveBeenCalledWith(title, 'The global verbose setting must be a type of boolean.');
+
+        expect(result)
+          .toEqual(true);
+      });
+
+      test('asdf', () => {
+        const result = validator.validateGlobalBoolean(settings('asdf'), 'asdf');
+
+        expect(console.log)
+          .toHaveBeenCalledWith(title, 'The global asdf setting must be a type of boolean.');
+
+        expect(result)
+          .toEqual(undefined);
+      });
+    });
+
+    describe('settings.global[section] is a boolean', () => {
+      test('verbose', () => {
+        const setting = {
+          global: {
+            verbose: false
+          }
+        };
+        const result = validator.validateGlobalBoolean(setting, 'verbose');
+
+        expect(console.log)
+          .not.toHaveBeenCalled();
+
+        expect(result)
+          .toEqual(false);
+      });
+
+      test('asdf', () => {
+        const setting = {
+          global: {
+            asdf: true
+          }
+        };
+        const result = validator.validateGlobalBoolean(setting, 'asdf');
+
+        expect(console.log)
+          .not.toHaveBeenCalled();
+
+        expect(result)
+          .toEqual(true);
       });
     });
   });
