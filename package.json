@@ -4,8 +4,13 @@
   "description": "Automated build tool for NW.js",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint --config=.eslintrc.js index.js tests/**/*.js",
+    "fix": "eslint --fix --config=.eslintrc.js index.js tests/**/*.js",
   },
   "devDependencies": {
+    "eslint": "^6.7.1",
+    "eslint-config-tjw-base": "^1.0.0",
+    "eslint-config-tjw-jest": "^1.0.0",
   },
   "repository": "https://github.com/nwutils/nw-utils-builder",
   "author": "The Jared Wilcurt",
