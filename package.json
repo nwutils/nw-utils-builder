@@ -4,8 +4,8 @@
   "description": "Automated build tool for NW.js",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint --config=.eslintrc.js index.js tests/**/*.js",
-    "fix": "eslint --fix --config=.eslintrc.js index.js tests/**/*.js",
+    "lint": "eslint --config=.eslintrc.js src/**/*.js tests/**/*.js",
+    "fix": "eslint --fix --config=.eslintrc.js src/**/*.js tests/**/*.js",
     "debug": "node --inspect-brk test.js",
     "test": "jest --coverage --runInBand",
     "validate": "npm run lint && npm test"
