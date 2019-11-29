@@ -9,7 +9,8 @@
     "debug": "node --inspect-brk test.js",
     "test": "jest --coverage --runInBand",
     "coverage": "jest --coverage --runInBand --coverageReporters=text-lcov | coveralls",
-    "validate": "npm run lint && npm run coverage"
+    "validate": "npm run lint && npm test",
+    "travis": "npm run lint && npm run coverage"
   },
   "devDependencies": {
     "coveralls": "^3.0.9",
