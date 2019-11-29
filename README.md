@@ -5,7 +5,7 @@
 
 ## nw-utils-builder
 
-[![Build Status](https://travis-ci.org/nwutils/nw-utils-builder.svg?branch=master)](https://travis-ci.org/nwutils/nw-utils-builder) [![Test Coverage](https://coveralls.io/repos/github/nwutils/nw-utils-builder/badge.svg)](https://coveralls.io/github/nwutils/nw-utils-builder) ![Lint Coverage: 100%](https://img.shields.io/badge/Lint%20Coverage-100%25-brightgreen.svg?logo=eslint)
+[![Build Status](https://travis-ci.org/nwutils/nw-utils-builder.svg?branch=master)](https://travis-ci.org/nwutils/nw-utils-builder) [![Test Coverage](https://img.shields.io/coveralls/github/nwutils/nw-utils-builder?label=Test%20Coverage&logo=jest)](https://coveralls.io/github/nwutils/nw-utils-builder) ![Lint Coverage: 100%](https://img.shields.io/badge/Lint%20Coverage-100%25-brightgreen.svg?logo=eslint)
 
 <!--
 ![Node Support >=4.0.0](https://img.shields.io/badge/Node-%3E%3D4.0.0-brightgreen.svg?logo=node.js)
