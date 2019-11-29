@@ -1,4 +1,4 @@
-const nwBuilder = require('./index.js').build;
+const nwBuilder = require('./src/index.js').build;
 
 const API_Example = {
   global: {
