@@ -1,6 +1,28 @@
+const _cloneDeep = require('lodash.cloneDeep');
 const semver = require('semver');
 
 const helpers = require('./helpers.js');
+
+const defaultSettings = {
+  global: {
+    verbose: true,
+    concurrent: true,
+    mirror: 'https://dl.nwjs.io/',
+    nwVersion: 'match',
+    nwFlavor: 'normal',
+    platform: 'win',
+    arch: 'x86',
+    files: ['**/*'],
+    excludes: [],
+    outputType: 'zip',
+    outputPattern: '{{name}}-{{version}}-{{platform}}-{{arch}}',
+    strippedManifestProperties: [],
+    junk: [],
+    icon: undefined,
+    unIcon: undefined
+  },
+  tasks: []
+};
 
 // "Reaping all the sins into the Heart of the Validator" - Burgalveist
 const validator = {
@@ -8,26 +30,7 @@ const validator = {
     helpers.log(message, this.settings, error);
   },
   // The default settings file that is updated based on what the user passes in
-  settings: {
-    global: {
-      verbose: true,
-      concurrent: true,
-      mirror: 'https://dl.nwjs.io/',
-      nwVersion: 'match',
-      nwFlavor: 'normal',
-      platform: 'win',
-      arch: 'x86',
-      files: ['**/*'],
-      excludes: [],
-      outputType: 'zip',
-      outputPattern: '{{name}}-{{version}}-{{platform}}-{{arch}}',
-      strippedManifestProperties: [],
-      junk: [],
-      icon: undefined,
-      unIcon: undefined
-    },
-    tasks: []
-  },
+  settings: _cloneDeep(defaultSettings),
   validationMap: {
     verbose: 'Boolean',
     concurrent: 'Boolean',
@@ -230,11 +233,15 @@ const validator = {
       this.applyGlobalSetting(settings, key, 'validate' + this.validationMap[key]);
     }
   },
+  resetState: function () {
+    this.settings = _cloneDeep(defaultSettings);
+  },
   /**
    * Loops over all settings objects passed in to combine them in this.settings
    * @param  {object} arguments The JS arguments object of all arguments passed in
    */
   buildSettingsObject: function (settings) {
+    this.resetState();
     this.validateGlobalSettings(settings);
     return this.settings;
   }
