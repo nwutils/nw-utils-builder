@@ -44,3 +44,4 @@
    * [ ] nsis
    * [ ] nsis7z
 * [ ] Find minimum supported Node version for this repo
+* [ ] Bump to v1.0.0 and release
