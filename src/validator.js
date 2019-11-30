@@ -28,6 +28,23 @@ const validator = {
     },
     tasks: []
   },
+  validationMap: {
+    verbose: 'Boolean',
+    concurrent: 'Boolean',
+    mirror: 'String',
+    nwVersion: 'NwVersion',
+    nwFlavor: 'NwFlavor',
+    platform: 'Platform',
+    arch: 'Arch',
+    files: 'ArrayOfStrings',
+    excludes: 'ArrayOfStrings',
+    outputType: 'OutputType',
+    outputPattern: 'String',
+    strippedManifestProperties: 'ArrayOfStrings',
+    junk: 'ArrayOfStrings',
+    icon: 'String',
+    unIcon: 'String'
+  },
   /**
    * Validates the section is an array that only contains strings
    * @param  {object} settings  Settings object passed in by the user
@@ -111,6 +128,14 @@ const validator = {
 
     return null;
   },
+  validateNwFlavor: function (settings) {
+  },
+  validatePlatform: function (settings) {
+  },
+  validateArch: function (settings) {
+  },
+  validateOutputType: function (settings) {
+  },
   applyGlobalSetting: function (settings, name, method) {
     // value = this.validateBoolean(settings.global, 'verbose');
     let value = this[method](settings.global, name);
@@ -132,28 +157,9 @@ const validator = {
       return;
     }
 
-    const validationMap = {
-      verbose: 'Boolean',
-      concurrent: 'Boolean',
-      mirror: 'String',
-      nwVersion: 'NwVersion',
-      // nwFlavor
-      // platform
-      // arch
-      files: 'ArrayOfStrings',
-      excludes: 'ArrayOfStrings',
-      // outputType
-      // outputPattern
-      strippedManifestProperties: 'ArrayOfStrings',
-      junk: 'ArrayOfStrings'
-      // icon
-      // unIcon
-
-    };
-
-    for (let key of validationMap) {
+    for (let key of this.validationMap) {
       // this.applyGlobalSetting(settings, 'verbose', 'validateBoolean');
-      this.applyGlobalSetting(settings, key, 'validate' + validationMap[key]);
+      this.applyGlobalSetting(settings, key, 'validate' + this.validationMap[key]);
     }
   },
   /**

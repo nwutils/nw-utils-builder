@@ -24,3 +24,23 @@ Object {
   "tasks": Array [],
 }
 `;
+
+exports[`Validator validationMap Snapshot 1`] = `
+Object {
+  "arch": "Arch",
+  "concurrent": "Boolean",
+  "excludes": "ArrayOfStrings",
+  "files": "ArrayOfStrings",
+  "icon": "String",
+  "junk": "ArrayOfStrings",
+  "mirror": "String",
+  "nwFlavor": "NwFlavor",
+  "nwVersion": "NwVersion",
+  "outputPattern": "String",
+  "outputType": "OutputType",
+  "platform": "Platform",
+  "strippedManifestProperties": "ArrayOfStrings",
+  "unIcon": "String",
+  "verbose": "Boolean",
+}
+`;

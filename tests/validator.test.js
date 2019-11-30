@@ -34,6 +34,13 @@ describe('Validator', () => {
     });
   });
 
+  describe('validationMap', () => {
+    test('Snapshot', () => {
+      expect(validator.validationMap)
+        .toMatchSnapshot();
+    });
+  });
+
   describe('validateArrayOfStrings', () => {
     describe('settings[section] is not an array', () => {
       function settings (section) {
