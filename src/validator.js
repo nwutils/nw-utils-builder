@@ -129,6 +129,23 @@ const validator = {
     return null;
   },
   validateNwFlavor: function (settings) {
+    let flavor = this.validateString(settings, 'nwFlavor');
+    let validFlavors = [
+      'match',
+      'sdk',
+      'normal'
+    ];
+
+    if (flavor) {
+      flavor = flavor.toLowerCase();
+      if (validFlavors.includes(flavor)) {
+        return flavor;
+      }
+
+      this.log('The nwFlavor setting must be a string of "normal", "sdk", or "match".');
+    }
+
+    return null;
   },
   validatePlatform: function (settings) {
   },

@@ -464,4 +464,66 @@ describe('Validator', () => {
         .toEqual(null);
     });
   });
+
+  describe('validateNwFlavor', () => {
+    test('No settings.nwFlavor', () => {
+      const result = validator.validateNwFlavor({});
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual(null);
+    });
+
+    test('settings.nwFlavor is not a string', () => {
+      const result = validator.validateNwFlavor({ nwFlavor: 3 });
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'The nwFlavor setting must be a string.');
+
+      expect(result)
+        .toEqual(null);
+    });
+
+    test('settings.nwFlavor is match', () => {
+      const result = validator.validateNwFlavor({ nwFlavor: 'match' });
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual('match');
+    });
+
+    test('settings.nwFlavor is sdk', () => {
+      const result = validator.validateNwFlavor({ nwFlavor: 'sdk' });
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual('sdk');
+    });
+
+    test('settings.nwFlavor is normal', () => {
+      const result = validator.validateNwFlavor({ nwFlavor: 'normal' });
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual('normal');
+    });
+
+    test('settings.nwFlavor is adsf', () => {
+      const result = validator.validateNwFlavor({ nwFlavor: 'adsf' });
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'The nwFlavor setting must be a string of "normal", "sdk", or "match".');
+
+      expect(result)
+        .toEqual(null);
+    });
+  });
 });
