@@ -2,19 +2,25 @@ const validator = require('./validator.js');
 const helpers = require('./helpers.js');
 
 const nwUtilsBuilder = {
-  settings: undefined,
   log: function (message, error) {
-    helpers.log(message, this.settings, error);
+    const settings = this.settings || { global: { verbose: true } };
+    helpers.log(message, settings, error);
   },
+  settings: undefined,
   buildSettingsObject: function (settings) {
     this.settings = validator.buildSettingsObject(settings);
   },
 
+  resetState: function () {
+    this.settings = undefined;
+  },
   build: function (settings) {
+    this.resetState();
     if (!settings) {
-      this.log('No settings passed in.', { global: { verbose: true } });
+      this.log('No settings passed in.');
       return;
     }
+    // let templatePattern = /({{)(?:nwVersion|nwFlavor|platform|arch|outputType|name|version)(}})/g;
     this.buildSettingsObject(settings);
   }
 };
