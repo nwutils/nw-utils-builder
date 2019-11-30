@@ -640,4 +640,76 @@ describe('Validator', () => {
         .toEqual(null);
     });
   });
+
+  describe('validateOutputType', () => {
+    test('No settings.outputType', () => {
+      const result = validator.validateOutputType({});
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual(null);
+    });
+
+    test('settings.outputType is not a string', () => {
+      const result = validator.validateOutputType({ outputType: 3 });
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'The outputType setting must be a string.');
+
+      expect(result)
+        .toEqual(null);
+    });
+
+    test('settings.outputType is zip', () => {
+      const result = validator.validateOutputType({ outputType: 'zip' });
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual('zip');
+    });
+
+    test('settings.outputType is 7z', () => {
+      const result = validator.validateOutputType({ outputType: '7z' });
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual('7z');
+    });
+
+    test('settings.outputType is nsis', () => {
+      const result = validator.validateOutputType({ outputType: 'nsis' });
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual('nsis');
+    });
+
+    test('settings.outputType is nsis7z', () => {
+      const result = validator.validateOutputType({ outputType: 'nsis7z' });
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual('nsis7z');
+    });
+
+    test('settings.outputType is adsf', () => {
+      const result = validator.validateOutputType({ outputType: 'adsf' });
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'The outputType setting must be a string of "zip", "7z", "nsis", or "nsis7z".');
+
+      expect(result)
+        .toEqual(null);
+    });
+  });
 });

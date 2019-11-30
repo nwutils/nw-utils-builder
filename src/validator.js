@@ -185,6 +185,24 @@ const validator = {
     return null;
   },
   validateOutputType: function (settings) {
+    let outputType = this.validateString(settings, 'outputType');
+    let validOutputTypes = [
+      'zip',
+      '7z',
+      'nsis',
+      'nsis7z'
+    ];
+
+    if (outputType) {
+      outputType = outputType.toLowerCase();
+      if (validOutputTypes.includes(outputType)) {
+        return outputType;
+      }
+
+      this.log('The outputType setting must be a string of "zip", "7z", "nsis", or "nsis7z".');
+    }
+
+    return null;
   },
   applyGlobalSetting: function (settings, name, method) {
     // value = this.validateBoolean(settings.global, 'verbose');
