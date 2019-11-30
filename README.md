@@ -18,8 +18,8 @@
 **TODO:**
 
 * [x] Design API
-* [ ] Validate options
-* [ ] Write unit tests
+* [x] Validate options
+* [x] Write unit tests
 * [ ] Produce basic Windows build
 * [ ] Produce basic Linux/OSX build
 * [ ] Implement API features
@@ -44,3 +44,4 @@
    * [ ] nsis
    * [ ] nsis7z
 * [ ] Find minimum supported Node version for this repo
+* [ ] Bump to v1.0.0 and release

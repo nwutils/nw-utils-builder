@@ -1,0 +1,63 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Validator Global default settings Snapshot 1`] = `
+Object {
+  "global": Object {
+    "arch": "x86",
+    "concurrent": true,
+    "excludes": Array [],
+    "files": Array [
+      "**/*",
+    ],
+    "icon": undefined,
+    "junk": Array [],
+    "mirror": "https://dl.nwjs.io/",
+    "nwFlavor": "normal",
+    "nwVersion": "match",
+    "outputPattern": "{{name}}-{{version}}-{{platform}}-{{arch}}",
+    "outputType": "zip",
+    "platform": "win",
+    "strippedManifestProperties": Array [],
+    "unIcon": undefined,
+    "verbose": true,
+  },
+  "tasks": Array [],
+}
+`;
+
+exports[`Validator validTaskSettings Snapshot 1`] = `
+Array [
+  "nwVersion",
+  "nwFlavor",
+  "platform",
+  "arch",
+  "files",
+  "excludes",
+  "outputType",
+  "outputPattern",
+  "strippedManifestProperties",
+  "junk",
+  "icon",
+  "unIcon",
+]
+`;
+
+exports[`Validator validationMap Snapshot 1`] = `
+Object {
+  "arch": "Arch",
+  "concurrent": "Boolean",
+  "excludes": "ArrayOfStrings",
+  "files": "ArrayOfStrings",
+  "icon": "String",
+  "junk": "ArrayOfStrings",
+  "mirror": "String",
+  "nwFlavor": "NwFlavor",
+  "nwVersion": "NwVersion",
+  "outputPattern": "String",
+  "outputType": "OutputType",
+  "platform": "Platform",
+  "strippedManifestProperties": "ArrayOfStrings",
+  "unIcon": "String",
+  "verbose": "Boolean",
+}
+`;
