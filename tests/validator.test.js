@@ -1,10 +1,15 @@
+const _cloneDeep = require('lodash.cloneDeep');
+
 const validator = require('../src/validator.js');
+const customizedGlobalSettingsAndTasks = require('./test-helpers.js').customizedGlobalSettingsAndTasks;
+
 const title = 'NW-UTILS-BUILDER:';
 
 describe('Validator', () => {
   let consoleLog;
 
   beforeEach(() => {
+    validator.resetState();
     consoleLog = console.log;
     console.log = jest.fn();
   });
@@ -19,7 +24,7 @@ describe('Validator', () => {
         validator.log('B', { global: { verbose: true } }, true);
       } catch (error) {
         expect(console.log)
-          .toHaveBeenCalledWith('NW-UTILS-BUILDER:');
+          .toHaveBeenCalledWith(title);
 
         expect(error)
           .toEqual('B');
@@ -37,6 +42,13 @@ describe('Validator', () => {
   describe('validationMap', () => {
     test('Snapshot', () => {
       expect(validator.validationMap)
+        .toMatchSnapshot();
+    });
+  });
+
+  describe('validTaskSettings', () => {
+    test('Snapshot', () => {
+      expect(validator.validTaskSettings)
         .toMatchSnapshot();
     });
   });
@@ -710,6 +722,212 @@ describe('Validator', () => {
 
       expect(result)
         .toEqual(null);
+    });
+  });
+
+  describe('validateGlobalSettings', () => {
+    test('No settings', () => {
+      const result = validator.validateGlobalSettings();
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual(undefined);
+    });
+
+    test('No settings.global', () => {
+      const result = validator.validateGlobalSettings({});
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual(undefined);
+    });
+
+    test('settings.global is not an object', () => {
+      const result = validator.validateGlobalSettings({ global: 3 });
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'settings.global must be an object.');
+
+      expect(result)
+        .toEqual(undefined);
+    });
+
+    test('settings.global is an array', () => {
+      const result = validator.validateGlobalSettings({ global: [] });
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'settings.global must be an object.');
+
+      expect(result)
+        .toEqual(undefined);
+    });
+
+    test('settings.global is valid', () => {
+      validator.validateGlobalSettings(_cloneDeep(customizedGlobalSettingsAndTasks));
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(validator.settings.global)
+        .toEqual(_cloneDeep(customizedGlobalSettingsAndTasks).global);
+    });
+  });
+
+  describe('applyGlobalSettingsToTask', () => {
+    test('Pass in unsupported keys', () => {
+      const result = validator.applyGlobalSettingsToTask({ dog: 'asdf' }, 'dog', 'validateString');
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'The dog setting is not supported on tasks.');
+
+      expect(result)
+        .toEqual(undefined);
+    });
+  });
+
+  describe('validateTasks', () => {
+    test('No settings', () => {
+      const result = validator.validateTasks();
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual(undefined);
+    });
+
+    test('No settings.tasks', () => {
+      const result = validator.validateTasks({});
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual(undefined);
+    });
+
+    test('settings.tasks is not an array', () => {
+      const result = validator.validateTasks({ tasks: 3 });
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'settings.tasks must be an array.');
+
+      expect(result)
+        .toEqual(undefined);
+    });
+
+    test('Not all tasks are objects', () => {
+      const result = validator.validateTasks({ tasks: [3, 6, 5] });
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'All tasks must be objects.');
+
+      expect(result)
+        .toEqual(undefined);
+    });
+
+    test('settings.tasks is valid', () => {
+      validator.validateTasks(_cloneDeep(customizedGlobalSettingsAndTasks));
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(validator.settings.tasks)
+        .toEqual(_cloneDeep(customizedGlobalSettingsAndTasks).tasks);
+    });
+  });
+
+  describe('buildSettingsObject', () => {
+    test('Bad settings are ignored', () => {
+      validator.buildSettingsObject({
+        global: {
+          verbose: false,
+          concurrent: 'asdf',
+          mirror: 1234,
+          nwVersion: 'asdf',
+          nwFlavor: 'asdf',
+          platform: 'asdf',
+          arch: 'asdf',
+          files: 'asdf',
+          excludes: 'asdf',
+          outputType: 'asdf',
+          outputPattern: 1234,
+          strippedManifestProperties: 'asdf',
+          junk: 'asdf',
+          icon: 1234,
+          unIcon: 1234
+        },
+        tasks: [
+          {
+            nwVersion: 'asdf',
+            nwFlavor: 'asdf',
+            platform: 'asdf',
+            arch: 'asdf',
+            files: 'asdf',
+            excludes: 'asdf',
+            outputType: 'asdf',
+            outputPattern: 1234,
+            strippedManifestProperties: 'asdf',
+            junk: 'asdf',
+            icon: 1234,
+            unIcon: 1234
+          }
+        ]
+      });
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(validator.settings)
+        .toEqual({
+          global: {
+            verbose: false,
+            concurrent: true,
+            mirror: 'https://dl.nwjs.io/',
+            nwVersion: 'match',
+            nwFlavor: 'normal',
+            platform: 'win',
+            arch: 'x86',
+            files: ['**/*'],
+            excludes: [],
+            outputType: 'zip',
+            outputPattern: '{{name}}-{{version}}-{{platform}}-{{arch}}',
+            strippedManifestProperties: [],
+            junk: [],
+            icon: undefined,
+            unIcon: undefined
+          },
+          tasks: [
+            {
+              nwVersion: 'match',
+              nwFlavor: 'normal',
+              platform: 'win',
+              arch: 'x86',
+              files: ['**/*'],
+              excludes: [],
+              outputType: 'zip',
+              outputPattern: '{{name}}-{{version}}-{{platform}}-{{arch}}',
+              strippedManifestProperties: [],
+              junk: [],
+              icon: undefined,
+              unIcon: undefined
+            }
+          ]
+        });
+    });
+
+    test('Settings object is built', () => {
+      validator.buildSettingsObject(_cloneDeep(customizedGlobalSettingsAndTasks));
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(validator.settings)
+        .toEqual(_cloneDeep(customizedGlobalSettingsAndTasks));
     });
   });
 });

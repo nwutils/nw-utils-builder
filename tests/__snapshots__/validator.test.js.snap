@@ -25,6 +25,23 @@ Object {
 }
 `;
 
+exports[`Validator validTaskSettings Snapshot 1`] = `
+Array [
+  "nwVersion",
+  "nwFlavor",
+  "platform",
+  "arch",
+  "files",
+  "excludes",
+  "outputType",
+  "outputPattern",
+  "strippedManifestProperties",
+  "junk",
+  "icon",
+  "unIcon",
+]
+`;
+
 exports[`Validator validationMap Snapshot 1`] = `
 Object {
   "arch": "Arch",
