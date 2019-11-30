@@ -48,6 +48,20 @@ const validator = {
     icon: 'String',
     unIcon: 'String'
   },
+  validTaskSettings: [
+    'nwVersion',
+    'nwFlavor',
+    'platform',
+    'arch',
+    'files',
+    'excludes',
+    'outputType',
+    'outputPattern',
+    'strippedManifestProperties',
+    'junk',
+    'icon',
+    'unIcon'
+  ],
   /**
    * Validates the section is an array that only contains strings
    * @param  {object} settings  Settings object passed in by the user
@@ -219,20 +233,76 @@ const validator = {
    * @param  {object} settings  A setting object passed in by the user
    */
   validateGlobalSettings: function (settings) {
+    if (!settings || !settings.global) {
+      return;
+    }
     if (
-      !settings ||
-      !settings.global ||
-      typeof(settings.global) !== 'object' ||
-      Array.isArray(settings.global)
+      settings &&
+      settings.global &&
+      (
+        typeof(settings.global) !== 'object' ||
+        Array.isArray(settings.global)
+      )
     ) {
+      this.log('settings.global must be an object.');
       return;
     }
 
-    for (let key of this.validationMap) {
+    for (let key of Object.keys(this.validationMap)) {
       // this.applyGlobalSetting(settings, 'verbose', 'validateBoolean');
       this.applyGlobalSetting(settings, key, 'validate' + this.validationMap[key]);
     }
   },
+  applyGlobalSettingsToTask: function (task, name, method) {
+    if (!this.validTaskSettings.includes(name)) {
+      this.log('The ' + name + ' setting is not supported on tasks.');
+      return;
+    }
+    let value = this[method](task, name);
+    if (value !== null) {
+      task[name] = value;
+    } else {
+      task[name] = this.settings.global[name];
+    }
+  },
+  validateTask: function (task) {
+    this.validTaskSettings.forEach((key) => {
+      // this.applyGlobalSettingsToTask(task, 'nwVersion', 'validateNwVersion');
+      this.applyGlobalSettingsToTask(task, key, 'validate' + this.validationMap[key]);
+    });
+    this.settings.tasks.push(task);
+  },
+  validateTasks: function (settings) {
+    if (!settings || !settings.tasks) {
+      return;
+    }
+    if (
+      settings &&
+      settings.tasks &&
+      !Array.isArray(settings.tasks)
+    ) {
+      this.log('settings.tasks must be an array.');
+      return;
+    }
+
+    const allTasksAreObjects = settings.tasks.every(function (task) {
+      return typeof(task) === 'object' && !Array.isArray(task);
+    });
+
+    if (!allTasksAreObjects) {
+      this.log('All tasks must be objects.');
+      return;
+    }
+
+    settings.tasks.forEach((task) => {
+      this.validateTask(task);
+    });
+  },
+  /**
+   * Clears the state of this file. Since node's "require" will cache this file in memory,
+   * if it is called multiple times from the same instance the defaults will need to be
+   * reset.
+   */
   resetState: function () {
     this.settings = _cloneDeep(defaultSettings);
   },
@@ -243,6 +313,7 @@ const validator = {
   buildSettingsObject: function (settings) {
     this.resetState();
     this.validateGlobalSettings(settings);
+    this.validateTasks(settings);
     return this.settings;
   }
 };
