@@ -526,4 +526,66 @@ describe('Validator', () => {
         .toEqual(null);
     });
   });
+
+  describe('validatePlatform', () => {
+    test('No settings.platform', () => {
+      const result = validator.validatePlatform({});
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual(null);
+    });
+
+    test('settings.platform is not a string', () => {
+      const result = validator.validatePlatform({ platform: 3 });
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'The platform setting must be a string.');
+
+      expect(result)
+        .toEqual(null);
+    });
+
+    test('settings.platform is win', () => {
+      const result = validator.validatePlatform({ platform: 'win' });
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual('win');
+    });
+
+    test('settings.platform is lin', () => {
+      const result = validator.validatePlatform({ platform: 'lin' });
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual('lin');
+    });
+
+    test('settings.platform is osx', () => {
+      const result = validator.validatePlatform({ platform: 'osx' });
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual('osx');
+    });
+
+    test('settings.platform is adsf', () => {
+      const result = validator.validatePlatform({ platform: 'adsf' });
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'The platform setting must be a string of "win", "lin", or "osx".');
+
+      expect(result)
+        .toEqual(null);
+    });
+  });
 });

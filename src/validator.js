@@ -148,6 +148,23 @@ const validator = {
     return null;
   },
   validatePlatform: function (settings) {
+    let platform = this.validateString(settings, 'platform');
+    let validPlatforms = [
+      'win',
+      'lin',
+      'osx'
+    ];
+
+    if (platform) {
+      platform = platform.toLowerCase();
+      if (validPlatforms.includes(platform)) {
+        return platform;
+      }
+
+      this.log('The platform setting must be a string of "win", "lin", or "osx".');
+    }
+
+    return null;
   },
   validateArch: function (settings) {
   },
