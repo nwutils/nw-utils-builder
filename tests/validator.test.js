@@ -588,4 +588,56 @@ describe('Validator', () => {
         .toEqual(null);
     });
   });
+
+  describe('validateArch', () => {
+    test('No settings.arch', () => {
+      const result = validator.validateArch({});
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual(null);
+    });
+
+    test('settings.arch is not a string', () => {
+      const result = validator.validateArch({ arch: 3 });
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'The arch setting must be a string.');
+
+      expect(result)
+        .toEqual(null);
+    });
+
+    test('settings.arch is x86', () => {
+      const result = validator.validateArch({ arch: 'x86' });
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual('x86');
+    });
+
+    test('settings.arch is x64', () => {
+      const result = validator.validateArch({ arch: 'x64' });
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual('x64');
+    });
+
+    test('settings.arch is adsf', () => {
+      const result = validator.validateArch({ arch: 'adsf' });
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'The arch setting must be a string of "x86" or "x64".');
+
+      expect(result)
+        .toEqual(null);
+    });
+  });
 });

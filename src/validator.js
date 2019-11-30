@@ -167,6 +167,22 @@ const validator = {
     return null;
   },
   validateArch: function (settings) {
+    let arch = this.validateString(settings, 'arch');
+    let validArchitectures = [
+      'x64',
+      'x86'
+    ];
+
+    if (arch) {
+      arch = arch.toLowerCase();
+      if (validArchitectures.includes(arch)) {
+        return arch;
+      }
+
+      this.log('The arch setting must be a string of "x86" or "x64".');
+    }
+
+    return null;
   },
   validateOutputType: function (settings) {
   },
