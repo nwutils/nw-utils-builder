@@ -1,4 +1,4 @@
-const _cloneDeep = require('lodash.cloneDeep');
+const _cloneDeep = require('lodash.clonedeep');
 
 const nwBuilder = require('../src/index.js');
 const customizedGlobalSettingsAndTasks = require('./test-helpers.js').customizedGlobalSettingsAndTasks;

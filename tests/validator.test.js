@@ -1,4 +1,4 @@
-const _cloneDeep = require('lodash.cloneDeep');
+const _cloneDeep = require('lodash.clonedeep');
 
 const validator = require('../src/validator.js');
 const customizedGlobalSettingsAndTasks = require('./test-helpers.js').customizedGlobalSettingsAndTasks;
