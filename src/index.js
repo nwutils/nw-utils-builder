@@ -22,6 +22,9 @@ const nwUtilsBuilder = {
     }
     // let templatePattern = /({{)(?:nwVersion|nwFlavor|platform|arch|outputType|name|version)(}})/g;
     this.buildSettingsObject(settings);
+  },
+  dryRun: function (settings) {
+    return validator.buildSettingsObject(settings);
   }
 };
 

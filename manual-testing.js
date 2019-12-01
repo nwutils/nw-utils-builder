@@ -1,4 +1,4 @@
-const nwBuilder = require('./src/index.js').build;
+const nwBuilder = require('./src/index.js');
 
 const API_Example = {
   global: {
@@ -61,4 +61,6 @@ const API_Example = {
   ]
 };
 
-nwBuilder(API_Example);
+// nwBuilder.build(API_EXAMPLE);
+
+console.log(JSON.stringify(nwBuilder.dryRun({ tasks: [{}] }), null, 2));
