@@ -4,7 +4,7 @@ describe('Helpers', () => {
   describe('Log', () => {
     let consoleLog;
     const verbose = {
-      global: {
+      options: {
         verbose: true
       }
     };

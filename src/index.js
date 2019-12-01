@@ -3,7 +3,7 @@ const helpers = require('./helpers.js');
 
 const nwUtilsBuilder = {
   log: function (message, error) {
-    const settings = this.settings || { global: { verbose: true } };
+    const settings = this.settings || { options: { verbose: true } };
     helpers.log(message, settings, error);
   },
   settings: undefined,

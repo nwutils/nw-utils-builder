@@ -1,7 +1,7 @@
 const _cloneDeep = require('lodash.clonedeep');
 
 const validator = require('../src/validator.js');
-const customizedGlobalSettingsAndTasks = require('./test-helpers.js').customizedGlobalSettingsAndTasks;
+const customizedSettingsAndTasks = require('./test-helpers.js').customizedSettingsAndTasks;
 
 const title = 'NW-UTILS-BUILDER:';
 
@@ -21,7 +21,7 @@ describe('Validator', () => {
   describe('Log', () => {
     test('Error true', () => {
       try {
-        validator.log('B', { global: { verbose: true } }, true);
+        validator.log('B', { options: { verbose: true } }, true);
       } catch (error) {
         expect(console.log)
           .toHaveBeenCalledWith(title);
@@ -725,9 +725,9 @@ describe('Validator', () => {
     });
   });
 
-  describe('validateGlobalSettings', () => {
+  describe('validateTaskDefaults', () => {
     test('No settings', () => {
-      const result = validator.validateGlobalSettings();
+      const result = validator.validateTaskDefaults();
 
       expect(console.log)
         .not.toHaveBeenCalled();
@@ -736,8 +736,8 @@ describe('Validator', () => {
         .toEqual(undefined);
     });
 
-    test('No settings.global', () => {
-      const result = validator.validateGlobalSettings({});
+    test('No settings.taskDefaults', () => {
+      const result = validator.validateTaskDefaults({});
 
       expect(console.log)
         .not.toHaveBeenCalled();
@@ -746,40 +746,40 @@ describe('Validator', () => {
         .toEqual(undefined);
     });
 
-    test('settings.global is not an object', () => {
-      const result = validator.validateGlobalSettings({ global: 3 });
+    test('settings.taskDefaults is not an object', () => {
+      const result = validator.validateTaskDefaults({ taskDefaults: 3 });
 
       expect(console.log)
-        .toHaveBeenCalledWith(title, 'settings.global must be an object.');
+        .toHaveBeenCalledWith(title, 'settings.taskDefaults must be an object.');
 
       expect(result)
         .toEqual(undefined);
     });
 
-    test('settings.global is an array', () => {
-      const result = validator.validateGlobalSettings({ global: [] });
+    test('settings.taskDefaults is an array', () => {
+      const result = validator.validateTaskDefaults({ taskDefaults: [] });
 
       expect(console.log)
-        .toHaveBeenCalledWith(title, 'settings.global must be an object.');
+        .toHaveBeenCalledWith(title, 'settings.taskDefaults must be an object.');
 
       expect(result)
         .toEqual(undefined);
     });
 
-    test('settings.global is valid', () => {
-      validator.validateGlobalSettings(_cloneDeep(customizedGlobalSettingsAndTasks));
+    test('settings.taskDefaults is valid', () => {
+      validator.validateTaskDefaults(_cloneDeep(customizedSettingsAndTasks));
 
       expect(console.log)
         .not.toHaveBeenCalled();
 
-      expect(validator.settings.global)
-        .toEqual(_cloneDeep(customizedGlobalSettingsAndTasks).global);
+      expect(validator.settings.taskDefaults)
+        .toEqual(_cloneDeep(customizedSettingsAndTasks).taskDefaults);
     });
   });
 
-  describe('applyGlobalSettingsToTask', () => {
+  describe('applyDefaultsToTask', () => {
     test('Pass in unsupported keys', () => {
-      const result = validator.applyGlobalSettingsToTask({ dog: 'asdf' }, 'dog', 'validateString');
+      const result = validator.applyDefaultsToTask({ dog: 'asdf' }, 'dog', 'validateString');
 
       expect(console.log)
         .toHaveBeenCalledWith(title, 'The dog setting is not supported on tasks.');
@@ -831,23 +831,25 @@ describe('Validator', () => {
     });
 
     test('settings.tasks is valid', () => {
-      validator.validateTasks(_cloneDeep(customizedGlobalSettingsAndTasks));
+      validator.validateTasks(_cloneDeep(customizedSettingsAndTasks));
 
       expect(console.log)
         .not.toHaveBeenCalled();
 
       expect(validator.settings.tasks)
-        .toEqual(_cloneDeep(customizedGlobalSettingsAndTasks).tasks);
+        .toEqual(_cloneDeep(customizedSettingsAndTasks).tasks);
     });
   });
 
   describe('buildSettingsObject', () => {
     test('Bad settings are ignored', () => {
       validator.buildSettingsObject({
-        global: {
+        options: {
           verbose: false,
           concurrent: 'asdf',
-          mirror: 1234,
+          mirror: 1234
+        },
+        taskDefaults: {
           nwVersion: 'asdf',
           nwFlavor: 'asdf',
           platform: 'asdf',
@@ -884,10 +886,12 @@ describe('Validator', () => {
 
       expect(validator.settings)
         .toEqual({
-          global: {
+          options: {
             verbose: false,
             concurrent: true,
-            mirror: 'https://dl.nwjs.io/',
+            mirror: 'https://dl.nwjs.io/'
+          },
+          taskDefaults: {
             nwVersion: 'match',
             nwFlavor: 'normal',
             platform: 'win',
@@ -921,13 +925,13 @@ describe('Validator', () => {
     });
 
     test('Settings object is built', () => {
-      validator.buildSettingsObject(_cloneDeep(customizedGlobalSettingsAndTasks));
+      validator.buildSettingsObject(_cloneDeep(customizedSettingsAndTasks));
 
       expect(console.log)
         .not.toHaveBeenCalled();
 
       expect(validator.settings)
-        .toEqual(_cloneDeep(customizedGlobalSettingsAndTasks));
+        .toEqual(_cloneDeep(customizedSettingsAndTasks));
     });
   });
 });

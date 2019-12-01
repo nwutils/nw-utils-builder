@@ -1,7 +1,7 @@
 const _cloneDeep = require('lodash.clonedeep');
 
 const nwBuilder = require('../src/index.js');
-const customizedGlobalSettingsAndTasks = require('./test-helpers.js').customizedGlobalSettingsAndTasks;
+const customizedSettingsAndTasks = require('./test-helpers.js').customizedSettingsAndTasks;
 
 const title = 'NW-UTILS-BUILDER:';
 
@@ -47,13 +47,13 @@ describe('nw-utils-builder', () => {
       expect(nwBuilder.settings)
         .toEqual(undefined);
 
-      nwBuilder.build(_cloneDeep(customizedGlobalSettingsAndTasks));
+      nwBuilder.build(_cloneDeep(customizedSettingsAndTasks));
 
       expect(console.log)
         .not.toHaveBeenCalled();
 
       expect(nwBuilder.settings)
-        .toEqual(_cloneDeep(customizedGlobalSettingsAndTasks));
+        .toEqual(_cloneDeep(customizedSettingsAndTasks));
     });
   });
 });
