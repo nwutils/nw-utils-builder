@@ -2,16 +2,19 @@
 
 exports[`Validator Global default settings Snapshot 1`] = `
 Object {
-  "global": Object {
-    "arch": "x86",
+  "options": Object {
     "concurrent": true,
+    "mirror": "https://dl.nwjs.io/",
+    "verbose": true,
+  },
+  "taskDefaults": Object {
+    "arch": "x86",
     "excludes": Array [],
     "files": Array [
       "**/*",
     ],
     "icon": undefined,
     "junk": Array [],
-    "mirror": "https://dl.nwjs.io/",
     "nwFlavor": "normal",
     "nwVersion": "match",
     "outputPattern": "{{name}}-{{version}}-{{platform}}-{{arch}}",
@@ -19,7 +22,6 @@ Object {
     "platform": "win",
     "strippedManifestProperties": Array [],
     "unIcon": undefined,
-    "verbose": true,
   },
   "tasks": Array [],
 }
