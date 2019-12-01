@@ -1,11 +1,13 @@
 const nwBuilder = require('./src/index.js');
 
 const API_Example = {
-  global: {
+  options: {
+    concurrent: true,
+    mirror: 'https://dl.nwjs.io/'
+  },
+  taskDefaults: {
     nwVersion: 'latest', // or 'v0.42.5' or 'match'
     nwFlavor: 'normal', // or 'sdk'
-    concurrent: true,
-    mirror: 'https://dl.nwjs.io/',
     files: [
       '**/*'
     ],

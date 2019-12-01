@@ -1,9 +1,11 @@
 const helpers = {
   customizedGlobalSettingsAndTasks: {
-    global: {
+    options: {
       verbose: true,
       concurrent: false,
-      mirror: 'mirror',
+      mirror: 'mirror'
+    },
+    defaultTasks: {
       nwVersion: 'latest',
       nwFlavor: 'sdk',
       platform: 'lin',

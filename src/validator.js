@@ -4,10 +4,12 @@ const semver = require('semver');
 const helpers = require('./helpers.js');
 
 const defaultSettings = {
-  global: {
+  options: {
     verbose: true,
     concurrent: true,
-    mirror: 'https://dl.nwjs.io/',
+    mirror: 'https://dl.nwjs.io/'
+  },
+  taskDefaults: {
     nwVersion: 'match',
     nwFlavor: 'normal',
     platform: 'win',
