@@ -56,4 +56,36 @@ describe('nw-utils-builder', () => {
         .toEqual(_cloneDeep(customizedSettingsAndTasks));
     });
   });
+
+  describe('dryRun', () => {
+    test('No Settings', () => {
+      const result = nwBuilder.dryRun();
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'No settings passed in.');
+
+      expect(result)
+        .toEqual(undefined);
+    });
+
+    test('Settings are empty', () => {
+      const results = nwBuilder.dryRun({ tasks: [{}] });
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(results)
+        .toMatchSnapshot();
+    });
+
+    test('Settings are applied correctly', () => {
+      const result = nwBuilder.dryRun(_cloneDeep(customizedSettingsAndTasks));
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual(_cloneDeep(customizedSettingsAndTasks));
+    });
+  });
 });
