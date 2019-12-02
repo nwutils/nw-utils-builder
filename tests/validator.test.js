@@ -725,9 +725,41 @@ describe('Validator', () => {
     });
   });
 
-  describe('validateTaskDefaults', () => {
-    test('No settings', () => {
-      const result = validator.validateTaskDefaults();
+  describe('validateOptionsAndTaskDefaults', () => {
+    describe('No settings', () => {
+      test('no choice', () => {
+        const result = validator.validateOptionsAndTaskDefaults();
+
+        expect(console.log)
+          .toHaveBeenCalledWith(title, 'validateOptionsAndTaskDefaults requires a string of "options" or "taskDefaults".');
+
+        expect(result)
+          .toEqual(undefined);
+      });
+
+      test('options', () => {
+        const result = validator.validateOptionsAndTaskDefaults(undefined, 'options');
+
+        expect(console.log)
+          .not.toHaveBeenCalled();
+
+        expect(result)
+          .toEqual(undefined);
+      });
+
+      test('taskDefaults', () => {
+        const result = validator.validateOptionsAndTaskDefaults(undefined, 'taskDefaults');
+
+        expect(console.log)
+          .not.toHaveBeenCalled();
+
+        expect(result)
+          .toEqual(undefined);
+      });
+    });
+
+    test('No settings.options', () => {
+      const result = validator.validateOptionsAndTaskDefaults({}, 'options');
 
       expect(console.log)
         .not.toHaveBeenCalled();
@@ -737,7 +769,7 @@ describe('Validator', () => {
     });
 
     test('No settings.taskDefaults', () => {
-      const result = validator.validateTaskDefaults({});
+      const result = validator.validateOptionsAndTaskDefaults({}, 'taskDefaults');
 
       expect(console.log)
         .not.toHaveBeenCalled();
@@ -746,18 +778,38 @@ describe('Validator', () => {
         .toEqual(undefined);
     });
 
+    test('settings.options is not an object', () => {
+      const result = validator.validateOptionsAndTaskDefaults({ options: 3 }, 'options');
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'settings.options must be an object.');
+
+      expect(result)
+        .toEqual(undefined);
+    });
+
     test('settings.taskDefaults is not an object', () => {
-      const result = validator.validateTaskDefaults({ taskDefaults: 3 });
+      const result = validator.validateOptionsAndTaskDefaults({ taskDefaults: 3 }, 'taskDefaults');
 
       expect(console.log)
         .toHaveBeenCalledWith(title, 'settings.taskDefaults must be an object.');
+
+      expect(result)
+        .toEqual(undefined);
+    });
+
+    test('settings.options is an array', () => {
+      const result = validator.validateOptionsAndTaskDefaults({ options: [] }, 'options');
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'settings.options must be an object.');
 
       expect(result)
         .toEqual(undefined);
     });
 
     test('settings.taskDefaults is an array', () => {
-      const result = validator.validateTaskDefaults({ taskDefaults: [] });
+      const result = validator.validateOptionsAndTaskDefaults({ taskDefaults: [] }, 'taskDefaults');
 
       expect(console.log)
         .toHaveBeenCalledWith(title, 'settings.taskDefaults must be an object.');
@@ -766,8 +818,18 @@ describe('Validator', () => {
         .toEqual(undefined);
     });
 
+    test('settings.options is valid', () => {
+      validator.validateOptionsAndTaskDefaults(_cloneDeep(customizedSettingsAndTasks), 'options');
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(validator.settings.options)
+        .toEqual(_cloneDeep(customizedSettingsAndTasks).options);
+    });
+
     test('settings.taskDefaults is valid', () => {
-      validator.validateTaskDefaults(_cloneDeep(customizedSettingsAndTasks));
+      validator.validateOptionsAndTaskDefaults(_cloneDeep(customizedSettingsAndTasks), 'taskDefaults');
 
       expect(console.log)
         .not.toHaveBeenCalled();
