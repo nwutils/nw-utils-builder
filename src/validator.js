@@ -4,10 +4,12 @@ const semver = require('semver');
 const helpers = require('./helpers.js');
 
 const defaultSettings = {
-  global: {
+  options: {
     verbose: true,
     concurrent: true,
-    mirror: 'https://dl.nwjs.io/',
+    mirror: 'https://dl.nwjs.io/'
+  },
+  taskDefaults: {
     nwVersion: 'match',
     nwFlavor: 'normal',
     platform: 'win',
@@ -48,20 +50,7 @@ const validator = {
     icon: 'String',
     unIcon: 'String'
   },
-  validTaskSettings: [
-    'nwVersion',
-    'nwFlavor',
-    'platform',
-    'arch',
-    'files',
-    'excludes',
-    'outputType',
-    'outputPattern',
-    'strippedManifestProperties',
-    'junk',
-    'icon',
-    'unIcon'
-  ],
+  validTaskSettings: Object.keys(defaultSettings.taskDefaults),
   /**
    * Validates the section is an array that only contains strings
    * @param  {object} settings  Settings object passed in by the user
@@ -221,39 +210,44 @@ const validator = {
 
     return null;
   },
-  applyGlobalSetting: function (settings, name, method) {
-    // value = this.validateBoolean(settings.global, 'verbose');
-    let value = this[method](settings.global, name);
-    if (value !== null) {
-      this.settings.global[name] = value;
-    }
-  },
   /**
    * Validates and applies settings passed in by the the user to this.settings.
-   * @param  {object} settings  A setting object passed in by the user
+   * @param  {object} settings          A setting object passed in by the user
+   * @param  {string} optionsOrDefault  'options' or 'taskDefaults'
    */
-  validateGlobalSettings: function (settings) {
-    if (!settings || !settings.global) {
+  validateOptionsAndTaskDefaults: function (settings, optionsOrDefault) {
+    if (!optionsOrDefault) {
+      this.log('validateOptionsAndTaskDefaults requires a string of "options" or "taskDefaults".');
+      return;
+    }
+    if (!settings || !settings[optionsOrDefault]) {
       return;
     }
     if (
       settings &&
-      settings.global &&
+      settings[optionsOrDefault] &&
       (
-        typeof(settings.global) !== 'object' ||
-        Array.isArray(settings.global)
+        typeof(settings[optionsOrDefault]) !== 'object' ||
+        Array.isArray(settings[optionsOrDefault])
       )
     ) {
-      this.log('settings.global must be an object.');
+      this.log('settings.' + optionsOrDefault + ' must be an object.');
       return;
     }
 
-    for (let key of Object.keys(this.validationMap)) {
-      // this.applyGlobalSetting(settings, 'verbose', 'validateBoolean');
-      this.applyGlobalSetting(settings, key, 'validate' + this.validationMap[key]);
-    }
+    // ['nwVersion', 'nwFlavor', 'platform', 'arch', 'files', 'excludes', 'outputType', ...]
+    const settingsToValidate = Object.keys(this.settings[optionsOrDefault]);
+    settingsToValidate.forEach((setting) => {
+      // this.validationMap.files // 'ArrayOfStrings'
+      const validationType = this.validationMap[setting];
+      // this.validateArrayOfStrings(settings.taskDefaults, 'files');
+      const value = this['validate' + validationType](settings[optionsOrDefault], setting);
+      if (value !== null) {
+        this.settings[optionsOrDefault][setting] = value;
+      }
+    });
   },
-  applyGlobalSettingsToTask: function (task, name, method) {
+  applyDefaultsToTask: function (task, name, method) {
     if (!this.validTaskSettings.includes(name)) {
       this.log('The ' + name + ' setting is not supported on tasks.');
       return;
@@ -262,13 +256,13 @@ const validator = {
     if (value !== null) {
       task[name] = value;
     } else {
-      task[name] = this.settings.global[name];
+      task[name] = this.settings.taskDefaults[name];
     }
   },
   validateTask: function (task) {
     this.validTaskSettings.forEach((key) => {
-      // this.applyGlobalSettingsToTask(task, 'nwVersion', 'validateNwVersion');
-      this.applyGlobalSettingsToTask(task, key, 'validate' + this.validationMap[key]);
+      // this.applyDefaultsToTask(task, 'nwVersion', 'validateNwVersion');
+      this.applyDefaultsToTask(task, key, 'validate' + this.validationMap[key]);
     });
     this.settings.tasks.push(task);
   },
@@ -312,7 +306,8 @@ const validator = {
    */
   buildSettingsObject: function (settings) {
     this.resetState();
-    this.validateGlobalSettings(settings);
+    this.validateOptionsAndTaskDefaults(settings, 'options');
+    this.validateOptionsAndTaskDefaults(settings, 'taskDefaults');
     this.validateTasks(settings);
     return this.settings;
   }

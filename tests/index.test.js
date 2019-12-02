@@ -1,7 +1,7 @@
 const _cloneDeep = require('lodash.clonedeep');
 
 const nwBuilder = require('../src/index.js');
-const customizedGlobalSettingsAndTasks = require('./test-helpers.js').customizedGlobalSettingsAndTasks;
+const customizedSettingsAndTasks = require('./test-helpers.js').customizedSettingsAndTasks;
 
 const title = 'NW-UTILS-BUILDER:';
 
@@ -47,13 +47,45 @@ describe('nw-utils-builder', () => {
       expect(nwBuilder.settings)
         .toEqual(undefined);
 
-      nwBuilder.build(_cloneDeep(customizedGlobalSettingsAndTasks));
+      nwBuilder.build(_cloneDeep(customizedSettingsAndTasks));
 
       expect(console.log)
         .not.toHaveBeenCalled();
 
       expect(nwBuilder.settings)
-        .toEqual(_cloneDeep(customizedGlobalSettingsAndTasks));
+        .toEqual(_cloneDeep(customizedSettingsAndTasks));
+    });
+  });
+
+  describe('dryRun', () => {
+    test('No Settings', () => {
+      const result = nwBuilder.dryRun();
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'No settings passed in.');
+
+      expect(result)
+        .toEqual(undefined);
+    });
+
+    test('Settings are empty', () => {
+      const results = nwBuilder.dryRun({ tasks: [{}] });
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(results)
+        .toMatchSnapshot();
+    });
+
+    test('Settings are applied correctly', () => {
+      const result = nwBuilder.dryRun(_cloneDeep(customizedSettingsAndTasks));
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(result)
+        .toEqual(_cloneDeep(customizedSettingsAndTasks));
     });
   });
 });

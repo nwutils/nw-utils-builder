@@ -23,7 +23,7 @@
 * [ ] Produce basic Windows build
 * [ ] Produce basic Linux/OSX build
 * [ ] Implement API features
-   * [ ] verbose
+   * [x] verbose
    * [ ] concurrent
    * [ ] mirror
    * [ ] nwVersion

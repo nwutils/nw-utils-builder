@@ -3,8 +3,8 @@ const helpers = {
     if (
       message &&
       settings &&
-      settings.global &&
-      settings.global.verbose
+      settings.options &&
+      settings.options.verbose
     ) {
       const title = 'NW-UTILS-BUILDER:';
       if (error) {

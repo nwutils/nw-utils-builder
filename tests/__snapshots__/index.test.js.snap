@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`nw-utils-builder dryRun Settings are empty 1`] = `
+Object {
+  "options": Object {
+    "concurrent": true,
+    "mirror": "https://dl.nwjs.io/",
+    "verbose": true,
+  },
+  "taskDefaults": Object {
+    "arch": "x86",
+    "excludes": Array [],
+    "files": Array [
+      "**/*",
+    ],
+    "icon": undefined,
+    "junk": Array [],
+    "nwFlavor": "normal",
+    "nwVersion": "match",
+    "outputPattern": "{{name}}-{{version}}-{{platform}}-{{arch}}",
+    "outputType": "zip",
+    "platform": "win",
+    "strippedManifestProperties": Array [],
+    "unIcon": undefined,
+  },
+  "tasks": Array [
+    Object {
+      "arch": "x86",
+      "excludes": Array [],
+      "files": Array [
+        "**/*",
+      ],
+      "icon": undefined,
+      "junk": Array [],
+      "nwFlavor": "normal",
+      "nwVersion": "match",
+      "outputPattern": "{{name}}-{{version}}-{{platform}}-{{arch}}",
+      "outputType": "zip",
+      "platform": "win",
+      "strippedManifestProperties": Array [],
+      "unIcon": undefined,
+    },
+  ],
+}
+`;
