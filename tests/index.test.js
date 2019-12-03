@@ -2,6 +2,7 @@ const _cloneDeep = require('lodash.clonedeep');
 
 const nwBuilder = require('../src/index.js');
 const customizedSettingsAndTasks = require('./test-helpers.js').customizedSettingsAndTasks;
+const manifest = require('../package.json');
 
 const title = 'NW-UTILS-BUILDER:';
 
@@ -29,6 +30,18 @@ describe('nw-utils-builder', () => {
         expect(error)
           .toEqual('B');
       }
+    });
+  });
+
+  describe('readManifest', () => {
+    test('Reads package.json', () => {
+      expect(nwBuilder.manifest)
+        .toEqual(undefined);
+
+      nwBuilder.readManifest();
+
+      expect(nwBuilder.manifest)
+        .toEqual(manifest);
     });
   });
 
