@@ -107,7 +107,7 @@ const validator = {
       if (typeof(setting[name]) === 'object' && !Array.isArray(setting[name])) {
         return setting[name];
       }
-      this.log('The ' + name + ' setting must be a type of object.');
+      this.log('The ' + name + ' setting must be an object.');
     }
     return null;
   },

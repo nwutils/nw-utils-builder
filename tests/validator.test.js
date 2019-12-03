@@ -54,10 +54,10 @@ describe('Validator', () => {
   });
 
   describe('validateArrayOfStrings', () => {
-    describe('settings[section] is not an array', () => {
-      function settings (section) {
+    describe('settings[name] is not an array', () => {
+      function settings (name) {
         let setting = {};
-        setting[section] = 'String';
+        setting[name] = 'String';
         return setting;
       }
 
@@ -92,10 +92,10 @@ describe('Validator', () => {
       });
     });
 
-    describe('settings[section] is an empty array', () => {
-      function settings (section) {
+    describe('settings[name] is an empty array', () => {
+      function settings (name) {
         let setting = {};
-        setting[section] = [];
+        setting[name] = [];
         return setting;
       }
 
@@ -130,10 +130,10 @@ describe('Validator', () => {
       });
     });
 
-    describe('settings[section] is array of numbers', () => {
-      function settings (section) {
+    describe('settings[name] is array of numbers', () => {
+      function settings (name) {
         let setting = {};
-        setting[section] = [10, 20, 30];
+        setting[name] = [10, 20, 30];
         return setting;
       }
 
@@ -169,9 +169,9 @@ describe('Validator', () => {
     });
 
     describe('Return deduped array', () => {
-      function settings (section) {
+      function settings (name) {
         let setting = {};
-        setting[section] = ['A', 'B', 'A', 'A', 'D', 'B', 'C'];
+        setting[name] = ['A', 'B', 'A', 'A', 'D', 'B', 'C'];
         return setting;
       }
 
@@ -206,7 +206,7 @@ describe('Validator', () => {
       });
     });
 
-    describe('No settings[section]', () => {
+    describe('No settings[name]', () => {
       const settings = {};
 
       test('junk', () => {
@@ -241,8 +241,92 @@ describe('Validator', () => {
     });
   });
 
+  describe('validateObject', () => {
+    describe('No settings[name]', () => {
+      const settings = {};
+
+      test('manifestOverrides', () => {
+        const result = validator.validateObject(settings, 'manifestOverrides');
+
+        expect(console.log)
+          .not.toHaveBeenCalled();
+
+        expect(result)
+          .toEqual(null);
+      });
+
+      test('asdf', () => {
+        const result = validator.validateObject(settings, 'asdf');
+
+        expect(console.log)
+          .not.toHaveBeenCalled();
+
+        expect(result)
+          .toEqual(null);
+      });
+    });
+
+    describe('settings[name] is not a object', () => {
+      function settings (name) {
+        const setting = {};
+        setting[name] = 4;
+        return setting;
+      }
+
+      test('manifestOverrides', () => {
+        const result = validator.validateObject(settings('manifestOverrides'), 'manifestOverrides');
+
+        expect(console.log)
+          .toHaveBeenCalledWith(title, 'The manifestOverrides setting must be an object.');
+
+        expect(result)
+          .toEqual(null);
+      });
+
+      test('asdf', () => {
+        const result = validator.validateObject(settings('asdf'), 'asdf');
+
+        expect(console.log)
+          .toHaveBeenCalledWith(title, 'The asdf setting must be an object.');
+
+        expect(result)
+          .toEqual(null);
+      });
+    });
+
+    describe('settings[name] is a object', () => {
+      function settings (name) {
+        const setting = {};
+        setting[name] = {
+          version: '1.0.0'
+        };
+        return setting;
+      }
+
+      test('manifestOverrides', () => {
+        const result = validator.validateObject(settings('manifestOverrides'), 'manifestOverrides');
+
+        expect(console.log)
+          .not.toHaveBeenCalled();
+
+        expect(result)
+          .toEqual({ version: '1.0.0' });
+      });
+
+      test('asdf', () => {
+        const result = validator.validateObject(settings('asdf'), 'asdf');
+
+        expect(console.log)
+          .not.toHaveBeenCalled();
+
+        expect(result)
+          .toEqual({ version: '1.0.0' });
+      });
+    });
+  });
+
   describe('validateBoolean', () => {
-    describe('No settings[section]', () => {
+    describe('No settings[name]', () => {
       const settings = {};
 
       test('verbose', () => {
@@ -266,10 +350,10 @@ describe('Validator', () => {
       });
     });
 
-    describe('settings[section] is not a boolean', () => {
-      function settings (section) {
+    describe('settings[name] is not a boolean', () => {
+      function settings (name) {
         const setting = {};
-        setting[section] = 0;
+        setting[name] = 0;
         return setting;
       }
 
@@ -294,7 +378,7 @@ describe('Validator', () => {
       });
     });
 
-    describe('settings[section] is a boolean', () => {
+    describe('settings[name] is a boolean', () => {
       test('verbose', () => {
         const settings = {
           verbose: false
@@ -324,7 +408,7 @@ describe('Validator', () => {
   });
 
   describe('validateString', () => {
-    describe('No settings[section]', () => {
+    describe('No settings[name]', () => {
       const settings = {};
 
       test('mirror', () => {
@@ -348,10 +432,10 @@ describe('Validator', () => {
       });
     });
 
-    describe('settings[section] is not a string', () => {
-      function settings (section) {
+    describe('settings[name] is not a string', () => {
+      function settings (name) {
         const setting = {};
-        setting[section] = 4;
+        setting[name] = 4;
         return setting;
       }
 
@@ -376,10 +460,10 @@ describe('Validator', () => {
       });
     });
 
-    describe('settings[section] is a string', () => {
-      function settings (section) {
+    describe('settings[name] is a string', () => {
+      function settings (name) {
         const setting = {};
-        setting[section] = 'qwer';
+        setting[name] = 'qwer';
         return setting;
       }
 
@@ -920,6 +1004,7 @@ describe('Validator', () => {
           excludes: 'asdf',
           outputType: 'asdf',
           outputPattern: 1234,
+          manifestOverrides: 'asdf',
           strippedManifestProperties: 'asdf',
           junk: 'asdf',
           icon: 1234,
@@ -935,6 +1020,7 @@ describe('Validator', () => {
             excludes: 'asdf',
             outputType: 'asdf',
             outputPattern: 1234,
+            manifestOverrides: 'asdf',
             strippedManifestProperties: 'asdf',
             junk: 'asdf',
             icon: 1234,
@@ -962,6 +1048,7 @@ describe('Validator', () => {
             excludes: [],
             outputType: 'zip',
             outputPattern: '{{name}}-{{version}}-{{platform}}-{{arch}}',
+            manifestOverrides: {},
             strippedManifestProperties: [],
             junk: [],
             icon: undefined,
@@ -977,6 +1064,7 @@ describe('Validator', () => {
               excludes: [],
               outputType: 'zip',
               outputPattern: '{{name}}-{{version}}-{{platform}}-{{arch}}',
+              manifestOverrides: {},
               strippedManifestProperties: [],
               junk: [],
               icon: undefined,
