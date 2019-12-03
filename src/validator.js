@@ -18,6 +18,7 @@ const defaultSettings = {
     excludes: [],
     outputType: 'zip',
     outputPattern: '{{name}}-{{version}}-{{platform}}-{{arch}}',
+    manifestOverrides: {},
     strippedManifestProperties: [],
     junk: [],
     icon: undefined,
@@ -45,6 +46,7 @@ const validator = {
     excludes: 'ArrayOfStrings',
     outputType: 'OutputType',
     outputPattern: 'String',
+    manifestOverrides: 'Object',
     strippedManifestProperties: 'ArrayOfStrings',
     junk: 'ArrayOfStrings',
     icon: 'String',
@@ -90,6 +92,22 @@ const validator = {
         return deduped;
       }
       this.log(message);
+    }
+    return null;
+  },
+  /**
+   * Validates a setting is an object.
+   *
+   * @param  {object} setting  Settings object passed in by the user
+   * @param  {string} name     Name of the setting (manifestOverrides)
+   * @return {object}          The value or null if check fails
+   */
+  validateObject: function (setting, name) {
+    if (Object.prototype.hasOwnProperty.call(setting, name)) {
+      if (typeof(setting[name]) === 'object' && !Array.isArray(setting[name])) {
+        return setting[name];
+      }
+      this.log('The ' + name + ' setting must be a type of object.');
     }
     return null;
   },
