@@ -1,7 +1,9 @@
 const nwBuilder = require('../src/index.js');
 
-console.log(nwBuilder.dryRun({
+const settings = {
   tasks: [
     {}
   ]
-}));
+};
+
+nwBuilder.build(settings);
