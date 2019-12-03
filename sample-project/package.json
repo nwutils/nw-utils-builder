@@ -1,0 +1,23 @@
+{
+  "name": "sample-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "window": {
+    "width": 380,
+    "height": 350
+  },
+  "scripts": {
+    "start": "nw .",
+    "build": "node build.js"
+  },
+  "author": "TheJaredWilcurt",
+  "license": "MIT",
+  "dependencies": {
+    "lodash.xor": "^4.5.0"
+  },
+  "devDependencies": {
+    "axios": "^0.19.0",
+    "nw": "^0.42.6-sdk"
+  }
+}
