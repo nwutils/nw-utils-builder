@@ -53,8 +53,10 @@ const validator = {
   validTaskSettings: Object.keys(defaultSettings.taskDefaults),
   /**
    * Validates the section is an array that only contains strings
+   *
    * @param  {object} settings  Settings object passed in by the user
    * @param  {string} section   'junk', 'files', 'excludes', 'strippedManifestProperties'
+   * @return {array}            Returns the value from the user's setting, or null if check fails
    */
   validateArrayOfStrings: function (setting, name) {
     const message = 'The ' + name + ' setting must be an array of strings, an empty array, or undefined.';
@@ -91,6 +93,13 @@ const validator = {
     }
     return null;
   },
+  /**
+   * Validates a setting is a boolean
+   *
+   * @param  {object}  setting  Settings object passed in by the user
+   * @param  {string}  name     Name of the setting ('verbose', 'concurrent')
+   * @return {boolean}          Returns the value or null if check fails
+   */
   validateBoolean: function (setting, name) {
     if (Object.prototype.hasOwnProperty.call(setting, name)) {
       if (typeof(setting[name]) === 'boolean') {
@@ -100,6 +109,13 @@ const validator = {
     }
     return null;
   },
+  /**
+   * Validates a setting is a string
+   *
+   * @param  {object} setting  Settings object passed in by the user
+   * @param  {string} name     Name of the setting ('mirror', 'outputPattern', 'icon', etc.)
+   * @return {string}          Returns the value or null if check fails
+   */
   validateString: function (setting, name) {
     if (Object.prototype.hasOwnProperty.call(setting, name)) {
       if (typeof(setting[name]) === 'string') {
@@ -109,6 +125,12 @@ const validator = {
     }
     return null;
   },
+  /**
+   * Validates the nwVersion setting meets requirements.
+   *
+   * @param  {object} settings  Settings object passed in by user
+   * @return {string}           Returns the value or null if check fails
+   */
   validateNwVersion: function (settings) {
     let version = this.validateString(settings, 'nwVersion');
 
@@ -134,6 +156,12 @@ const validator = {
 
     return null;
   },
+  /**
+   * Validates the nwFlavor setting matches allowed values (match, sdk, normal).
+   *
+   * @param  {object} settings  Settings object passed in by user
+   * @return {string}           The value or null if check failed.
+   */
   validateNwFlavor: function (settings) {
     let flavor = this.validateString(settings, 'nwFlavor');
     let validFlavors = [
@@ -153,6 +181,12 @@ const validator = {
 
     return null;
   },
+  /**
+   * Validates the platform setting matches allowed values (win, lin, osx)
+   *
+   * @param  {object} settings  Settings object passed in by user
+   * @return {string}           The value or null if check failed
+   */
   validatePlatform: function (settings) {
     let platform = this.validateString(settings, 'platform');
     let validPlatforms = [
@@ -172,6 +206,12 @@ const validator = {
 
     return null;
   },
+  /**
+   * Validates the platform setting matches allowed values (x64, x86)
+   *
+   * @param  {object} settings  Settings object passed in by user
+   * @return {string}           The value or null if check failed
+   */
   validateArch: function (settings) {
     let arch = this.validateString(settings, 'arch');
     let validArchitectures = [
@@ -190,6 +230,12 @@ const validator = {
 
     return null;
   },
+  /**
+   * Validates the platform setting matches allowed values (zip, 7z, nsis, nsis7z)
+   *
+   * @param  {object} settings  Settings object passed in by user
+   * @return {string}           The value or null if check failed
+   */
   validateOutputType: function (settings) {
     let outputType = this.validateString(settings, 'outputType');
     let validOutputTypes = [
@@ -212,6 +258,7 @@ const validator = {
   },
   /**
    * Validates and applies settings passed in by the the user to this.settings.
+   *
    * @param  {object} settings          A setting object passed in by the user
    * @param  {string} optionsOrDefault  'options' or 'taskDefaults'
    */
@@ -247,6 +294,15 @@ const validator = {
       }
     });
   },
+  /**
+   * Applies all taskDefaults to a passed in task,
+   * unless the task already has that setting and
+   * it is valid.
+   *
+   * @param  {object} task    Task object with user's passed in settings
+   * @param  {string} name    Setting name (icon, platform, etc)
+   * @param  {string} method  Name of the validation method (validateString)
+   */
   applyDefaultsToTask: function (task, name, method) {
     if (!this.validTaskSettings.includes(name)) {
       this.log('The ' + name + ' setting is not supported on tasks.');
@@ -259,6 +315,12 @@ const validator = {
       task[name] = this.settings.taskDefaults[name];
     }
   },
+  /**
+   * Loop over all allowed task settings.
+   * Validate or default the setting on the task.
+   *
+   * @param  {object} task  The task object passed in by the user
+   */
   validateTask: function (task) {
     this.validTaskSettings.forEach((key) => {
       // this.applyDefaultsToTask(task, 'nwVersion', 'validateNwVersion');
@@ -266,6 +328,11 @@ const validator = {
     });
     this.settings.tasks.push(task);
   },
+  /**
+   * Validate all tasks are objects, then loop over each task to valide/default their settings.
+   *
+   * @param  {object} settings  The settings object passed in by the user.
+   */
   validateTasks: function (settings) {
     if (!settings || !settings.tasks) {
       return;
