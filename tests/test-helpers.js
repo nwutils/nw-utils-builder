@@ -14,6 +14,9 @@ const helpers = {
       excludes: ['package-lock.json', 'qwer'],
       outputType: 'nsis7z',
       outputPattern: '{{nwFlavor}}-{{name}}',
+      manifestOverrides: {
+        name: 'default'
+      },
       strippedManifestProperties: ['chromium-args', 'build'],
       junk: ['README.md', 'test'],
       icon: 'assets/file.ico',
@@ -29,6 +32,9 @@ const helpers = {
         excludes: ['package-lock.json', 'zxcv'],
         outputType: 'nsis',
         outputPattern: '{{nwFlavor}}-{{name}}-XP',
+        manifestOverrides: {
+          name: 'task'
+        },
         strippedManifestProperties: ['chromium-args'],
         junk: ['README.md'],
         icon: 'assets/filexp.ico',
