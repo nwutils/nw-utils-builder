@@ -21,9 +21,15 @@ const nwUtilsBuilder = {
    * it as JSON and sets it in this.manifest.
    */
   readManifest: function () {
-    const manifestPath = path.join(process.cwd(), 'package.json');
-    // doing require('file.json') will cache the result, to prevent this we read/parse
-    this.manifest = JSON.parse(fs.readFileSync(manifestPath));
+    const packagePath = path.join(process.cwd(), 'package.json');
+    const manifestPath = path.join(process.cwd(), 'manifest.json');
+
+    if (fs.existsSync(packagePath)) {
+      // doing require('file.json') will cache the result, to prevent this we read/parse
+      this.manifest = JSON.parse(fs.readFileSync(packagePath));
+    } else if (fs.existsSync(manifestPath)) {
+      this.manifest = JSON.parse(fs.readFileSync(manifestPath));
+    }
   },
 
   /**
@@ -48,6 +54,10 @@ const nwUtilsBuilder = {
     // let templatePattern = /({{)(?:nwVersion|nwFlavor|platform|arch|outputType|name|version)(}})/g;
     this.buildSettingsObject(settings);
     this.readManifest();
+    if (!this.manifest) {
+      this.log('No package.json or manifest.json file found, cannot build.');
+      return;
+    }
   },
   /**
    * Exposes generated internal settings object created from
