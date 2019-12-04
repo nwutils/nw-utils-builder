@@ -24,7 +24,7 @@
 * [ ] Produce basic Linux/OSX build
 * [ ] Implement API features
    * [x] verbose
-   * [ ] concurrent
+   * [ ] output
    * [ ] mirror
    * [ ] nwVersion
    * [ ] nwFlavor
@@ -38,10 +38,12 @@
    * [ ] junk
    * [ ] icon
    * [ ] unIcon
+   * [ ] concurrent
 * [ ] Support each build type
    * [ ] zip
    * [ ] 7z
    * [ ] nsis
    * [ ] nsis7z
 * [ ] Find minimum supported Node version for this repo
+* [ ] Documentation
 * [ ] Bump to v1.0.0 and release

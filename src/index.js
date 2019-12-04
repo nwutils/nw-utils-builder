@@ -1,7 +1,7 @@
 const validator = require('./validator.js');
 const helpers = require('./helpers.js');
 
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 
 const NO_SETTINGS = 'No settings passed in.';

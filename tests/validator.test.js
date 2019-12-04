@@ -993,7 +993,8 @@ describe('Validator', () => {
         options: {
           verbose: false,
           concurrent: 'asdf',
-          mirror: 1234
+          mirror: 1234,
+          output: {}
         },
         taskDefaults: {
           nwVersion: 'asdf',
@@ -1037,7 +1038,8 @@ describe('Validator', () => {
           options: {
             verbose: false,
             concurrent: true,
-            mirror: 'https://dl.nwjs.io/'
+            mirror: 'https://dl.nwjs.io/',
+            output: './dist'
           },
           taskDefaults: {
             nwVersion: 'match',

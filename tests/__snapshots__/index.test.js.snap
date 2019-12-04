@@ -5,6 +5,7 @@ Object {
   "options": Object {
     "concurrent": true,
     "mirror": "https://dl.nwjs.io/",
+    "output": "./dist",
     "verbose": true,
   },
   "taskDefaults": Object {
