@@ -1,5 +1,6 @@
 .git/
 node_modules/
+sample-project/
 tests/
 .editorconfig
 .eslintrc.js

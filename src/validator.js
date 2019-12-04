@@ -7,7 +7,8 @@ const defaultSettings = {
   options: {
     verbose: true,
     concurrent: true,
-    mirror: 'https://dl.nwjs.io/'
+    mirror: 'https://dl.nwjs.io/',
+    output: './dist'
   },
   taskDefaults: {
     nwVersion: 'match',
@@ -38,6 +39,7 @@ const validator = {
     verbose: 'Boolean',
     concurrent: 'Boolean',
     mirror: 'String',
+    output: 'String',
     nwVersion: 'NwVersion',
     nwFlavor: 'NwFlavor',
     platform: 'Platform',

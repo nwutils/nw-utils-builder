@@ -14,6 +14,7 @@
     "travis": "npm run lint && npm run coverage"
   },
   "dependencies": {
+    "fs-extra": "^8.1.0",
     "lodash.clonedeep": "^4.5.0",
     "semver": "^6.3.0"
   },
@@ -22,7 +23,8 @@
     "eslint": "^6.7.1",
     "eslint-config-tjw-base": "^1.0.0",
     "eslint-config-tjw-jest": "^1.0.0",
-    "jest": "^24.9.0"
+    "jest": "^24.9.0",
+    "mock-fs": "^4.10.4"
   },
   "repository": "https://github.com/nwutils/nw-utils-builder",
   "author": "The Jared Wilcurt",

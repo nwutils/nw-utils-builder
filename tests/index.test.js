@@ -1,8 +1,8 @@
 const _cloneDeep = require('lodash.clonedeep');
+const mockfs = require('mock-fs');
 
 const nwBuilder = require('../src/index.js');
 const customizedSettingsAndTasks = require('./test-helpers.js').customizedSettingsAndTasks;
-const manifest = require('../package.json');
 
 const title = 'NW-UTILS-BUILDER:';
 
@@ -16,6 +16,7 @@ describe('nw-utils-builder', () => {
   });
 
   afterEach(() => {
+    mockfs.restore();
     console.log = consoleLog;
   });
 
@@ -35,13 +36,43 @@ describe('nw-utils-builder', () => {
 
   describe('readManifest', () => {
     test('Reads package.json', () => {
+      mockfs({
+        'package.json': '{ "name": "test" }'
+      });
+
       expect(nwBuilder.manifest)
         .toEqual(undefined);
 
       nwBuilder.readManifest();
 
       expect(nwBuilder.manifest)
-        .toEqual(manifest);
+        .toEqual({ name: 'test' });
+    });
+
+    test('Reads manifest.json', () => {
+      mockfs({
+        'manifest.json': '{ "name": "test" }'
+      });
+
+      expect(nwBuilder.manifest)
+        .toEqual(undefined);
+
+      nwBuilder.readManifest();
+
+      expect(nwBuilder.manifest)
+        .toEqual({ name: 'test' });
+    });
+
+    test('No manifest found', () => {
+      mockfs({});
+
+      expect(nwBuilder.manifest)
+        .toEqual(undefined);
+
+      nwBuilder.readManifest();
+
+      expect(nwBuilder.manifest)
+        .toEqual(undefined);
     });
   });
 
@@ -67,6 +98,14 @@ describe('nw-utils-builder', () => {
 
       expect(nwBuilder.settings)
         .toEqual(_cloneDeep(customizedSettingsAndTasks));
+    });
+
+    test('No manifest found', () => {
+      mockfs({});
+      nwBuilder.build(_cloneDeep(customizedSettingsAndTasks));
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'No package.json or manifest.json file found, cannot build.');
     });
   });
 
