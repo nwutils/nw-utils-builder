@@ -48,7 +48,7 @@ const nwUtilsBuilder = {
       json = await response.json();
     } catch (error) {
       this.log('Error getting details about latest NW.js versions. Using hard-coded versions.');
-      this.log(nwVersionMap);
+      this.log(this.nwVersionMap);
     }
 
     this.nwVersionMap.latest = json.latest;
@@ -56,7 +56,7 @@ const nwUtilsBuilder = {
     this.nwVersionMap.lts = json.lts;
     this.allNwVersions = json.versions;
   },
-  applyNwVersionMap: function () {
+  applyNwVersionMapToTasks: function () {
     this.settings.tasks.forEach((task) => {
       if (['latest', 'lts', 'stable'].includes(task.nwVersion)) {
         task.nwVersion = this.nwVersionMap[task.nwVersion];
@@ -73,7 +73,7 @@ const nwUtilsBuilder = {
             task.nwVersion = this.manifest.devDependencies.nw;
           }
         } else {
-          this.log('A task with an "nwVerion" of "match" was set, but no "nw" devDependency was found in your package.json or manifest.json. Falling back to the latest stable version.');
+          this.log('A task with an "nwVersion" of "match" was set, but no "nw" devDependency was found in your package.json or manifest.json. Falling back to the latest stable version.');
           this.log(task);
           task.nwVersion = this.nwVersionMap.stable;
         }
@@ -94,7 +94,7 @@ const nwUtilsBuilder = {
    *
    * @return {boolean}  True if safe to continue build, false if settings or manifest are missing
    */
-  preBuild: function () {
+  preBuild: function (settings) {
     this.resetState();
     if (!settings) {
       this.log(NO_SETTINGS);
@@ -114,14 +114,14 @@ const nwUtilsBuilder = {
    * @param  {object} settings  User settings and tasks
    */
   build: async function (settings) {
-    const preBuildSuccess = this.preBuild();
+    const preBuildSuccess = this.preBuild(settings);
     if (!preBuildSuccess) {
       return;
     }
     this.buildSettingsObject(settings);
 
     await this.getNwVersionDetails();
-    this.applyTaskNwVersion();
+    this.applyNwVersionMapToTasks();
   },
   /**
    * Exposes generated internal settings object created from
@@ -131,7 +131,7 @@ const nwUtilsBuilder = {
    * @return {object}           The built settings
    */
   dryRun: function (settings) {
-    const preBuildSuccess = this.preBuild();
+    const preBuildSuccess = this.preBuild(settings);
     if (!preBuildSuccess) {
       return;
     }
