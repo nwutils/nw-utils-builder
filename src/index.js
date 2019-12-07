@@ -66,23 +66,36 @@ const nwUtilsBuilder = {
     this.manifest = undefined;
   },
   /**
+   * Resets state, checks for missing settings or manifest,
+   *
+   * @return {boolean}  True if safe to continue build, false if settings or manifest are missing
+   */
+  preBuild: function () {
+    this.resetState();
+    if (!settings) {
+      this.log(NO_SETTINGS);
+      return false;
+    }
+
+    this.readManifest();
+    if (!this.manifest) {
+      this.log('No package.json or manifest.json file found, cannot build.');
+      return false;
+    }
+    return true;
+  },
+  /**
    * Performs all build tasks based on passed in settings
    *
    * @param  {object} settings  User settings and tasks
    */
-    this.resetState();
-    if (!settings) {
-      this.log(NO_SETTINGS);
-      return;
-    }
-    // let templatePattern = /({{)(?:nwVersion|nwFlavor|platform|arch|outputType|name|version)(}})/g;
-    this.buildSettingsObject(settings);
-    this.readManifest();
-    if (!this.manifest) {
-      this.log('No package.json or manifest.json file found, cannot build.');
   build: async function (settings) {
+    const preBuildSuccess = this.preBuild();
+    if (!preBuildSuccess) {
       return;
     }
+    this.buildSettingsObject(settings);
+
     await this.getNwVersionDetails();
   },
   /**
@@ -93,8 +106,8 @@ const nwUtilsBuilder = {
    * @return {object}           The built settings
    */
   dryRun: function (settings) {
-    if (!settings) {
-      this.log(NO_SETTINGS);
+    const preBuildSuccess = this.preBuild();
+    if (!preBuildSuccess) {
       return;
     }
     return validator.buildSettingsObject(settings);
