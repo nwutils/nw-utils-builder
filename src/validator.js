@@ -153,13 +153,16 @@ const validator = {
    */
   validateNwVersion: function (settings) {
     let version = this.validateString(settings, 'nwVersion');
+    const allowedKeywords = [
+      'latest',
+      'lts',
+      'match',
+      'stable'
+    ];
 
     if (version) {
       version = version.toLowerCase();
-      if (
-        version === 'match' ||
-        version === 'latest'
-      ) {
+      if (allowedKeywords.includes(version)) {
         return version;
       }
 
