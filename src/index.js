@@ -56,6 +56,30 @@ const nwUtilsBuilder = {
     this.nwVersionMap.lts = json.lts;
     this.allNwVersions = json.versions;
   },
+  applyNwVersionMap: function () {
+    this.settings.tasks.forEach((task) => {
+      if (['latest', 'lts', 'stable'].includes(task.nwVersion)) {
+        task.nwVersion = this.nwVersionMap[task.nwVersion];
+      }
+      if (task.nwVersion === 'match') {
+        if (
+          this.manifest &&
+          this.manifest.devDependencies &&
+          this.manifest.devDependencies.nw
+        ) {
+          if (['latest', 'sdk'].includes(this.manifest.devDependencies.nw)) {
+            task.nwVersion = this.nwVersionMap.latest;
+          } else {
+            task.nwVersion = this.manifest.devDependencies.nw;
+          }
+        } else {
+          this.log('A task with an "nwVerion" of "match" was set, but no "nw" devDependency was found in your package.json or manifest.json. Falling back to the latest stable version.');
+          this.log(task);
+          task.nwVersion = this.nwVersionMap.stable;
+        }
+      }
+    });
+  },
 
   /**
    * Resets the state of the script so left over settings from previous runs
@@ -97,6 +121,7 @@ const nwUtilsBuilder = {
     this.buildSettingsObject(settings);
 
     await this.getNwVersionDetails();
+    this.applyTaskNwVersion();
   },
   /**
    * Exposes generated internal settings object created from
