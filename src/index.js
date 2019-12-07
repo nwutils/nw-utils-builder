@@ -80,6 +80,29 @@ const nwUtilsBuilder = {
       }
     });
   },
+  applyNwFlavorMapToTasks: function () {
+    this.settings.tasks.forEach((task) => {
+      if (task.nwFlavor === 'sdk') {
+        return;
+      }
+      if (task.nwFlavor === 'match') {
+        if (
+          this.manifest &&
+          this.manifest.devDependencies &&
+          this.manifest.devDependencies.nw
+        ) {
+          if (this.manifest.devDependencies.nw.includes('sdk')) {
+            task.nwFlavor = 'sdk';
+            return;
+          }
+        } else {
+          this.log('A task with an "nwFlavor" of "match" was set, but no "nw" devDependency was found in your package.json or manifest.json. Falling back to "normal".');
+          this.log(task);
+        }
+      }
+      task.nwFlavor = 'normal';
+    });
+  },
 
   /**
    * Resets the state of the script so left over settings from previous runs
@@ -122,6 +145,7 @@ const nwUtilsBuilder = {
 
     await this.getNwVersionDetails();
     this.applyNwVersionMapToTasks();
+    this.applyNwFlavorMapToTasks();
   },
   /**
    * Exposes generated internal settings object created from
