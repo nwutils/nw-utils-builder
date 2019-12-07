@@ -103,6 +103,32 @@ const nwUtilsBuilder = {
       task.nwFlavor = 'normal';
     });
   },
+  /**
+   * Loops over all tasks and generates a task name based on its outputPattern.
+   *
+   * @param {object} settings  The settings object passed in by the user.
+   */
+  applyTaskNames: function () {
+    this.settings.tasks.forEach((task) => {
+      let name = task.outputPattern;
+      name = name.replace('{{name}}', this.manifest && this.manifest.name);
+      name = name.replace('{{version}}', this.manifest && this.manifest.version);
+
+      const keywords = [
+        'nwVersion',
+        'nwFlavor',
+        'platform',
+        'arch',
+        'outputType'
+      ];
+      keywords.forEach(function (keyword) {
+        name = name.replace('{{' + keyword + '}}', task[keyword] || keyword);
+      });
+
+      task.name = name;
+    });
+  },
+
 
   /**
    * Resets the state of the script so left over settings from previous runs
@@ -146,6 +172,7 @@ const nwUtilsBuilder = {
     await this.getNwVersionDetails();
     this.applyNwVersionMapToTasks();
     this.applyNwFlavorMapToTasks();
+    this.applyTaskNames();
   },
   /**
    * Exposes generated internal settings object created from
