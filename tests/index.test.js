@@ -77,8 +77,8 @@ describe('nw-utils-builder', () => {
   });
 
   describe('build', () => {
-    test('No Settings', () => {
-      const result = nwBuilder.build();
+    test('No Settings', async () => {
+      const result = await nwBuilder.build();
 
       expect(console.log)
         .toHaveBeenCalledWith(title, 'No settings passed in.');
@@ -87,22 +87,26 @@ describe('nw-utils-builder', () => {
         .toEqual(undefined);
     });
 
-    test('Settings are applied correctly', () => {
+    test('Settings are applied correctly', async () => {
+      mockfs({
+        'package.json': '{ "name": "test-name" }'
+      });
+
       expect(nwBuilder.settings)
         .toEqual(undefined);
 
-      nwBuilder.build(_cloneDeep(customizedSettingsAndTasks));
+      await nwBuilder.build(_cloneDeep(customizedSettingsAndTasks));
 
       expect(console.log)
         .not.toHaveBeenCalled();
 
       expect(nwBuilder.settings)
-        .toEqual(_cloneDeep(customizedSettingsAndTasks));
+        .toMatchSnapshot();
     });
 
-    test('No manifest found', () => {
+    test('No manifest found', async () => {
       mockfs({});
-      nwBuilder.build(_cloneDeep(customizedSettingsAndTasks));
+      await nwBuilder.build(_cloneDeep(customizedSettingsAndTasks));
 
       expect(console.log)
         .toHaveBeenCalledWith(title, 'No package.json or manifest.json file found, cannot build.');

@@ -1,5 +1,75 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`nw-utils-builder build Settings are applied correctly 1`] = `
+Object {
+  "options": Object {
+    "concurrent": false,
+    "mirror": "mirror",
+    "output": "./built",
+    "verbose": true,
+  },
+  "taskDefaults": Object {
+    "arch": "x64",
+    "excludes": Array [
+      "package-lock.json",
+      "qwer",
+    ],
+    "files": Array [
+      "src/**/*",
+      "asdf",
+    ],
+    "icon": "assets/file.ico",
+    "junk": Array [
+      "README.md",
+      "test",
+    ],
+    "manifestOverrides": Object {
+      "name": "default",
+    },
+    "nwFlavor": "sdk",
+    "nwVersion": "latest",
+    "outputPattern": "{{nwFlavor}}-{{name}}",
+    "outputType": "nsis7z",
+    "platform": "lin",
+    "strippedManifestProperties": Array [
+      "chromium-args",
+      "build",
+    ],
+    "unIcon": "assets/file.ico",
+  },
+  "tasks": Array [
+    Object {
+      "arch": "x86",
+      "excludes": Array [
+        "package-lock.json",
+        "zxcv",
+      ],
+      "files": Array [
+        "src/**/*",
+        "qwer",
+      ],
+      "icon": "assets/filexp.ico",
+      "junk": Array [
+        "README.md",
+      ],
+      "manifestOverrides": Object {
+        "name": "task",
+      },
+      "name": "normal-test-name-XP",
+      "nwFlavor": "normal",
+      "nwVersion": "v0.14.7",
+      "outputPattern": "{{nwFlavor}}-{{name}}-XP",
+      "outputType": "nsis",
+      "platform": "win",
+      "strippedManifestProperties": Array [
+        "chromium-args",
+      ],
+      "unIcon": "assets/filexp.ico",
+    },
+  ],
+}
+`;
+
 exports[`nw-utils-builder dryRun Settings are empty 1`] = `
 Object {
   "options": Object {
