@@ -76,6 +76,51 @@ describe('nw-utils-builder', () => {
     });
   });
 
+  describe('applyTaskNames', () => {
+    test('No tasks', () => {
+      nwBuilder.settings = {
+        tasks: []
+      };
+      nwBuilder.applyTaskNames();
+
+      expect(nwBuilder.settings.tasks)
+        .toEqual([]);
+    });
+
+    test('All keywords', () => {
+      mockfs({
+        'package.json': '{ "name": "test-name", "version": "21.22.23" }'
+      });
+      const allKeywords = [
+        '{{name}}',
+        '{{version}}',
+        '{{nwVersion}}',
+        '{{nwFlavor}}',
+        '{{platform}}',
+        '{{arch}}',
+        '{{outputType}}'
+      ].join('-');
+
+      nwBuilder.readManifest();
+      nwBuilder.settings = {
+        tasks: [
+          {
+            nwVersion: '0.42.5',
+            nwFlavor: 'sdk',
+            platform: 'win',
+            arch: 'x64',
+            outputType: 'nsis',
+            outputPattern: allKeywords
+          }
+        ]
+      };
+      nwBuilder.applyTaskNames();
+
+      expect(nwBuilder.settings.tasks[0].name)
+        .toEqual('test-name-21.22.23-0.42.5-sdk-win-x64-nsis');
+    });
+  });
+
   describe('build', () => {
     test('No Settings', async () => {
       const result = await nwBuilder.build();
