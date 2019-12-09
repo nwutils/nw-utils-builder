@@ -20,6 +20,12 @@ const nwUtilsBuilder = {
   allNwVersions: undefined,
   settings: undefined,
   manifest: undefined,
+  /**
+   * Passes settings into the validator.js file for validation and defaults.
+   * If settings are valid, we store the modified version on this parent object.
+   *
+   * @param  {object} settings  The settings object passed in by the user.
+   */
   buildSettingsObject: function (settings) {
     this.settings = validator.buildSettingsObject(settings);
   },
@@ -38,6 +44,10 @@ const nwUtilsBuilder = {
       this.manifest = JSON.parse(fs.readFileSync(manifestPath));
     }
   },
+  /**
+   * Makes a network request for the latest NW.js versions.
+   * Stores the data in this nwUtilsBuilder object to be referenced.
+   */
   getNwVersionDetails: async function () {
     const cachebust = (new Date()).getTime();
     const url = 'https://nwjs.io/versions.json?' + cachebust;
@@ -56,6 +66,11 @@ const nwUtilsBuilder = {
     this.nwVersionMap.lts = json.lts;
     this.allNwVersions = json.versions;
   },
+  /**
+   * Loops over all tasks setting the correct nwVersion, based on
+   * the versions returned from a previous network request, or derived
+   * from user's manifest.
+   */
   applyNwVersionMapToTasks: function () {
     this.settings.tasks.forEach((task) => {
       if (['latest', 'lts', 'stable'].includes(task.nwVersion)) {
@@ -80,6 +95,10 @@ const nwUtilsBuilder = {
       }
     });
   },
+  /**
+   * Loops over all tasks and sets the correct nwFlavor, deriving
+   * from defaults or user's manifest if set to match.
+   */
   applyNwFlavorMapToTasks: function () {
     this.settings.tasks.forEach((task) => {
       if (task.nwFlavor === 'sdk') {
@@ -105,8 +124,6 @@ const nwUtilsBuilder = {
   },
   /**
    * Loops over all tasks and generates a task name based on its outputPattern.
-   *
-   * @param {object} settings  The settings object passed in by the user.
    */
   applyTaskNames: function () {
     this.settings.tasks.forEach((task) => {
