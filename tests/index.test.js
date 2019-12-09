@@ -119,6 +119,28 @@ describe('nw-utils-builder', () => {
       expect(nwBuilder.settings.tasks[0].name)
         .toEqual('test-name-21.22.23-0.42.5-sdk-win-x64-nsis');
     });
+
+    test('Keyword missing a value', () => {
+      const someKeywords = [
+        '{{platform}}',
+        '{{arch}}',
+        '{{nwFlavor}}'
+      ].join('-');
+
+      nwBuilder.settings = {
+        tasks: [
+          {
+            platform: 'lin',
+            arch: 'x86',
+            outputPattern: someKeywords
+          }
+        ]
+      };
+      nwBuilder.applyTaskNames();
+
+      expect(nwBuilder.settings.tasks[0].name)
+        .toEqual('lin-x86-nwFlavor');
+    });
   });
 
   describe('build', () => {
