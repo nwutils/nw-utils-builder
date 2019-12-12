@@ -7,6 +7,7 @@
     "lint": "eslint --config=.eslintrc.js src/**/*.js tests/**/*.js",
     "fix": "eslint --fix --config=.eslintrc.js src/**/*.js tests/**/*.js",
     "debug": "node --inspect-brk test.js",
+    "unit": "npm test",
     "test": "jest --coverage --runInBand",
     "test-one": "cls & jest --coverage --runInBand -t \"validateTaskDefaults\"",
     "coverage": "jest --coverage --runInBand --coverageReporters=text-lcov | coveralls",

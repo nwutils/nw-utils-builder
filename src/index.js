@@ -146,7 +146,6 @@ const nwUtilsBuilder = {
     });
   },
 
-
   /**
    * Resets the state of the script so left over settings from previous runs
    * that occur in the same instance do not carry over.

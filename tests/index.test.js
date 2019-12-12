@@ -76,6 +76,177 @@ describe('nw-utils-builder', () => {
     });
   });
 
+  describe('applyNwFlavorMapToTasks', () => {
+    test('No tasks', () => {
+      nwBuilder.settings = {
+        options: { verbose: true },
+        tasks: []
+      };
+      nwBuilder.applyNwFlavorMapToTasks();
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(nwBuilder.settings.tasks)
+        .toEqual([]);
+    });
+
+    test('sdk', () => {
+      nwBuilder.settings = {
+        options: { verbose: true },
+        tasks: [{ nwFlavor: 'sdk' }]
+      };
+
+      nwBuilder.applyNwFlavorMapToTasks();
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(nwBuilder.settings.tasks[0].nwFlavor)
+        .toEqual('sdk');
+    });
+
+    test('normal', () => {
+      nwBuilder.settings = {
+        options: { verbose: true },
+        tasks: [{ nwFlavor: 'normal' }]
+      };
+
+      nwBuilder.applyNwFlavorMapToTasks();
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(nwBuilder.settings.tasks[0].nwFlavor)
+        .toEqual('normal');
+    });
+
+    test('match sdk', () => {
+      nwBuilder.settings = {
+        options: { verbose: true },
+        tasks: [{ nwFlavor: 'match' }]
+      };
+
+      nwBuilder.manifest = {
+        devDependencies: {
+          nw: '0.42.0-sdk'
+        }
+      };
+
+      nwBuilder.applyNwFlavorMapToTasks();
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(nwBuilder.settings.tasks[0].nwFlavor)
+        .toEqual('sdk');
+    });
+
+    test('match normal', () => {
+      nwBuilder.settings = {
+        options: { verbose: true },
+        tasks: [{ nwFlavor: 'match' }]
+      };
+
+      nwBuilder.manifest = {
+        devDependencies: {
+          nw: '0.42.0'
+        }
+      };
+
+      nwBuilder.applyNwFlavorMapToTasks();
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(nwBuilder.settings.tasks[0].nwFlavor)
+        .toEqual('normal');
+    });
+
+    test('match missing nw', () => {
+      const flavor = 'match';
+      const task = { nwFlavor: flavor };
+      nwBuilder.settings = {
+        options: { verbose: true },
+        tasks: [task]
+      };
+
+      nwBuilder.manifest = {
+        devDependencies: {}
+      };
+
+      nwBuilder.applyNwFlavorMapToTasks();
+
+      expect(console.log)
+        .toHaveBeenCalledWith(
+          title,
+          'A task with an "nwFlavor" of "match" was set, ' +
+          'but no "nw" devDependency was found in your package.json ' +
+          'or manifest.json. Falling back to "normal".'
+        );
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, task);
+
+      expect(nwBuilder.settings.tasks[0].nwFlavor)
+        .toEqual('normal');
+    });
+
+    test('match missing devDependencies', () => {
+      const flavor = 'match';
+      const task = { nwFlavor: flavor };
+      nwBuilder.settings = {
+        options: { verbose: true },
+        tasks: [task]
+      };
+
+      nwBuilder.manifest = {};
+
+      nwBuilder.applyNwFlavorMapToTasks();
+
+      expect(console.log)
+        .toHaveBeenCalledWith(
+          title,
+          'A task with an "nwFlavor" of "match" was set, ' +
+          'but no "nw" devDependency was found in your package.json ' +
+          'or manifest.json. Falling back to "normal".'
+        );
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, task);
+
+      expect(nwBuilder.settings.tasks[0].nwFlavor)
+        .toEqual('normal');
+    });
+
+    test('match missing manifest', () => {
+      const flavor = 'match';
+      const task = { nwFlavor: flavor };
+      nwBuilder.settings = {
+        options: { verbose: true },
+        tasks: [task]
+      };
+
+      nwBuilder.manifest = undefined;
+
+      nwBuilder.applyNwFlavorMapToTasks();
+
+      expect(console.log)
+        .toHaveBeenCalledWith(
+          title,
+          'A task with an "nwFlavor" of "match" was set, ' +
+          'but no "nw" devDependency was found in your package.json ' +
+          'or manifest.json. Falling back to "normal".'
+        );
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, task);
+
+      expect(nwBuilder.settings.tasks[0].nwFlavor)
+        .toEqual('normal');
+    });
+  });
+
   describe('applyTaskNames', () => {
     test('No tasks', () => {
       nwBuilder.settings = {
