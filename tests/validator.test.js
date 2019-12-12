@@ -554,7 +554,12 @@ describe('Validator', () => {
       const result = validator.validateNwVersion({ nwVersion: 'adsf' });
 
       expect(console.log)
-        .toHaveBeenCalledWith(title, 'The nwVersion setting must be a string of a valid version number ("v0.42.5"), "latest", or "match".');
+        .toHaveBeenCalledWith(
+          title,
+          'The nwVersion setting must be a string of a valid ' +
+          'version number like "0.42.6", or a valid keyword ' +
+          'like "stable", "latest", "lts", or "match".'
+        );
 
       expect(result)
         .toEqual(null);

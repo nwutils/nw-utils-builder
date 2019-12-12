@@ -76,6 +76,217 @@ describe('nw-utils-builder', () => {
     });
   });
 
+  describe('applyNwVersionMapToTasks', () => {
+    test('No tasks', () => {
+      nwBuilder.settings = {
+        options: { verbose: true },
+        tasks: []
+      };
+
+      nwBuilder.applyNwVersionMapToTasks();
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(nwBuilder.settings.tasks)
+        .toEqual([]);
+    });
+
+    test('latest', () => {
+      nwBuilder.settings = {
+        options: { verbose: true },
+        tasks: [{ nwVersion: 'latest' }]
+      };
+
+      nwBuilder.applyNwVersionMapToTasks();
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(nwBuilder.settings.tasks[0].nwVersion)
+        .toEqual('v0.43.0-beta1');
+    });
+
+    test('stable', () => {
+      nwBuilder.settings = {
+        options: { verbose: true },
+        tasks: [{ nwVersion: 'stable' }]
+      };
+
+      nwBuilder.applyNwVersionMapToTasks();
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(nwBuilder.settings.tasks[0].nwVersion)
+        .toEqual('v0.42.6');
+    });
+
+    test('lts', () => {
+      nwBuilder.settings = {
+        options: { verbose: true },
+        tasks: [{ nwVersion: 'lts' }]
+      };
+
+      nwBuilder.applyNwVersionMapToTasks();
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(nwBuilder.settings.tasks[0].nwVersion)
+        .toEqual('v0.14.7');
+    });
+
+    test('match missing manifest', () => {
+      const version = 'match';
+      const task = { nwVersion: version };
+      nwBuilder.settings = {
+        options: { verbose: true },
+        tasks: [task]
+      };
+
+      nwBuilder.manifest = undefined;
+
+      nwBuilder.applyNwVersionMapToTasks();
+
+
+      expect(console.log)
+        .toHaveBeenCalledWith(
+          title,
+          'A task with an "nwVersion" of "match" was set, ' +
+          'but no "nw" devDependency was found in your package.json ' +
+          'or manifest.json. Falling back to the latest stable version.'
+        );
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, task);
+
+      expect(nwBuilder.settings.tasks[0].nwVersion)
+        .toEqual(nwBuilder.nwVersionMap.stable);
+    });
+
+    test('match missing devDependencies', () => {
+      const version = 'match';
+      const task = { nwVersion: version };
+      nwBuilder.settings = {
+        options: { verbose: true },
+        tasks: [task]
+      };
+
+      nwBuilder.manifest = {};
+
+      nwBuilder.applyNwVersionMapToTasks();
+
+
+      expect(console.log)
+        .toHaveBeenCalledWith(
+          title,
+          'A task with an "nwVersion" of "match" was set, ' +
+          'but no "nw" devDependency was found in your package.json ' +
+          'or manifest.json. Falling back to the latest stable version.'
+        );
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, task);
+
+      expect(nwBuilder.settings.tasks[0].nwVersion)
+        .toEqual(nwBuilder.nwVersionMap.stable);
+    });
+
+    test('match missing nw', () => {
+      const version = 'match';
+      const task = { nwVersion: version };
+      nwBuilder.settings = {
+        options: { verbose: true },
+        tasks: [task]
+      };
+
+      nwBuilder.manifest = {
+        devDependencies: {}
+      };
+
+      nwBuilder.applyNwVersionMapToTasks();
+
+
+      expect(console.log)
+        .toHaveBeenCalledWith(
+          title,
+          'A task with an "nwVersion" of "match" was set, ' +
+          'but no "nw" devDependency was found in your package.json ' +
+          'or manifest.json. Falling back to the latest stable version.'
+        );
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, task);
+
+      expect(nwBuilder.settings.tasks[0].nwVersion)
+        .toEqual(nwBuilder.nwVersionMap.stable);
+    });
+
+    test('match latest', () => {
+      nwBuilder.settings = {
+        options: { verbose: true },
+        tasks: [{ nwVersion: 'match' }]
+      };
+
+      nwBuilder.manifest = {
+        devDependencies: {
+          nw: 'latest'
+        }
+      };
+
+      nwBuilder.applyNwVersionMapToTasks();
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(nwBuilder.settings.tasks[0].nwVersion)
+        .toEqual(nwBuilder.nwVersionMap.latest);
+    });
+
+    test('match sdk', () => {
+      nwBuilder.settings = {
+        options: { verbose: true },
+        tasks: [{ nwVersion: 'match' }]
+      };
+
+      nwBuilder.manifest = {
+        devDependencies: {
+          nw: 'sdk'
+        }
+      };
+
+      nwBuilder.applyNwVersionMapToTasks();
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(nwBuilder.settings.tasks[0].nwVersion)
+        .toEqual(nwBuilder.nwVersionMap.latest);
+    });
+
+    test('match version', () => {
+      nwBuilder.settings = {
+        options: { verbose: true },
+        tasks: [{ nwVersion: 'match' }]
+      };
+
+      nwBuilder.manifest = {
+        devDependencies: {
+          nw: 'v0.23.2'
+        }
+      };
+
+      nwBuilder.applyNwVersionMapToTasks();
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(nwBuilder.settings.tasks[0].nwVersion)
+        .toEqual('v0.23.2');
+    });
+  });
+
   describe('applyNwFlavorMapToTasks', () => {
     test('No tasks', () => {
       nwBuilder.settings = {
