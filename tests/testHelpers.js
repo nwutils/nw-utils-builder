@@ -42,7 +42,8 @@ const helpers = {
         unIcon: 'assets/filexp.ico'
       }
     ]
-  }
+  },
+  title: 'NW-UTILS-BUILDER:'
 };
 
 module.exports = helpers;

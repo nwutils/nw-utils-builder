@@ -61,10 +61,12 @@ const nwUtilsBuilder = {
       this.log(this.nwVersionMap);
     }
 
-    this.nwVersionMap.latest = json.latest;
-    this.nwVersionMap.stable = json.stable;
-    this.nwVersionMap.lts = json.lts;
-    this.allNwVersions = json.versions;
+    if (json) {
+      this.nwVersionMap.latest = json.latest;
+      this.nwVersionMap.stable = json.stable;
+      this.nwVersionMap.lts = json.lts;
+      this.allNwVersions = json.versions;
+    }
   },
   /**
    * Loops over all tasks setting the correct nwVersion, based on

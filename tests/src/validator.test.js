@@ -1,9 +1,10 @@
 const _cloneDeep = require('lodash.clonedeep');
 
-const validator = require('../src/validator.js');
-const customizedSettingsAndTasks = require('./test-helpers.js').customizedSettingsAndTasks;
+const validator = require('../../src/validator.js');
+const testHelpers = require('../testHelpers.js');
 
-const title = 'NW-UTILS-BUILDER:';
+const customizedSettingsAndTasks = testHelpers.customizedSettingsAndTasks;
+const title = testHelpers.title;
 
 describe('Validator', () => {
   let consoleLog;

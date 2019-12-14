@@ -25,7 +25,9 @@
     "eslint": "^6.7.1",
     "eslint-config-tjw-base": "^1.0.0",
     "eslint-config-tjw-jest": "^1.0.0",
+    "fetch-mock": "^8.0.1",
     "jest": "^24.9.0",
+    "lolex": "^5.1.1",
     "mock-fs": "^4.10.4"
   },
   "repository": "https://github.com/nwutils/nw-utils-builder",

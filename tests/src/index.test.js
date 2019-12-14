@@ -1,15 +1,21 @@
 const _cloneDeep = require('lodash.clonedeep');
+const fetch = require('node-fetch');
+const lolex = require('lolex');
 const mockfs = require('mock-fs');
 
-const nwBuilder = require('../src/index.js');
-const customizedSettingsAndTasks = require('./test-helpers.js').customizedSettingsAndTasks;
+const nwBuilder = require('../../src/index.js');
+const mockResponse = require('../mockResponses.js');
+const testHelpers = require('../testHelpers.js');
 
-const title = 'NW-UTILS-BUILDER:';
+const customizedSettingsAndTasks = testHelpers.customizedSettingsAndTasks;
+const title = testHelpers.title;
 
 describe('nw-utils-builder', () => {
   let consoleLog;
+  let clock;
 
   beforeEach(() => {
+    clock = lolex.install();
     nwBuilder.resetState();
     consoleLog = console.log;
     console.log = jest.fn();
@@ -17,7 +23,9 @@ describe('nw-utils-builder', () => {
 
   afterEach(() => {
     mockfs.restore();
+    fetch.restore();
     console.log = consoleLog;
+    clock.uninstall();
   });
 
   describe('Log', () => {
@@ -73,6 +81,20 @@ describe('nw-utils-builder', () => {
 
       expect(nwBuilder.manifest)
         .toEqual(undefined);
+    });
+  });
+
+  describe('getNwVersionDetails', () => {
+    test('Network request fails', async () => {
+      fetch.get('begin:https://nwjs.io/versions.json', 500);
+
+      await nwBuilder.getNwVersionDetails();
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'Error getting details about latest NW.js versions. Using hard-coded versions.');
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, nwBuilder.nwVersionMap);
     });
   });
 
@@ -537,6 +559,8 @@ describe('nw-utils-builder', () => {
     });
 
     test('Settings are applied correctly', async () => {
+      fetch.get('begin:https://nwjs.io/versions.json', mockResponse);
+
       mockfs({
         'package.json': '{ "name": "test-name" }'
       });
@@ -554,7 +578,10 @@ describe('nw-utils-builder', () => {
     });
 
     test('No manifest found', async () => {
+      fetch.get('begin:https://nwjs.io/versions.json', mockResponse);
+
       mockfs({});
+
       await nwBuilder.build(_cloneDeep(customizedSettingsAndTasks));
 
       expect(console.log)
