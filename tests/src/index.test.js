@@ -1,7 +1,10 @@
+// Needs to be required before anything else that effects Node's fs module
+const mockfs = require('mock-fs');
+
+const fs = require('fs-extra');
 const _cloneDeep = require('lodash/clonedeep');
 const fetch = require('node-fetch');
 const lolex = require('lolex');
-const mockfs = require('mock-fs');
 
 const nwBuilder = require('../../src/index.js');
 const mockResponse = require('../mockResponses.js');
@@ -732,6 +735,147 @@ describe('nw-utils-builder', () => {
     });
   });
 
+  describe('processTasks', () => {
+    test('Fail to create dist folder for task', () => {
+      const originalManifest = {
+        name: 'test',
+        version: '1.0.0',
+        devDependencies: {
+          nw: 'sdk'
+        }
+      };
+      mockfs({
+        'package.json': JSON.stringify(originalManifest, null, 2),
+        dist: mockfs.directory({
+          mode: parseInt('0400', 8)
+        })
+      });
+
+      expect(fs.readdirSync('.'))
+        .toEqual(['dist', 'package.json']);
+
+      nwBuilder.readManifest();
+      nwBuilder.buildSettingsObject({ tasks: [{}] });
+      nwBuilder.applyManifestToTasks();
+
+      nwBuilder.processTasks();
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'Unable to save modifed manifest on task.');
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, nwBuilder.settings.tasks[0]);
+
+      expect(console.log.mock.calls[2][0])
+        .toEqual(title);
+
+      expect(console.log.mock.calls[2][1].message.startsWith('EACCES: permission denied, mkdir '))
+        .toEqual(true);
+
+      expect(fs.readdirSync('./dist'))
+        .toEqual([]);
+    });
+
+    test('Fail to write manifest file for task', () => {
+      const originalManifest = {
+        name: 'test',
+        version: '1.0.0',
+        devDependencies: {
+          nw: 'sdk'
+        }
+      };
+      mockfs({
+        'package.json': JSON.stringify(originalManifest, null, 2),
+        dist: {
+          'test-1.0.0-win-x86': {
+            'package.json': mockfs.file({
+              content: '{ "name": "immutable", "version": "10.10.10" }',
+              mode: parseInt('0400', 8)
+            })
+          }
+        }
+      });
+
+      expect(fs.readdirSync('.'))
+        .toEqual(['dist', 'package.json']);
+
+      nwBuilder.readManifest();
+      nwBuilder.buildSettingsObject({ tasks: [{}] });
+      nwBuilder.applyManifestToTasks();
+
+      nwBuilder.processTasks();
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'Unable to save modifed manifest on task.');
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, nwBuilder.settings.tasks[0]);
+
+      expect(console.log.mock.calls[2][0])
+        .toEqual(title);
+
+      expect(console.log.mock.calls[2][1].message)
+        .toEqual('EACCES: permission denied, open \'dist\\test-1.0.0-win-x86\\package.json\'');
+
+      expect(fs.readdirSync('./dist'))
+        .toEqual(['test-1.0.0-win-x86']);
+
+      expect(fs.readdirSync('./dist/test-1.0.0-win-x86'))
+        .toEqual(['package.json']);
+
+      const savedFile = fs.readFileSync('./dist/test-1.0.0-win-x86/package.json');
+
+      expect(JSON.parse(savedFile))
+        .toEqual({
+          name: 'immutable',
+          version: '10.10.10'
+        });
+    });
+
+    test('Saves manifest to file', () => {
+      const originalManifest = {
+        name: 'test',
+        version: '1.0.0',
+        devDependencies: {
+          nw: 'sdk'
+        }
+      };
+      mockfs({
+        'package.json': JSON.stringify(originalManifest, null, 2)
+      });
+
+      expect(fs.readdirSync('.'))
+        .toEqual(['package.json']);
+
+      nwBuilder.readManifest();
+      nwBuilder.buildSettingsObject({
+        tasks: [{
+          strippedManifestProperties: ['devDependencies']
+        }]
+      });
+      nwBuilder.applyManifestToTasks();
+
+      nwBuilder.processTasks();
+
+      expect(fs.readdirSync('./dist'))
+        .toEqual(['test-1.0.0-win-x86']);
+
+      expect(fs.readdirSync('./dist/test-1.0.0-win-x86'))
+        .toEqual(['package.json']);
+
+      const savedFile = fs.readFileSync('./dist/test-1.0.0-win-x86/package.json');
+
+      expect(JSON.parse(savedFile))
+        .toEqual({
+          name: 'test',
+          version: '1.0.0'
+        });
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+    });
+  });
+
   describe('build', () => {
     test('No Settings', async () => {
       const result = await nwBuilder.build();
@@ -758,6 +902,7 @@ describe('nw-utils-builder', () => {
       expect(console.log)
         .not.toHaveBeenCalled();
 
+      mockfs.restore();
       expect(nwBuilder.settings)
         .toMatchSnapshot();
     });
@@ -791,6 +936,7 @@ describe('nw-utils-builder', () => {
       expect(console.log)
         .not.toHaveBeenCalled();
 
+      mockfs.restore();
       expect(results)
         .toMatchSnapshot();
     });

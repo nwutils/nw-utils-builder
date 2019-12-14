@@ -199,13 +199,21 @@ const nwUtilsBuilder = {
   processTasks: function () {
     // this.log(this.settings.options);
     this.settings.tasks.forEach((task) => {
+      const dist = path.join(this.settings.options.output, task.name);
+      const manifestLocation = path.join(dist, 'package.json');
 
-      let output = path.join(this.settings.options.output, task.name);
-      fs.ensureDirSync(output);
+      let manifestData = this.tweakManifestForSpecificTask(task);
+      manifestData = JSON.stringify(manifestData, null, 2);
 
-      let manifest = this.tweakManifestForSpecificTask(task);
+      try {
+        fs.ensureDirSync(dist);
+        fs.writeFileSync(manifestLocation, manifestData);
+      } catch (err) {
+        this.log('Unable to save modifed manifest on task.');
+        this.log(task);
+        this.log(err);
+      }
 
-      fs.writeFileSync(path.join(output, 'package.json'), JSON.stringify(manifest, null, 2));
       // this.log(task);
     });
   },
