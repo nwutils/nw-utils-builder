@@ -12,11 +12,7 @@ const nwUtilsBuilder = {
     const settings = this.settings || { options: { verbose: true } };
     helpers.log(message, settings, error);
   },
-  nwVersionMap: {
-    latest: 'v0.43.0-beta1',
-    stable: 'v0.42.6',
-    lts: 'v0.14.7'
-  },
+  nwVersionMap: undefined,
   allNwVersions: undefined,
   settings: undefined,
   manifest: undefined,
@@ -155,6 +151,11 @@ const nwUtilsBuilder = {
   resetState: function () {
     this.settings = undefined;
     this.manifest = undefined;
+    this.nwVersionMap = {
+      latest: 'v0.43.0-beta1',
+      stable: 'v0.42.6',
+      lts: 'v0.14.7'
+    };
   },
   /**
    * Resets state, checks for missing settings or manifest,

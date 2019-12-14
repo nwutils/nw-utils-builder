@@ -96,6 +96,47 @@ describe('nw-utils-builder', () => {
       expect(console.log)
         .toHaveBeenCalledWith(title, nwBuilder.nwVersionMap);
     });
+
+    test('JSON parse fails', async () => {
+      fetch.get('begin:https://nwjs.io/versions.json', 'Invalid JSON');
+
+      await nwBuilder.getNwVersionDetails();
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'Error getting details about latest NW.js versions. Using hard-coded versions.');
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, nwBuilder.nwVersionMap);
+    });
+
+    test('Network request succeeds', async () => {
+      const fakeResponse = {
+        latest: 'v100.100.100',
+        stable: 'v90.90.90',
+        lts: 'v80.80.80',
+        versions: [{
+          version: 'v70.70.70'
+        }]
+      };
+      fetch.get('begin:https://nwjs.io/versions.json', JSON.stringify(fakeResponse));
+
+      await nwBuilder.getNwVersionDetails();
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+
+      expect(nwBuilder.nwVersionMap)
+        .toEqual({
+          latest: 'v100.100.100',
+          stable: 'v90.90.90',
+          lts: 'v80.80.80'
+        });
+
+      expect(nwBuilder.allNwVersions)
+        .toEqual([{
+          version: 'v70.70.70'
+        }]);
+    });
   });
 
   describe('applyNwVersionMapToTasks', () => {
