@@ -3,20 +3,30 @@ const helpers = require('./helpers.js');
 
 const fs = require('fs-extra');
 const path = require('path');
+
+const _cloneDeep = require('lodash/clonedeep');
+const _omit = require('lodash/omit');
 const fetch = require('node-fetch');
 const semver = require('semver');
 
 const NO_SETTINGS = 'No settings passed in.';
 
 const nwUtilsBuilder = {
-  log: function (message, error) {
-    const settings = this.settings || { options: { verbose: true } };
-    helpers.log(message, settings, error);
-  },
   nwVersionMap: undefined,
   allNwVersions: undefined,
   settings: undefined,
   manifest: undefined,
+
+  /**
+   * Console logs helper error messages if verbose mode is enabled.
+   * @param  {any}      message   What should be logged
+   * @param  {boolean}  error     If true, will throw
+   */
+  log: function (message, error) {
+    const settings = this.settings || { options: { verbose: true } };
+    helpers.log(message, settings, error);
+  },
+
   /**
    * Passes settings into the validator.js file for validation and defaults.
    * If settings are valid, we store the modified version on this parent object.
@@ -41,6 +51,16 @@ const nwUtilsBuilder = {
       this.manifest = JSON.parse(fs.readFileSync(manifestPath));
     }
   },
+  tweakManifestForSpecificTask: function (task) {
+    let manifest = _cloneDeep(this.manifest);
+    manifest = _omit(manifest, task.strippedManifestProperties);
+    manifest = {
+      ...manifest,
+      ...task.manifestOverrides
+    };
+    return manifest;
+  },
+
   /**
    * Makes a network request for the latest NW.js versions.
    * Stores the data in this nwUtilsBuilder object to be referenced.
@@ -152,6 +172,7 @@ const nwUtilsBuilder = {
     });
   },
 
+
   /**
    * Resets the state of the script so left over settings from previous runs
    * that occur in the same instance do not carry over.
@@ -171,9 +192,17 @@ const nwUtilsBuilder = {
     this.applyTaskNames();
   },
   processTasks: function () {
-    // this.settings.tasks.forEach((task) => {
-    //   this.log(task);
-    // });
+    console.log(this.settings.options);
+    this.settings.tasks.forEach((task) => {
+
+      let output = path.join(this.settings.options.output, task.name);
+      fs.ensureDirSync(output);
+
+      let manifest = this.tweakManifestForSpecificTask(task);
+
+      fs.writeFileSync(path.join(output, 'package.json'), JSON.stringify(manifest, null, 2));
+      this.log(task);
+    });
   },
   /**
    * Resets state, checks for missing settings or manifest,

@@ -62,3 +62,4 @@ typings/
 
 .yarn-lock
 sample-project/package-lock.json
+sample-project/dist
