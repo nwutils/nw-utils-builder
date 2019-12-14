@@ -1,4 +1,4 @@
-const _cloneDeep = require('lodash.clonedeep');
+const _cloneDeep = require('lodash/cloneDeep');
 const semver = require('semver');
 
 const helpers = require('./helpers.js');

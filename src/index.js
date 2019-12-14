@@ -3,20 +3,31 @@ const helpers = require('./helpers.js');
 
 const fs = require('fs-extra');
 const path = require('path');
+
+const _cloneDeep = require('lodash/cloneDeep');
+const _merge = require('lodash/merge');
+const _omit = require('lodash/omit');
 const fetch = require('node-fetch');
 const semver = require('semver');
 
 const NO_SETTINGS = 'No settings passed in.';
 
 const nwUtilsBuilder = {
-  log: function (message, error) {
-    const settings = this.settings || { options: { verbose: true } };
-    helpers.log(message, settings, error);
-  },
   nwVersionMap: undefined,
   allNwVersions: undefined,
   settings: undefined,
   manifest: undefined,
+
+  /**
+   * Console logs helper error messages if verbose mode is enabled.
+   * @param  {any}      message   What should be logged
+   * @param  {boolean}  error     If true, will throw
+   */
+  log: function (message, error) {
+    const settings = this.settings || { options: { verbose: true } };
+    helpers.log(message, settings, error);
+  },
+
   /**
    * Passes settings into the validator.js file for validation and defaults.
    * If settings are valid, we store the modified version on this parent object.
@@ -41,6 +52,20 @@ const nwUtilsBuilder = {
       this.manifest = JSON.parse(fs.readFileSync(manifestPath));
     }
   },
+  /**
+   * Takes the user's manifest file and modifies it based on the settings of this particular task.
+   * @param  {object} task  The settings for this specific task
+   * @return {object}       A modified version of the manifest, to be saved in the output dir
+   */
+  tweakManifestForSpecificTask: function (task) {
+    let manifest = _cloneDeep(this.manifest);
+    // Does a deep delete of properties based on strings like 'a.b.c'
+    manifest = _omit(manifest, task.strippedManifestProperties);
+    // Performs a deep merge, beyond what the horrendously badly named "spread" operator offers
+    manifest = _merge(manifest, task.manifestOverrides);
+    return manifest;
+  },
+
   /**
    * Makes a network request for the latest NW.js versions.
    * Stores the data in this nwUtilsBuilder object to be referenced.
@@ -152,6 +177,7 @@ const nwUtilsBuilder = {
     });
   },
 
+
   /**
    * Resets the state of the script so left over settings from previous runs
    * that occur in the same instance do not carry over.
@@ -171,9 +197,25 @@ const nwUtilsBuilder = {
     this.applyTaskNames();
   },
   processTasks: function () {
-    // this.settings.tasks.forEach((task) => {
-    //   this.log(task);
-    // });
+    // this.log(this.settings.options);
+    this.settings.tasks.forEach((task) => {
+      const dist = path.join(this.settings.options.output, task.name);
+      const manifestLocation = path.join(dist, 'package.json');
+
+      let manifestData = this.tweakManifestForSpecificTask(task);
+      manifestData = JSON.stringify(manifestData, null, 2);
+
+      try {
+        fs.ensureDirSync(dist);
+        fs.writeFileSync(manifestLocation, manifestData);
+      } catch (err) {
+        this.log('Unable to save modifed manifest on task.');
+        this.log(task);
+        this.log(err);
+      }
+
+      // this.log(task);
+    });
   },
   /**
    * Resets state, checks for missing settings or manifest,
