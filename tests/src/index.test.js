@@ -1,4 +1,4 @@
-const _cloneDeep = require('lodash.clonedeep');
+const _cloneDeep = require('lodash/clonedeep');
 const fetch = require('node-fetch');
 const lolex = require('lolex');
 const mockfs = require('mock-fs');
