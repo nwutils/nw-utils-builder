@@ -336,7 +336,7 @@ describe('nw-utils-builder', () => {
 
       nwBuilder.manifest = {
         devDependencies: {
-          nw: 'v0.23.2'
+          nw: '^0.23.2-sdk'
         }
       };
 
@@ -347,6 +347,37 @@ describe('nw-utils-builder', () => {
 
       expect(nwBuilder.settings.tasks[0].nwVersion)
         .toEqual('v0.23.2');
+    });
+
+    test('match version is invalid', () => {
+      const version = 'match';
+      const task = { nwVersion: version };
+      nwBuilder.settings = {
+        options: { verbose: true },
+        tasks: [task]
+      };
+
+      nwBuilder.manifest = {
+        devDependencies: {
+          nw: 'x.x.x'
+        }
+      };
+
+      nwBuilder.applyNwVersionMapToTasks();
+
+      expect(console.log)
+        .toHaveBeenCalledWith(
+          title,
+          'A task with an "nwVersion" of "match" was set, ' +
+          'but the version for you "nw" devDependency was ' +
+          'not valid. Falling back to the latest stable version.'
+        );
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, task)
+
+      expect(nwBuilder.settings.tasks[0].nwVersion)
+        .toEqual('v0.42.6');
     });
   });
 

@@ -4,6 +4,7 @@ const helpers = require('./helpers.js');
 const fs = require('fs-extra');
 const path = require('path');
 const fetch = require('node-fetch');
+const semver = require('semver');
 
 const NO_SETTINGS = 'No settings passed in.';
 
@@ -83,7 +84,14 @@ const nwUtilsBuilder = {
           if (['latest', 'sdk'].includes(this.manifest.devDependencies.nw)) {
             task.nwVersion = this.nwVersionMap.latest;
           } else {
-            task.nwVersion = this.manifest.devDependencies.nw;
+            let matchedVersion = semver.coerce(this.manifest.devDependencies.nw);
+            if (matchedVersion) {
+              task.nwVersion = 'v' + matchedVersion.version;
+            } else {
+              this.log('A task with an "nwVersion" of "match" was set, but the version for you "nw" devDependency was not valid. Falling back to the latest stable version.');
+              this.log(task);
+              task.nwVersion = this.nwVersionMap.stable;
+            }
           }
         } else {
           this.log('A task with an "nwVersion" of "match" was set, but no "nw" devDependency was found in your package.json or manifest.json. Falling back to the latest stable version.');
@@ -157,6 +165,16 @@ const nwUtilsBuilder = {
       lts: 'v0.14.7'
     };
   },
+  applyManifestToTasks: function () {
+    this.applyNwVersionMapToTasks();
+    this.applyNwFlavorMapToTasks();
+    this.applyTaskNames();
+  },
+  processTasks: function () {
+    this.settings.tasks.forEach((task) => {
+      // this.log(task);
+    });
+  },
   /**
    * Resets state, checks for missing settings or manifest,
    *
@@ -189,9 +207,9 @@ const nwUtilsBuilder = {
     this.buildSettingsObject(settings);
 
     await this.getNwVersionDetails();
-    this.applyNwVersionMapToTasks();
-    this.applyNwFlavorMapToTasks();
-    this.applyTaskNames();
+
+    this.applyManifestToTasks();
+    this.processTasks();
   },
   /**
    * Exposes generated internal settings object created from
