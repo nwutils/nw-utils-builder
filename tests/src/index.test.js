@@ -84,6 +84,119 @@ describe('nw-utils-builder', () => {
     });
   });
 
+  describe('tweakManifestForSpecificTask', () => {
+    test('Omit stripped properties', () => {
+      const manifest = {
+        name: 'app',
+        version: '1.0.0',
+        main: 'index.html',
+        scripts: {
+          start: 'nw .'
+        },
+        dependencies: {
+          lodash: '^4.0.0'
+        },
+        devDependencies: {
+          nw: 'latest',
+          eslint: '^6.7.1'
+        },
+        a: {
+          b: true,
+          c: {
+            d: {
+              e: true,
+              f: true
+            },
+            g: {
+              h: true
+            }
+          },
+          i: true
+        }
+      };
+      nwBuilder.manifest = manifest;
+
+      const response = nwBuilder.tweakManifestForSpecificTask({
+        strippedManifestProperties: [
+          'scripts',
+          'devDependencies',
+          'a.c.d.e'
+        ]
+      });
+
+      expect(response)
+        .toEqual({
+          name: 'app',
+          version: '1.0.0',
+          main: 'index.html',
+          dependencies: {
+            lodash: '^4.0.0'
+          },
+          a: {
+            b: true,
+            c: {
+              d: {
+                f: true
+              },
+              g: {
+                h: true
+              }
+            },
+            i: true
+          }
+        });
+
+      expect(nwBuilder.manifest)
+        .toEqual(manifest);
+    });
+
+    test('Override properties', () => {
+      const manifest = {
+        name: 'app',
+        version: '1.0.0',
+        main: 'index.html',
+        scripts: {
+          start: 'nw .'
+        },
+        dependencies: {
+          lodash: '^4.0.0'
+        }
+      };
+      nwBuilder.manifest = manifest;
+
+      const response = nwBuilder.tweakManifestForSpecificTask({
+        manifestOverrides: {
+          name: 'app-xp',
+          main: 'http://localhost:8494',
+          'node-main': 'server.js',
+          'node-remote': 'http://localhost:8494',
+          scripts: {
+            serve: 'node server.js'
+          }
+        }
+      });
+
+      expect(response)
+        .toEqual({
+          name: 'app-xp',
+          version: '1.0.0',
+          main: 'http://localhost:8494',
+          'node-main': 'server.js',
+          'node-remote': 'http://localhost:8494',
+          scripts: {
+            start: 'nw .',
+            serve: 'node server.js'
+          },
+          dependencies: {
+            lodash: '^4.0.0'
+          }
+        });
+
+      expect(nwBuilder.manifest)
+        .toEqual(manifest);
+    });
+  });
+
   describe('getNwVersionDetails', () => {
     test('Network request fails', async () => {
       fetch.get('begin:https://nwjs.io/versions.json', 500);
