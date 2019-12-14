@@ -814,8 +814,10 @@ describe('nw-utils-builder', () => {
       expect(console.log.mock.calls[2][0])
         .toEqual(title);
 
-      expect(console.log.mock.calls[2][1].message)
-        .toEqual('EACCES: permission denied, open \'dist\\test-1.0.0-win-x86\\package.json\'');
+      const thirdConsoleLog = console.log.mock.calls[2][1].message.split('\\').join('/');
+
+      expect(thirdConsoleLog)
+        .toEqual('EACCES: permission denied, open \'dist/test-1.0.0-win-x86/package.json\'');
 
       expect(fs.readdirSync('./dist'))
         .toEqual(['test-1.0.0-win-x86']);
