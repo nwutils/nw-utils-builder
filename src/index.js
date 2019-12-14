@@ -171,9 +171,9 @@ const nwUtilsBuilder = {
     this.applyTaskNames();
   },
   processTasks: function () {
-    this.settings.tasks.forEach((task) => {
-      // this.log(task);
-    });
+    // this.settings.tasks.forEach((task) => {
+    //   this.log(task);
+    // });
   },
   /**
    * Resets state, checks for missing settings or manifest,

@@ -374,7 +374,7 @@ describe('nw-utils-builder', () => {
         );
 
       expect(console.log)
-        .toHaveBeenCalledWith(title, task)
+        .toHaveBeenCalledWith(title, task);
 
       expect(nwBuilder.settings.tasks[0].nwVersion)
         .toEqual('v0.42.6');
