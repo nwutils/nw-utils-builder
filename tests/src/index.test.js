@@ -2,7 +2,7 @@
 const mockfs = require('mock-fs');
 
 const fs = require('fs-extra');
-const _cloneDeep = require('lodash/clonedeep');
+const _cloneDeep = require('lodash/cloneDeep');
 const fetch = require('node-fetch');
 const lolex = require('lolex');
 

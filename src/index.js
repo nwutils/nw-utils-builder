@@ -4,7 +4,7 @@ const helpers = require('./helpers.js');
 const fs = require('fs-extra');
 const path = require('path');
 
-const _cloneDeep = require('lodash/clonedeep');
+const _cloneDeep = require('lodash/cloneDeep');
 const _merge = require('lodash/merge');
 const _omit = require('lodash/omit');
 const fetch = require('node-fetch');
