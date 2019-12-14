@@ -1,4 +1,5 @@
-const helpers = require('../src/helpers.js');
+const helpers = require('../../src/helpers.js');
+const title = require('../testHelpers.js').title;
 
 describe('Helpers', () => {
   describe('Log', () => {
@@ -57,7 +58,7 @@ describe('Helpers', () => {
       helpers.log('A', verbose);
 
       expect(console.log)
-        .toHaveBeenCalledWith('NW-UTILS-BUILDER:', 'A');
+        .toHaveBeenCalledWith(title, 'A');
     });
 
     test('Error true', () => {
@@ -65,7 +66,7 @@ describe('Helpers', () => {
         helpers.log('A', verbose, true);
       } catch (error) {
         expect(console.log)
-          .toHaveBeenCalledWith('NW-UTILS-BUILDER:');
+          .toHaveBeenCalledWith(title);
 
         expect(error)
           .toEqual('A');

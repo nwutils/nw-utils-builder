@@ -7,6 +7,7 @@
     "lint": "eslint --config=.eslintrc.js src/**/*.js tests/**/*.js",
     "fix": "eslint --fix --config=.eslintrc.js src/**/*.js tests/**/*.js",
     "debug": "node --inspect-brk test.js",
+    "unit": "npm test",
     "test": "jest --coverage --runInBand",
     "test-one": "cls & jest --coverage --runInBand -t \"validateTaskDefaults\"",
     "coverage": "jest --coverage --runInBand --coverageReporters=text-lcov | coveralls",
@@ -16,6 +17,7 @@
   "dependencies": {
     "fs-extra": "^8.1.0",
     "lodash.clonedeep": "^4.5.0",
+    "node-fetch": "^2.6.0",
     "semver": "^6.3.0"
   },
   "devDependencies": {
@@ -23,7 +25,9 @@
     "eslint": "^6.7.1",
     "eslint-config-tjw-base": "^1.0.0",
     "eslint-config-tjw-jest": "^1.0.0",
+    "fetch-mock": "^8.0.1",
     "jest": "^24.9.0",
+    "lolex": "^5.1.1",
     "mock-fs": "^4.10.4"
   },
   "repository": "https://github.com/nwutils/nw-utils-builder",

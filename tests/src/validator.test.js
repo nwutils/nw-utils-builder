@@ -1,9 +1,10 @@
 const _cloneDeep = require('lodash.clonedeep');
 
-const validator = require('../src/validator.js');
-const customizedSettingsAndTasks = require('./test-helpers.js').customizedSettingsAndTasks;
+const validator = require('../../src/validator.js');
+const testHelpers = require('../testHelpers.js');
 
-const title = 'NW-UTILS-BUILDER:';
+const customizedSettingsAndTasks = testHelpers.customizedSettingsAndTasks;
+const title = testHelpers.title;
 
 describe('Validator', () => {
   let consoleLog;
@@ -554,7 +555,12 @@ describe('Validator', () => {
       const result = validator.validateNwVersion({ nwVersion: 'adsf' });
 
       expect(console.log)
-        .toHaveBeenCalledWith(title, 'The nwVersion setting must be a string of a valid version number ("v0.42.5"), "latest", or "match".');
+        .toHaveBeenCalledWith(
+          title,
+          'The nwVersion setting must be a string of a valid ' +
+          'version number like "0.42.6", or a valid keyword ' +
+          'like "stable", "latest", "lts", or "match".'
+        );
 
       expect(result)
         .toEqual(null);
