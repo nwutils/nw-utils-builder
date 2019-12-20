@@ -16,7 +16,7 @@ const defaultSettings = {
     platform: 'win',
     arch: 'x86',
     files: ['**/*'],
-    excludes: [],
+    excludes: ['node_modules'],
     outputType: 'zip',
     outputPattern: '{{name}}-{{version}}-{{platform}}-{{arch}}',
     manifestOverrides: {},

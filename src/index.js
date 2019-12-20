@@ -1,6 +1,6 @@
-const validator = require('./validator.js');
 const helpers = require('./helpers.js');
 const processTasks = require('./processTasks.js');
+const validator = require('./validator.js');
 
 const fs = require('fs-extra');
 const path = require('path');
