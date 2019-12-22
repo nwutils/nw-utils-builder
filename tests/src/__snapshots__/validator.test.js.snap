@@ -31,6 +31,57 @@ Object {
 }
 `;
 
+exports[`Validator buildSettingsObject Bad settings are ignored 1`] = `
+Object {
+  "options": Object {
+    "concurrent": true,
+    "mirror": "https://dl.nwjs.io/",
+    "output": "./dist",
+    "verbose": false,
+  },
+  "taskDefaults": Object {
+    "arch": "x86",
+    "excludes": Array [
+      "node_modules",
+    ],
+    "files": Array [
+      "**/*",
+    ],
+    "icon": undefined,
+    "junk": Array [],
+    "manifestOverrides": Object {},
+    "nwFlavor": "normal",
+    "nwVersion": "match",
+    "outputPattern": "{{name}}-{{version}}-{{platform}}-{{arch}}",
+    "outputType": "zip",
+    "platform": "win",
+    "strippedManifestProperties": Array [],
+    "unIcon": undefined,
+  },
+  "tasks": Array [
+    Object {
+      "arch": "x86",
+      "excludes": Array [
+        "node_modules",
+      ],
+      "files": Array [
+        "**/*",
+      ],
+      "icon": undefined,
+      "junk": Array [],
+      "manifestOverrides": Object {},
+      "nwFlavor": "normal",
+      "nwVersion": "match",
+      "outputPattern": "{{name}}-{{version}}-{{platform}}-{{arch}}",
+      "outputType": "zip",
+      "platform": "win",
+      "strippedManifestProperties": Array [],
+      "unIcon": undefined,
+    },
+  ],
+}
+`;
+
 exports[`Validator validTaskSettings Snapshot 1`] = `
 Array [
   "nwVersion",

@@ -1040,46 +1040,7 @@ describe('Validator', () => {
         .not.toHaveBeenCalled();
 
       expect(validator.settings)
-        .toEqual({
-          options: {
-            verbose: false,
-            concurrent: true,
-            mirror: 'https://dl.nwjs.io/',
-            output: './dist'
-          },
-          taskDefaults: {
-            nwVersion: 'match',
-            nwFlavor: 'normal',
-            platform: 'win',
-            arch: 'x86',
-            files: ['**/*'],
-            excludes: [],
-            outputType: 'zip',
-            outputPattern: '{{name}}-{{version}}-{{platform}}-{{arch}}',
-            manifestOverrides: {},
-            strippedManifestProperties: [],
-            junk: [],
-            icon: undefined,
-            unIcon: undefined
-          },
-          tasks: [
-            {
-              nwVersion: 'match',
-              nwFlavor: 'normal',
-              platform: 'win',
-              arch: 'x86',
-              files: ['**/*'],
-              excludes: [],
-              outputType: 'zip',
-              outputPattern: '{{name}}-{{version}}-{{platform}}-{{arch}}',
-              manifestOverrides: {},
-              strippedManifestProperties: [],
-              junk: [],
-              icon: undefined,
-              unIcon: undefined
-            }
-          ]
-        });
+        .toMatchSnapshot();
     });
 
     test('Settings object is built', () => {
