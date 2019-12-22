@@ -185,7 +185,6 @@ const nwUtilsBuilder = {
   processTasks: function () {
     this.settings.tasks = processTasks.processTasks({
       nwVersionMap: _cloneDeep(this.nwVersionMap),
-      allNwVersions: _cloneDeep(this.allNwVersions),
       settings: _cloneDeep(this.settings),
       manifest: _cloneDeep(this.manifest)
     });

@@ -8,6 +8,8 @@ const _merge = require('lodash/merge');
 const _omit = require('lodash/omit');
 const glob = require('fast-glob');
 
+const isJest = typeof(process.env.JEST_WORKER_ID) === 'string';
+
 const processTasks = {
   nwVersionMap: undefined,
   allNwVersions: undefined,
@@ -39,7 +41,8 @@ const processTasks = {
     task.excludes.push(this.settings.options.output);
 
     const filesToCopy = glob.sync(task.files, {
-      ignore: task.excludes
+      ignore: task.excludes,
+      stats: isJest
     });
 
     filesToCopy.forEach((file) => {
@@ -81,6 +84,15 @@ const processTasks = {
     this.settings = state.settings;
     this.manifest = state.manifest;
   },
+  /**
+   * Loops over each task, cleaning the dist folder and performing a build
+   *
+   * @param  {object} state               Current state of the app
+   * @param  {object} state.nwVersionMap
+   * @param  {object} state.settings
+   * @param  {object} state.manifest
+   * @return {array}                      The array of modified tasks
+   */
   processTasks: function (state) {
     if (!state || !state.settings) {
       this.log('Processing of tasks requires a settings object.');
@@ -94,7 +106,7 @@ const processTasks = {
       this.cleanDist();
       this.copyFiles(task);
       this.copyManifest(task);
-      this.log(task);
+      // this.log(task);
     });
 
     return this.settings.tasks;

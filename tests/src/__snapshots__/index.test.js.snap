@@ -43,6 +43,7 @@ Object {
       "excludes": Array [
         "package-lock.json",
         "zxcv",
+        "./built",
       ],
       "files": Array [
         "src/**/*",
