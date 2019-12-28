@@ -45,7 +45,13 @@ const processTasks = {
     });
 
     filesToCopy.forEach((file) => {
-      fs.copySync(file, path.join(this.dist, file));
+      try {
+        fs.copySync(file.path, path.join(this.dist, file.path));
+      } catch (err) {
+        this.log('Error copying file');
+        this.log(file);
+        this.log(err);
+      }
     });
   },
   /**

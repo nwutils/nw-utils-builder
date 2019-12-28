@@ -11,6 +11,9 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1'
   },
+  modulePathIgnorePatterns: [
+    '<rootDir>/sample-project'
+  ],
   setupFilesAfterEnv: [
     '<rootDir>/tests/setup.js'
   ],
