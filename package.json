@@ -10,6 +10,7 @@
     "unit": "npm test",
     "test": "jest --coverage --runInBand",
     "test-one": "cls & jest --coverage --runInBand -t \"validateTaskDefaults\"",
+    "test-debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --no-cache --runInBand -t \"Fail to write manifest file for task\"",
     "coverage": "jest --coverage --runInBand --coverageReporters=text-lcov | coveralls",
     "validate": "npm run lint && npm test",
     "travis": "npm run lint && npm run coverage"

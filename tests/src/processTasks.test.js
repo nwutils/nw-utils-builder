@@ -2,15 +2,15 @@
 const mockfs = require('mock-fs');
 
 const fs = require('fs-extra');
-// const _cloneDeep = require('lodash/cloneDeep');
+const _cloneDeep = require('lodash/cloneDeep');
 const fetch = require('node-fetch');
 const lolex = require('lolex');
 
 const nwBuilder = require('../../src/index.js');
 const processTasks = require('../../src/processTasks.js');
-// const testHelpers = require('../testHelpers.js');
+const testHelpers = require('../testHelpers.js');
 
-// const title = testHelpers.title;
+const title = testHelpers.title;
 
 describe('Process Tasks', () => {
   let consoleLog;
@@ -19,6 +19,11 @@ describe('Process Tasks', () => {
   beforeEach(() => {
     clock = lolex.install();
     nwBuilder.resetState();
+    processTasks.resetState({
+      nwVersionMap: undefined,
+      settings: undefined,
+      manifest: undefined
+    });
     consoleLog = console.log;
     console.log = jest.fn();
   });
@@ -60,10 +65,10 @@ describe('Process Tasks', () => {
 
       expect(fs.readdirSync('./dist/test-1.0.0-win-x86'))
         .toEqual(['package.json']);
-
-
     });
   });
+
+  // describe('copyFiles', () => {});
 
   describe('tweakManifestForSpecificTask', () => {
     test('Omit stripped properties', () => {
@@ -178,31 +183,40 @@ describe('Process Tasks', () => {
     });
   });
 
-  describe('processTasks', () => {
-    /*
-    test('Fail to create dist folder for task', () => {
-      const originalManifest = {
+  describe('copyManifest', () => {
+    beforeEach(() => {
+      processTasks.dist = './dist/test-1.0.0-win-x86';
+
+      processTasks.manifest = {
         name: 'test',
-        version: '1.0.0',
-        devDependencies: {
-          nw: 'sdk'
-        }
+        main: 'index.html',
+        version: '1.0.0'
       };
+
+      processTasks.settings = {
+        options: {
+          verbose: true
+        },
+        tasks: [{
+          strippedManifestProperties: [],
+          manifestOverrides: []
+        }]
+      };
+    });
+
+    test('Fails to create dist folder', () => {
       mockfs({
-        'package.json': JSON.stringify(originalManifest, null, 2),
-        dist: mockfs.directory({
+        output: mockfs.directory({
           mode: parseInt('0400', 8)
         })
       });
 
+      processTasks.dist = './output/dist';
+
+      processTasks.copyManifest(processTasks.settings.tasks[0]);
+
       expect(fs.readdirSync('.'))
-        .toEqual(['dist', 'package.json']);
-
-      nwBuilder.readManifest();
-      nwBuilder.buildSettingsObject({ tasks: [{}] });
-      nwBuilder.applyManifestToTasks();
-
-      nwBuilder.processTasks();
+        .toEqual(['output']);
 
       expect(console.log)
         .toHaveBeenCalledWith(title, 'Unable to save modifed manifest on task.');
@@ -216,20 +230,13 @@ describe('Process Tasks', () => {
       expect(console.log.mock.calls[2][1].message.startsWith('EACCES: permission denied, mkdir '))
         .toEqual(true);
 
-      expect(fs.readdirSync('./dist'))
+      expect(fs.readdirSync('./output'))
         .toEqual([]);
     });
 
     test('Fail to write manifest file for task', () => {
-      const originalManifest = {
-        name: 'test',
-        version: '1.0.0',
-        devDependencies: {
-          nw: 'sdk'
-        }
-      };
       mockfs({
-        'package.json': JSON.stringify(originalManifest, null, 2),
+        'package.json': JSON.stringify(processTasks.manifest, null, 2),
         dist: {
           'test-1.0.0-win-x86': {
             'package.json': mockfs.file({
@@ -243,17 +250,13 @@ describe('Process Tasks', () => {
       expect(fs.readdirSync('.'))
         .toEqual(['dist', 'package.json']);
 
-      nwBuilder.readManifest();
-      nwBuilder.buildSettingsObject({ tasks: [{}] });
-      nwBuilder.applyManifestToTasks();
-
-      nwBuilder.processTasks();
+      processTasks.copyManifest(processTasks.settings.tasks[0]);
 
       expect(console.log)
         .toHaveBeenCalledWith(title, 'Unable to save modifed manifest on task.');
 
       expect(console.log)
-        .toHaveBeenCalledWith(title, nwBuilder.settings.tasks[0]);
+        .toHaveBeenCalledWith(title, processTasks.settings.tasks[0]);
 
       expect(console.log.mock.calls[2][0])
         .toEqual(title);
@@ -279,28 +282,14 @@ describe('Process Tasks', () => {
     });
 
     test('Saves manifest to file', () => {
-      processTasks.processTasks({
-        manifest: {
-          name: 'test',
-          version: '1.0.0',
-          devDependencies: {
-            nw: 'sdk'
-          }
-        }
+      mockfs({
+        'package.json': JSON.stringify(processTasks.manifest, null, 2)
       });
+
+      processTasks.copyManifest(processTasks.settings.tasks[0]);
 
       expect(fs.readdirSync('.'))
-        .toEqual(['package.json']);
-
-      nwBuilder.readManifest();
-      nwBuilder.buildSettingsObject({
-        tasks: [{
-          strippedManifestProperties: ['devDependencies']
-        }]
-      });
-      nwBuilder.applyManifestToTasks();
-
-      nwBuilder.processTasks();
+        .toEqual(['dist', 'package.json']);
 
       expect(fs.readdirSync('./dist'))
         .toEqual(['test-1.0.0-win-x86']);
@@ -312,6 +301,7 @@ describe('Process Tasks', () => {
 
       expect(JSON.parse(savedFile))
         .toEqual({
+          main: 'index.html',
           name: 'test',
           version: '1.0.0'
         });
@@ -319,7 +309,87 @@ describe('Process Tasks', () => {
       expect(console.log)
         .not.toHaveBeenCalled();
     });
+  });
 
-    */
+  describe('resetState', () => {
+    test('Resets state', () => {
+      processTasks.dist = 'asdf';
+
+      expect(processTasks.nwVersionMap)
+        .toEqual(undefined);
+
+      expect(processTasks.settings)
+        .toEqual(undefined);
+
+      expect(processTasks.manifest)
+        .toEqual(undefined);
+
+      expect(processTasks.dist)
+        .toEqual('asdf');
+
+      const nwVersionMap = {
+        latest: '2.0.0',
+        stable: '1.0.0',
+        lts: '0.1.0'
+      };
+      const settings = {
+        tasks: []
+      };
+      const manifest = {
+        main: 'index.html',
+        name: 'test',
+        version: '1.0.0'
+      };
+
+      processTasks.resetState({
+        nwVersionMap: _cloneDeep(nwVersionMap),
+        settings: _cloneDeep(settings),
+        manifest: _cloneDeep(manifest)
+      });
+
+      expect(processTasks.nwVersionMap)
+        .toEqual(nwVersionMap);
+
+      expect(processTasks.settings)
+        .toEqual(settings);
+
+      expect(processTasks.manifest)
+        .toEqual(manifest);
+
+      expect(processTasks.dist)
+        .toEqual(undefined);
+    });
+  });
+
+  describe('processTasks', () => {
+    test('State not passed in', () => {
+      const result = processTasks.processTasks();
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'Processing of tasks requires a settings object.');
+
+      expect(result)
+        .toEqual(false);
+    });
+
+    test('Settings not passed in', () => {
+      const result = processTasks.processTasks({
+        nwVersionMap: {
+          lts: '0.1.0',
+          latest: '2.0.0',
+          stable: '1.0.0'
+        },
+        manifest: {
+          name: 'test',
+          version: '1.0.0'
+        }
+      });
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'Processing of tasks requires a settings object.');
+
+      expect(result)
+        .toEqual(false);
+    });
   });
 });

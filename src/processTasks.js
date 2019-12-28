@@ -12,7 +12,6 @@ const isJest = typeof(process.env.JEST_WORKER_ID) === 'string';
 
 const processTasks = {
   nwVersionMap: undefined,
-  allNwVersions: undefined,
   settings: undefined,
   manifest: undefined,
   dist: undefined,
@@ -79,8 +78,8 @@ const processTasks = {
   },
 
   resetState: function (state) {
+    this.dist = undefined;
     this.nwVersionMap = state.nwVersionMap;
-    this.allNwVersions = state.allNwVersions;
     this.settings = state.settings;
     this.manifest = state.manifest;
   },
