@@ -6,7 +6,6 @@ const _cloneDeep = require('lodash/cloneDeep');
 const fetch = require('node-fetch');
 const lolex = require('lolex');
 
-const nwBuilder = require('../../src/index.js');
 const processTasks = require('../../src/processTasks.js');
 const testHelpers = require('../testHelpers.js');
 
@@ -18,7 +17,6 @@ describe('Process Tasks', () => {
 
   beforeEach(() => {
     clock = lolex.install();
-    nwBuilder.resetState();
     processTasks.resetState({
       nwVersionMap: undefined,
       settings: undefined,
@@ -35,36 +33,70 @@ describe('Process Tasks', () => {
     clock.uninstall();
   });
 
+  // Clean Dist relies on fs-extra's removeSync, which calls
+  // exec (rd /s /q || rimraf) instead of Node's FS module.
+  // This means we can't mock the file system to verify deletion.
+  // Checking if files exist via mock-fs will still show them.
   describe('cleanDist', () => {
+    let spyRemoveSync;
+
+    beforeEach(() => {
+      spyRemoveSync = jest.spyOn(fs, 'removeSync');
+      processTasks.dist = './dist/test-1.0.0-win-x86';
+    });
+
+    afterEach(() => {
+      spyRemoveSync.mockRestore();
+    });
+
     test('Deletes old build', () => {
-      const originalManifest = {
-        name: 'test',
-        version: '1.0.0',
-        devDependencies: {
-          nw: 'sdk'
-        }
-      };
+      mockfs({ dist: {} });
+
+      processTasks.cleanDist();
+
+      expect(spyRemoveSync)
+        .toHaveBeenCalledWith(processTasks.dist);
+
+      expect(console.log)
+        .not.toHaveBeenCalled();
+    });
+
+    test('Fails to delete old build files', () => {
       mockfs({
-        'package.json': JSON.stringify(originalManifest, null, 2),
         dist: {
           'test-1.0.0-win-x86': {
-            'package.json': 'data'
+            'file.txt': 'data',
+            'folder': {
+              'sub-file.txt': 'More text'
+            },
+            'package.json': mockfs.file({
+              content: 'Some text',
+              mode: parseInt('0000', 8)
+            })
           }
         }
       });
 
-      nwBuilder.readManifest();
-      nwBuilder.buildSettingsObject({ tasks: [{}] });
-      nwBuilder.applyManifestToTasks();
+      const fsRemoveSync = fs.removeSync;
+      fs.removeSync = jest.fn(() => {
+        throw new Error('Error Message');
+      });
 
-      expect(fs.readdirSync('.'))
-        .toEqual(['dist', 'package.json']);
+      processTasks.cleanDist();
 
-      expect(fs.readdirSync('./dist'))
-        .toEqual(['test-1.0.0-win-x86']);
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'Error cleaning out task folder before build.');
 
-      expect(fs.readdirSync('./dist/test-1.0.0-win-x86'))
-        .toEqual(['package.json']);
+      expect(console.log)
+        .toHaveBeenCalledWith(title, processTasks.dist);
+
+      expect(console.log.mock.calls[2][0])
+        .toEqual(title);
+
+      expect(console.log.mock.calls[2][1].message)
+        .toEqual('Error Message');
+
+      fs.removeSynce = fsRemoveSync;
     });
   });
 
@@ -166,10 +198,9 @@ describe('Process Tasks', () => {
       expect(console.log.mock.calls[1][0])
         .toEqual(title);
 
-      mockfs.restore();
 
-      expect(console.log.mock.calls[1][1])
-        .toMatchSnapshot('File glob');
+      expect(console.log.mock.calls[1][1].path)
+        .toEqual('file.txt');
 
       expect(console.log.mock.calls[2][0])
         .toEqual(title);
@@ -224,10 +255,8 @@ describe('Process Tasks', () => {
       expect(console.log.mock.calls[1][0])
         .toEqual(title);
 
-      mockfs.restore();
-
-      expect(console.log.mock.calls[1][1])
-        .toMatchSnapshot('File glob');
+      expect(console.log.mock.calls[1][1].path)
+        .toEqual('file.txt');
 
       expect(console.log.mock.calls[2][0])
         .toEqual(title);

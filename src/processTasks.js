@@ -30,7 +30,7 @@ const processTasks = {
     try {
       fs.removeSync(this.dist);
     } catch (err) {
-      this.log('Error cleaning out task folder before build');
+      this.log('Error cleaning out task folder before build.');
       this.log(this.dist);
       this.log(err);
     }
