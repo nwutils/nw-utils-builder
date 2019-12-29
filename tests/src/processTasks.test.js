@@ -135,9 +135,105 @@ describe('Process Tasks', () => {
         .not.toHaveBeenCalled();
     });
 
-    test('Fails to copy files', () => {
-      expect('TODO')
-        .toEqual('TODO');
+    test('Fails to create dist folder', () => {
+      mockfs({
+        'dist': mockfs.directory({
+          mode: parseInt('0400', 8)
+        }),
+        'package.json': JSON.stringify(processTasks.manifest, null, 2),
+        'file.txt': 'Some text',
+        'folder': {
+          'sub-file.txt': 'More text'
+        }
+      });
+
+      processTasks.copyFiles(processTasks.settings.tasks[0]);
+
+      expect(fs.readdirSync('.'))
+        .toEqual([
+          'dist',
+          'file.txt',
+          'folder',
+          'package.json'
+        ]);
+
+      expect(fs.readdirSync('./dist'))
+        .toEqual([]);
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'Error copying file.');
+
+      expect(console.log.mock.calls[1][0])
+        .toEqual(title);
+
+      mockfs.restore();
+
+      expect(console.log.mock.calls[1][1])
+        .toMatchSnapshot('File glob');
+
+      expect(console.log.mock.calls[2][0])
+        .toEqual(title);
+
+      expect(console.log.mock.calls[2][1].message.startsWith('EACCES: permission denied'))
+        .toEqual(true);
+    });
+
+    test('Fails to copy file', () => {
+      mockfs({
+        'file.txt': mockfs.file({
+          content: 'Some text',
+          mode: parseInt('0000', 8)
+        }),
+        'package.json': JSON.stringify(processTasks.manifest, null, 2),
+        'folder': {
+          'sub-file.txt': 'More text'
+        }
+      });
+
+      processTasks.copyFiles(processTasks.settings.tasks[0]);
+
+      expect(fs.readdirSync('.'))
+        .toEqual([
+          'dist',
+          'file.txt',
+          'folder',
+          'package.json'
+        ]);
+
+      expect(fs.readdirSync('./dist'))
+        .toEqual(['test-1.0.0-win-x86']);
+
+      expect(fs.readdirSync('./dist/test-1.0.0-win-x86'))
+        .toEqual([
+          'folder',
+          'package.json'
+        ]);
+
+      expect(fs.readdirSync('./dist/test-1.0.0-win-x86/folder'))
+        .toEqual(['sub-file.txt']);
+
+      expect(JSON.parse(fs.readFileSync('./dist/test-1.0.0-win-x86/package.json')))
+        .toEqual(processTasks.manifest);
+
+      expect(String(fs.readFileSync('./dist/test-1.0.0-win-x86/folder/sub-file.txt')))
+        .toEqual('More text');
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'Error copying file.');
+
+      expect(console.log.mock.calls[1][0])
+        .toEqual(title);
+
+      mockfs.restore();
+
+      expect(console.log.mock.calls[1][1])
+        .toMatchSnapshot('File glob');
+
+      expect(console.log.mock.calls[2][0])
+        .toEqual(title);
+
+      expect(console.log.mock.calls[2][1].message.startsWith('EACCES: permission denied'))
+        .toEqual(true);
     });
   });
 

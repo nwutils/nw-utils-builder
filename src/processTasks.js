@@ -48,7 +48,7 @@ const processTasks = {
       try {
         fs.copySync(file.path, path.join(this.dist, file.path));
       } catch (err) {
-        this.log('Error copying file');
+        this.log('Error copying file.');
         this.log(file);
         this.log(err);
       }
@@ -105,13 +105,11 @@ const processTasks = {
     }
     this.resetState(state);
 
-    // this.log(this.settings.options);
     this.settings.tasks.forEach((task) => {
       this.dist = path.join(this.settings.options.output, task.name);
       this.cleanDist();
       this.copyFiles(task);
       this.copyManifest(task);
-      // this.log(task);
     });
 
     return this.settings.tasks;
