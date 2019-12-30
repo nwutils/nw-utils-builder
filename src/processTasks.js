@@ -26,6 +26,9 @@ const processTasks = {
     helpers.log(message, settings, error);
   },
 
+  /**
+   * Recursively deletes the dist folder of the current task.
+   */
   cleanDist: function () {
     try {
       fs.removeSync(this.dist);
@@ -35,10 +38,18 @@ const processTasks = {
       this.log(err);
     }
   },
+  /**
+   * Finds all files to copy based on task settings, then copies each file to the dist folder
+   * for this task.
+   *
+   * @param  {object} task  The settings for this specific task
+   */
   copyFiles: function (task) {
     // exclude the dist folder
     task.excludes.push(this.settings.options.output);
 
+    // Newer versions of Node let glob run much faster, but the way it does this doesn't work
+    // well with unit tests, so we if running in Jest we use the slow way that doesn't break.
     const filesToCopy = glob.sync(task.files, {
       ignore: task.excludes,
       stats: isJest
@@ -67,6 +78,11 @@ const processTasks = {
     manifest = _merge(manifest, task.manifestOverrides);
     return manifest;
   },
+  /**
+   * Saves the modified manifest file to the dist folder for this task.
+   *
+   * @param  {object} task  The settings for this specific task
+   */
   copyManifest: function (task) {
     const manifestLocation = path.join(this.dist, 'package.json');
 
@@ -83,6 +99,15 @@ const processTasks = {
     }
   },
 
+  /**
+   * Resets the state of the script so left over settings from previous runs
+   * that occur in the same instance do not carry over.
+   *
+   * @param  {object} state               Current state of the app
+   * @param  {object} state.nwVersionMap
+   * @param  {object} state.settings
+   * @param  {object} state.manifest
+   */
   resetState: function (state) {
     this.dist = undefined;
     this.nwVersionMap = state.nwVersionMap;
@@ -90,7 +115,7 @@ const processTasks = {
     this.manifest = state.manifest;
   },
   /**
-   * Loops over each task, cleaning the dist folder and performing a build
+   * Loops over each task, cleaning that task's dist folder and performing a build for that task.
    *
    * @param  {object} state               Current state of the app
    * @param  {object} state.nwVersionMap
