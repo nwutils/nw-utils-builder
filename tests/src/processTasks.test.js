@@ -33,10 +33,12 @@ describe('Process Tasks', () => {
     clock.uninstall();
   });
 
-  // Clean Dist relies on fs-extra's removeSync, which calls
-  // exec (rd /s /q || rimraf) instead of Node's FS module.
-  // This means we can't mock the file system to verify deletion.
-  // Checking if files exist via mock-fs will still show them.
+  /**
+   * Clean Dist relies on fs-extra's removeSync, which calls
+   * exec (rd /s /q || rimraf) instead of Node's FS module.
+   * This means we can't mock the file system to verify deletion.
+   * Checking if files exist via mock-fs will still show them.
+   */
   describe('cleanDist', () => {
     let spyRemoveSync;
 
@@ -511,9 +513,6 @@ describe('Process Tasks', () => {
     test('Resets state', () => {
       processTasks.dist = 'asdf';
 
-      expect(processTasks.nwVersionMap)
-        .toEqual(undefined);
-
       expect(processTasks.settings)
         .toEqual(undefined);
 
@@ -523,11 +522,6 @@ describe('Process Tasks', () => {
       expect(processTasks.dist)
         .toEqual('asdf');
 
-      const nwVersionMap = {
-        latest: '2.0.0',
-        stable: '1.0.0',
-        lts: '0.1.0'
-      };
       const settings = {
         tasks: []
       };
@@ -538,13 +532,9 @@ describe('Process Tasks', () => {
       };
 
       processTasks.resetState({
-        nwVersionMap: _cloneDeep(nwVersionMap),
         settings: _cloneDeep(settings),
         manifest: _cloneDeep(manifest)
       });
-
-      expect(processTasks.nwVersionMap)
-        .toEqual(nwVersionMap);
 
       expect(processTasks.settings)
         .toEqual(settings);

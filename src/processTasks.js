@@ -11,7 +11,6 @@ const glob = require('fast-glob');
 const isJest = typeof(process.env.JEST_WORKER_ID) === 'string';
 
 const processTasks = {
-  nwVersionMap: undefined,
   settings: undefined,
   manifest: undefined,
   dist: undefined,
@@ -104,13 +103,11 @@ const processTasks = {
    * that occur in the same instance do not carry over.
    *
    * @param  {object} state               Current state of the app
-   * @param  {object} state.nwVersionMap
    * @param  {object} state.settings
    * @param  {object} state.manifest
    */
   resetState: function (state) {
     this.dist = undefined;
-    this.nwVersionMap = state.nwVersionMap;
     this.settings = state.settings;
     this.manifest = state.manifest;
   },
@@ -118,7 +115,6 @@ const processTasks = {
    * Loops over each task, cleaning that task's dist folder and performing a build for that task.
    *
    * @param  {object} state               Current state of the app
-   * @param  {object} state.nwVersionMap
    * @param  {object} state.settings
    * @param  {object} state.manifest
    * @return {array}                      The array of modified tasks
