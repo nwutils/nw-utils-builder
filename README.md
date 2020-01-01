@@ -35,9 +35,10 @@
    * [ ] outputType
    * [ ] outputPattern
    * [ ] strippedManifestProperties
-   * [ ] junk
    * [ ] icon
    * [ ] unIcon
+   * [ ] hostNodeMustMatch
+   * [ ] junk
    * [ ] concurrent
 * [ ] Support each build type
    * [ ] zip
