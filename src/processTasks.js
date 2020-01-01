@@ -8,8 +8,6 @@ const _merge = require('lodash/merge');
 const _omit = require('lodash/omit');
 const glob = require('fast-glob');
 
-const isJest = typeof(process.env.JEST_WORKER_ID) === 'string';
-
 const processTasks = {
   settings: undefined,
   manifest: undefined,
@@ -47,11 +45,17 @@ const processTasks = {
     // exclude the dist folder
     task.excludes.push(this.settings.options.output);
 
-    // Newer versions of Node let glob run much faster, but the way it does this doesn't work
-    // well with unit tests, so we if running in Jest we use the slow way that doesn't break.
+    /**
+     * Mock-fs in our unit tests, and versions of Node below 10.10, require stats to be true.
+     * This will return an array of detailed objects about each file. stats: false is roughly
+     * twice as fast and returns only an array of strings of the paths. This would be preferred
+     * in the future for the performance increase, but for now, we have to live with this for
+     * compatibility.
+     */
+    const weAreUsingMockFsOrNodeUnder10dot10 = true;
     const filesToCopy = glob.sync(task.files, {
       ignore: task.excludes,
-      stats: isJest
+      stats: weAreUsingMockFsOrNodeUnder10dot10
     });
 
     filesToCopy.forEach((file) => {
