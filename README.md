@@ -24,17 +24,17 @@
 * [ ] Produce basic Linux/OSX build
 * [ ] Implement API features
    * [x] verbose
-   * [ ] output
+   * [x] files
+   * [x] excludes
+   * [x] outputPattern
+   * [x] strippedManifestProperties
+   * [x] output
    * [ ] mirror
    * [ ] nwVersion
    * [ ] nwFlavor
    * [ ] platform
    * [ ] arch
-   * [ ] files
-   * [ ] excludes
    * [ ] outputType
-   * [ ] outputPattern
-   * [ ] strippedManifestProperties
    * [ ] icon
    * [ ] unIcon
    * [ ] hostNodeMustMatch
@@ -48,3 +48,56 @@
 * [ ] Find minimum supported Node version for this repo
 * [ ] Documentation
 * [ ] Bump to v1.0.0 and release
+
+
+## Documentation (WIP, do not use)
+
+**Every setting is optional**, but you do need to pass in at least an object as a task.
+
+**Bare minimum:**
+
+```js
+const nwBuilder = require('nw-utils-builder');
+
+nwBuilder.build({
+  tasks: [{}]
+});
+```
+
+
+### Top-level Settings
+
+Name           | Allowed values   | Default     | Description
+:--            | :--              | :--         | :--
+`options`      | Object           | `undefined` | Global options, like your dist folder, or whether to log errors during builds.
+`taskDefaults` | Object           | `undefined` | Settings that all tasks will inherit by default.
+`tasks`        | Array of Objects | `undefined` | Each object represents a unique build task. Any settings here will override the ones set in the `taskDefaults`.
+
+
+### Options
+
+Name         | Allowed values | Default                 | Description
+:--          | :--            | :--                     | :--
+`verbose`    | Boolean        | `true`                  | True = Will console log helpful information, warnings, errors, and tips. False = silent, unless something explodes.
+`output`     | File Path      | `'./dist'`              | The location where all builds will be stored
+`mirror`     | URL            | `'https://dl.nwjs.io/'` | NOT IMPLEMENTED. IGNORE
+`concurrent` | Boolean        | `false`                 | NOT IMPLEMENTED. IGNORE
+
+
+### Task Defaults
+
+Name                         | Allowed values                                                  | Default                                        | Description
+:--                          | :--                                                             | :--                                            | :--
+`nwVersion`                  | Valid NW.js version, `'latest'`, `'lts'`, `'match'`, `'stable'` | `'match'`                                      | Valid version, like `'0.43.2'`. Latest/LTS/Stable are based on [this](https://nwjs.io/versions.json). Match will use the same version as what is in your `package.json`'s `devDependencies.nw`.
+`nwFlavor`                   | `'match'`, `'normal'`, `'sdk'`                                  | `'normal'`                                     | Which flavor of NW.js to use. Match will use the flavor set in your `package.json`'s `devDependencies.nw`.
+`platform`                   | `'win'`, `'lin'`, `'osx'`                                       | `'win'`                                        | Which OS your build task is for. Windows, Linux, or OSX (MacOS/Darwin).
+`arch`                       | `'x86'`, `'x64'`                                                | `'x86'`                                        | The OS architechture this build task is targeting. x86 = 32-Bit, x64 = 64-Bit OS.
+`files`                      | An array of strings with glob patterns                          | `['**/*']`                                     | This is used to find the files to be copied to your dist folder for that build task.
+`excludes`                   | An array of strings with glob patterns                          | `['node_modules']`                             | This is used to find the files to be skipped when copying `files` to your dist folder.
+`outputType`                 | `'7z'`, `'nsis'`, `'nsis7z'`, `'zip'`                           | `'zip'`                                        | NOT IMPLEMENTED. May change. To be detailed later.
+`outputPattern`              | String                                                          | `'{{name}}-{{version}}-{{platform}}-{{arch}}'` | String used to dynamically name your build task's dist folder. Keywords in double curly braces are replaced at build time. Valid keywords: name, version, nwVersion, nwFlavor, platform, arch, outputType. Name and version are derived from your `package.json`, the rest come from your task's settings.
+`manifestOverrides`          | Object                                                          | `{}`                                           | This object will be deep-merged with your manifest (`package.json`), overriding just the parts you specify.
+`strippedManifestProperties` | Array of strings                                                | `[]`                                           | List of items in the `package.json` manifest to be removed when copied during the build. Can be nested like `['dependencies.lodash']`.
+`junk`                       | Array of strings                                                | `[]`                                           | NOT IMPLEMENTED. May change. Will allow removing of junk files after copying and doing an `npm install`.
+`icon`                       | File path                                                       | `undefined`                                    | NOT IMPLEMENTED. May change.
+`unIcon`                     | File path                                                       | `undefined`                                    | NOT IMPLEMENTED. May change.

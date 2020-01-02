@@ -99,7 +99,7 @@ const nwUtilsBuilder = {
             if (matchedVersion) {
               task.nwVersion = 'v' + matchedVersion.version;
             } else {
-              this.log('A task with an "nwVersion" of "match" was set, but the version for you "nw" devDependency was not valid. Falling back to the latest stable version.');
+              this.log('A task with an "nwVersion" of "match" was set, but the version for your "nw" devDependency was not valid. Falling back to the latest stable version.');
               this.log(task);
               task.nwVersion = this.nwVersionMap.stable;
             }
