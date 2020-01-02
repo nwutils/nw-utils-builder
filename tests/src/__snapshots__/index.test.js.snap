@@ -43,6 +43,7 @@ Object {
       "excludes": Array [
         "package-lock.json",
         "zxcv",
+        "./built",
       ],
       "files": Array [
         "src/**/*",
@@ -80,7 +81,9 @@ Object {
   },
   "taskDefaults": Object {
     "arch": "x86",
-    "excludes": Array [],
+    "excludes": Array [
+      "node_modules",
+    ],
     "files": Array [
       "**/*",
     ],
@@ -98,7 +101,9 @@ Object {
   "tasks": Array [
     Object {
       "arch": "x86",
-      "excludes": Array [],
+      "excludes": Array [
+        "node_modules",
+      ],
       "files": Array [
         "**/*",
       ],

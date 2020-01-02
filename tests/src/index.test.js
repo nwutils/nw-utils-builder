@@ -45,6 +45,39 @@ describe('nw-utils-builder', () => {
     });
   });
 
+  describe('buildSettingsObject', () => {
+    test('Returns defaults', () => {
+      nwBuilder.settings = undefined;
+      nwBuilder.buildSettingsObject({});
+
+      expect(nwBuilder.settings)
+        .toEqual({
+          options: {
+            verbose: true,
+            concurrent: true,
+            mirror: 'https://dl.nwjs.io/',
+            output: './dist'
+          },
+          taskDefaults: {
+            nwVersion: 'match',
+            nwFlavor: 'normal',
+            platform: 'win',
+            arch: 'x86',
+            files: [ '**/*' ],
+            excludes: [ 'node_modules' ],
+            junk: [],
+            manifestOverrides: {},
+            outputPattern: '{{name}}-{{version}}-{{platform}}-{{arch}}',
+            outputType: 'zip',
+            strippedManifestProperties: [],
+            icon: undefined,
+            unIcon: undefined
+          },
+          tasks: []
+        });
+    });
+  });
+
   describe('readManifest', () => {
     test('Reads package.json', () => {
       mockfs({
@@ -84,119 +117,6 @@ describe('nw-utils-builder', () => {
 
       expect(nwBuilder.manifest)
         .toEqual(undefined);
-    });
-  });
-
-  describe('tweakManifestForSpecificTask', () => {
-    test('Omit stripped properties', () => {
-      const manifest = {
-        name: 'app',
-        version: '1.0.0',
-        main: 'index.html',
-        scripts: {
-          start: 'nw .'
-        },
-        dependencies: {
-          lodash: '^4.0.0'
-        },
-        devDependencies: {
-          nw: 'latest',
-          eslint: '^6.7.1'
-        },
-        a: {
-          b: true,
-          c: {
-            d: {
-              e: true,
-              f: true
-            },
-            g: {
-              h: true
-            }
-          },
-          i: true
-        }
-      };
-      nwBuilder.manifest = manifest;
-
-      const response = nwBuilder.tweakManifestForSpecificTask({
-        strippedManifestProperties: [
-          'scripts',
-          'devDependencies',
-          'a.c.d.e'
-        ]
-      });
-
-      expect(response)
-        .toEqual({
-          name: 'app',
-          version: '1.0.0',
-          main: 'index.html',
-          dependencies: {
-            lodash: '^4.0.0'
-          },
-          a: {
-            b: true,
-            c: {
-              d: {
-                f: true
-              },
-              g: {
-                h: true
-              }
-            },
-            i: true
-          }
-        });
-
-      expect(nwBuilder.manifest)
-        .toEqual(manifest);
-    });
-
-    test('Override properties', () => {
-      const manifest = {
-        name: 'app',
-        version: '1.0.0',
-        main: 'index.html',
-        scripts: {
-          start: 'nw .'
-        },
-        dependencies: {
-          lodash: '^4.0.0'
-        }
-      };
-      nwBuilder.manifest = manifest;
-
-      const response = nwBuilder.tweakManifestForSpecificTask({
-        manifestOverrides: {
-          name: 'app-xp',
-          main: 'http://localhost:8494',
-          'node-main': 'server.js',
-          'node-remote': 'http://localhost:8494',
-          scripts: {
-            serve: 'node server.js'
-          }
-        }
-      });
-
-      expect(response)
-        .toEqual({
-          name: 'app-xp',
-          version: '1.0.0',
-          main: 'http://localhost:8494',
-          'node-main': 'server.js',
-          'node-remote': 'http://localhost:8494',
-          scripts: {
-            start: 'nw .',
-            serve: 'node server.js'
-          },
-          dependencies: {
-            lodash: '^4.0.0'
-          }
-        });
-
-      expect(nwBuilder.manifest)
-        .toEqual(manifest);
     });
   });
 
@@ -485,7 +405,7 @@ describe('nw-utils-builder', () => {
         .toHaveBeenCalledWith(
           title,
           'A task with an "nwVersion" of "match" was set, ' +
-          'but the version for you "nw" devDependency was ' +
+          'but the version for your "nw" devDependency was ' +
           'not valid. Falling back to the latest stable version.'
         );
 
@@ -735,119 +655,59 @@ describe('nw-utils-builder', () => {
     });
   });
 
-  describe('processTasks', () => {
-    test('Fail to create dist folder for task', () => {
-      const originalManifest = {
-        name: 'test',
-        version: '1.0.0',
-        devDependencies: {
-          nw: 'sdk'
-        }
+  describe('resetState', () => {
+    test('Resets state', () => {
+      nwBuilder.settings = {
+        options: {},
+        tasks: []
       };
-      mockfs({
-        'package.json': JSON.stringify(originalManifest, null, 2),
-        dist: mockfs.directory({
-          mode: parseInt('0400', 8)
-        })
-      });
-
-      expect(fs.readdirSync('.'))
-        .toEqual(['dist', 'package.json']);
-
-      nwBuilder.readManifest();
-      nwBuilder.buildSettingsObject({ tasks: [{}] });
-      nwBuilder.applyManifestToTasks();
-
-      nwBuilder.processTasks();
-
-      expect(console.log)
-        .toHaveBeenCalledWith(title, 'Unable to save modifed manifest on task.');
-
-      expect(console.log)
-        .toHaveBeenCalledWith(title, nwBuilder.settings.tasks[0]);
-
-      expect(console.log.mock.calls[2][0])
-        .toEqual(title);
-
-      expect(console.log.mock.calls[2][1].message.startsWith('EACCES: permission denied, mkdir '))
-        .toEqual(true);
-
-      expect(fs.readdirSync('./dist'))
-        .toEqual([]);
-    });
-
-    test('Fail to write manifest file for task', () => {
-      const originalManifest = {
+      nwBuilder.manifest = {
         name: 'test',
-        version: '1.0.0',
-        devDependencies: {
-          nw: 'sdk'
-        }
+        main: 'index.html'
       };
-      mockfs({
-        'package.json': JSON.stringify(originalManifest, null, 2),
-        dist: {
-          'test-1.0.0-win-x86': {
-            'package.json': mockfs.file({
-              content: '{ "name": "immutable", "version": "10.10.10" }',
-              mode: parseInt('0400', 8)
-            })
-          }
-        }
-      });
+      nwBuilder.nwVersionMap = {
+        latest: 'v1.0.1',
+        stable: 'v1.0.0',
+        lts: 'v0.1.0'
+      };
 
-      expect(fs.readdirSync('.'))
-        .toEqual(['dist', 'package.json']);
+      nwBuilder.resetState();
 
-      nwBuilder.readManifest();
-      nwBuilder.buildSettingsObject({ tasks: [{}] });
-      nwBuilder.applyManifestToTasks();
+      expect(nwBuilder.settings)
+        .toEqual(undefined);
 
-      nwBuilder.processTasks();
+      expect(nwBuilder.manifest)
+        .toEqual(undefined);
 
-      expect(console.log)
-        .toHaveBeenCalledWith(title, 'Unable to save modifed manifest on task.');
-
-      expect(console.log)
-        .toHaveBeenCalledWith(title, nwBuilder.settings.tasks[0]);
-
-      expect(console.log.mock.calls[2][0])
-        .toEqual(title);
-
-      const thirdConsoleLog = console.log.mock.calls[2][1].message.split('\\').join('/');
-
-      expect(thirdConsoleLog)
-        .toEqual('EACCES: permission denied, open \'dist/test-1.0.0-win-x86/package.json\'');
-
-      expect(fs.readdirSync('./dist'))
-        .toEqual(['test-1.0.0-win-x86']);
-
-      expect(fs.readdirSync('./dist/test-1.0.0-win-x86'))
-        .toEqual(['package.json']);
-
-      const savedFile = fs.readFileSync('./dist/test-1.0.0-win-x86/package.json');
-
-      expect(JSON.parse(savedFile))
+      expect(nwBuilder.nwVersionMap)
         .toEqual({
-          name: 'immutable',
-          version: '10.10.10'
+          latest: 'v0.43.0-beta1',
+          stable: 'v0.42.6',
+          lts: 'v0.14.7'
         });
     });
+  });
 
-    test('Saves manifest to file', () => {
+  describe('processTasks', () => {
+    test('Tasks have been updated', () => {
       const originalManifest = {
         name: 'test',
         version: '1.0.0',
+        main: 'index.html',
         devDependencies: {
           nw: 'sdk'
         }
       };
       mockfs({
+        'index.html': '<!DOCTYPE html><html><h1>Hello World</h1></html>',
         'package.json': JSON.stringify(originalManifest, null, 2)
       });
 
       expect(fs.readdirSync('.'))
-        .toEqual(['package.json']);
+        .toEqual([
+          'index.html',
+          'package.json'
+        ]);
 
       nwBuilder.readManifest();
       nwBuilder.buildSettingsObject({
@@ -857,24 +717,69 @@ describe('nw-utils-builder', () => {
       });
       nwBuilder.applyManifestToTasks();
 
+      expect(nwBuilder.settings.tasks)
+        .toEqual([{
+          nwVersion: 'v0.43.0-beta1',
+          nwFlavor: 'normal',
+          platform: 'win',
+          arch: 'x86',
+          files: ['**/*'],
+          excludes: ['node_modules'],
+          junk: [],
+          manifestOverrides: {},
+          strippedManifestProperties: ['devDependencies'],
+          name: 'test-1.0.0-win-x86',
+          outputType: 'zip',
+          outputPattern: '{{name}}-{{version}}-{{platform}}-{{arch}}',
+          icon: undefined,
+          unIcon: undefined
+        }]);
+
       nwBuilder.processTasks();
+
+      expect(nwBuilder.settings.tasks)
+        .toEqual([{
+          nwVersion: 'v0.43.0-beta1',
+          nwFlavor: 'normal',
+          platform: 'win',
+          arch: 'x86',
+          files: ['**/*'],
+          excludes: [
+            'node_modules',
+            './dist'
+          ],
+          junk: [],
+          manifestOverrides: {},
+          strippedManifestProperties: ['devDependencies'],
+          name: 'test-1.0.0-win-x86',
+          outputType: 'zip',
+          outputPattern: '{{name}}-{{version}}-{{platform}}-{{arch}}',
+          icon: undefined,
+          unIcon: undefined
+        }]);
+
+      expect(fs.readdirSync('.'))
+        .toEqual([
+          'dist',
+          'index.html',
+          'package.json'
+        ]);
 
       expect(fs.readdirSync('./dist'))
         .toEqual(['test-1.0.0-win-x86']);
 
       expect(fs.readdirSync('./dist/test-1.0.0-win-x86'))
-        .toEqual(['package.json']);
+        .toEqual([
+          'index.html',
+          'package.json'
+        ]);
 
-      const savedFile = fs.readFileSync('./dist/test-1.0.0-win-x86/package.json');
-
-      expect(JSON.parse(savedFile))
+      expect(JSON.parse(fs.readFileSync('./dist/test-1.0.0-win-x86/package.json')))
         .toEqual({
           name: 'test',
-          version: '1.0.0'
+          version: '1.0.0',
+          main: 'index.html'
         });
-
-      expect(console.log)
-        .not.toHaveBeenCalled();
     });
   });
 

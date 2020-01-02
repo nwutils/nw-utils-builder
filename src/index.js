@@ -1,12 +1,11 @@
-const validator = require('./validator.js');
 const helpers = require('./helpers.js');
+const processTasks = require('./processTasks.js');
+const validator = require('./validator.js');
 
 const fs = require('fs-extra');
 const path = require('path');
 
 const _cloneDeep = require('lodash/cloneDeep');
-const _merge = require('lodash/merge');
-const _omit = require('lodash/omit');
 const fetch = require('node-fetch');
 const semver = require('semver');
 
@@ -51,19 +50,6 @@ const nwUtilsBuilder = {
     } else if (fs.existsSync(manifestPath)) {
       this.manifest = JSON.parse(fs.readFileSync(manifestPath));
     }
-  },
-  /**
-   * Takes the user's manifest file and modifies it based on the settings of this particular task.
-   * @param  {object} task  The settings for this specific task
-   * @return {object}       A modified version of the manifest, to be saved in the output dir
-   */
-  tweakManifestForSpecificTask: function (task) {
-    let manifest = _cloneDeep(this.manifest);
-    // Does a deep delete of properties based on strings like 'a.b.c'
-    manifest = _omit(manifest, task.strippedManifestProperties);
-    // Performs a deep merge, beyond what the horrendously badly named "spread" operator offers
-    manifest = _merge(manifest, task.manifestOverrides);
-    return manifest;
   },
 
   /**
@@ -113,7 +99,7 @@ const nwUtilsBuilder = {
             if (matchedVersion) {
               task.nwVersion = 'v' + matchedVersion.version;
             } else {
-              this.log('A task with an "nwVersion" of "match" was set, but the version for you "nw" devDependency was not valid. Falling back to the latest stable version.');
+              this.log('A task with an "nwVersion" of "match" was set, but the version for your "nw" devDependency was not valid. Falling back to the latest stable version.');
               this.log(task);
               task.nwVersion = this.nwVersionMap.stable;
             }
@@ -197,24 +183,9 @@ const nwUtilsBuilder = {
     this.applyTaskNames();
   },
   processTasks: function () {
-    // this.log(this.settings.options);
-    this.settings.tasks.forEach((task) => {
-      const dist = path.join(this.settings.options.output, task.name);
-      const manifestLocation = path.join(dist, 'package.json');
-
-      let manifestData = this.tweakManifestForSpecificTask(task);
-      manifestData = JSON.stringify(manifestData, null, 2);
-
-      try {
-        fs.ensureDirSync(dist);
-        fs.writeFileSync(manifestLocation, manifestData);
-      } catch (err) {
-        this.log('Unable to save modifed manifest on task.');
-        this.log(task);
-        this.log(err);
-      }
-
-      // this.log(task);
+    this.settings.tasks = processTasks.processTasks({
+      settings: _cloneDeep(this.settings),
+      manifest: _cloneDeep(this.manifest)
     });
   },
   /**
