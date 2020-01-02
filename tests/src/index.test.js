@@ -1,7 +1,7 @@
 // Needs to be required before anything else that effects Node's fs module
 const mockfs = require('mock-fs');
 
-// const fs = require('fs-extra');
+const fs = require('fs-extra');
 const _cloneDeep = require('lodash/cloneDeep');
 const fetch = require('node-fetch');
 const lolex = require('lolex');
@@ -405,7 +405,7 @@ describe('nw-utils-builder', () => {
         .toHaveBeenCalledWith(
           title,
           'A task with an "nwVersion" of "match" was set, ' +
-          'but the version for you "nw" devDependency was ' +
+          'but the version for your "nw" devDependency was ' +
           'not valid. Falling back to the latest stable version.'
         );
 
@@ -689,21 +689,25 @@ describe('nw-utils-builder', () => {
   });
 
   describe('processTasks', () => {
-    /*
     test('Tasks have been updated', () => {
       const originalManifest = {
         name: 'test',
         version: '1.0.0',
+        main: 'index.html',
         devDependencies: {
           nw: 'sdk'
         }
       };
       mockfs({
+        'index.html': '<!DOCTYPE html><html><h1>Hello World</h1></html>',
         'package.json': JSON.stringify(originalManifest, null, 2)
       });
 
       expect(fs.readdirSync('.'))
-        .toEqual(['package.json']);
+        .toEqual([
+          'index.html',
+          'package.json'
+        ]);
 
       nwBuilder.readManifest();
       nwBuilder.buildSettingsObject({
@@ -714,32 +718,69 @@ describe('nw-utils-builder', () => {
       nwBuilder.applyManifestToTasks();
 
       expect(nwBuilder.settings.tasks)
-        .toEqual([
-          {
-            nwVersion: 'v0.43.0-beta1',
-            nwFlavor: 'normal',
-            platform: 'win',
-            arch: 'x86',
-            // remove the space below
-            files: [ '** /*' ],
-            excludes: [ 'node_modules' ],
-            junk: [],
-            manifestOverrides: {},
-            strippedManifestProperties: [ 'devDependencies' ],
-            name: 'test-1.0.0-win-x86',
-            outputType: 'zip',
-            outputPattern: '{{name}}-{{version}}-{{platform}}-{{arch}}',
-            icon: undefined,
-            unIcon: undefined
-          }
-        ]);
+        .toEqual([{
+          nwVersion: 'v0.43.0-beta1',
+          nwFlavor: 'normal',
+          platform: 'win',
+          arch: 'x86',
+          files: ['**/*'],
+          excludes: ['node_modules'],
+          junk: [],
+          manifestOverrides: {},
+          strippedManifestProperties: ['devDependencies'],
+          name: 'test-1.0.0-win-x86',
+          outputType: 'zip',
+          outputPattern: '{{name}}-{{version}}-{{platform}}-{{arch}}',
+          icon: undefined,
+          unIcon: undefined
+        }]);
 
       nwBuilder.processTasks();
 
       expect(nwBuilder.settings.tasks)
-        .toEqual([]);
+        .toEqual([{
+          nwVersion: 'v0.43.0-beta1',
+          nwFlavor: 'normal',
+          platform: 'win',
+          arch: 'x86',
+          files: ['**/*'],
+          excludes: [
+            'node_modules',
+            './dist'
+          ],
+          junk: [],
+          manifestOverrides: {},
+          strippedManifestProperties: ['devDependencies'],
+          name: 'test-1.0.0-win-x86',
+          outputType: 'zip',
+          outputPattern: '{{name}}-{{version}}-{{platform}}-{{arch}}',
+          icon: undefined,
+          unIcon: undefined
+        }]);
+
+      expect(fs.readdirSync('.'))
+        .toEqual([
+          'dist',
+          'index.html',
+          'package.json'
+        ]);
+
+      expect(fs.readdirSync('./dist'))
+        .toEqual(['test-1.0.0-win-x86']);
+
+      expect(fs.readdirSync('./dist/test-1.0.0-win-x86'))
+        .toEqual([
+          'index.html',
+          'package.json'
+        ]);
+
+      expect(JSON.parse(fs.readFileSync('./dist/test-1.0.0-win-x86/package.json')))
+        .toEqual({
+          name: 'test',
+          version: '1.0.0',
+          main: 'index.html'
+        });
     });
-    */
   });
 
   describe('build', () => {
