@@ -1,6 +1,9 @@
 // Needs to be required before anything else that effects Node's fs module
 const mockfs = require('mock-fs');
 
+const child_process = require('child_process');
+jest.mock('child_process');
+
 const fs = require('fs-extra');
 const _cloneDeep = require('lodash/cloneDeep');
 const fetch = require('node-fetch');
@@ -12,6 +15,10 @@ const testHelpers = require('../testHelpers.js');
 
 const customizedSettingsAndTasks = testHelpers.customizedSettingsAndTasks;
 const title = testHelpers.title;
+
+afterAll(() => {
+  jest.resetModules();
+});
 
 describe('nw-utils-builder', () => {
   let consoleLog;
@@ -780,6 +787,9 @@ describe('nw-utils-builder', () => {
           version: '1.0.0',
           main: 'index.html'
         });
+
+      expect(child_process.execSync)
+        .toHaveBeenCalledWith('npm install');
     });
   });
 
