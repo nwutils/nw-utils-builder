@@ -4,7 +4,7 @@ const mockfs = require('mock-fs');
 const fs = require('fs-extra');
 const _cloneDeep = require('lodash/cloneDeep');
 const fetch = require('node-fetch');
-const lolex = require('lolex');
+const lolex = require('@sinonjs/fake-timers');
 
 const processTasks = require('../../src/processTasks.js');
 const testHelpers = require('../testHelpers.js');
