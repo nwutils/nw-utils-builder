@@ -64,6 +64,36 @@ nwBuilder.build({
 });
 ```
 
+**Basic example:**
+
+```js
+const nwBuilder = require('nw-utils-builder');
+
+nwBuilder.build({
+  // General options
+  options: {
+    output: './builds' // defaults to './dist'
+  },
+  // Your custom global defaults that all tasks inherit from
+  taskDefaults: {
+    nwVersion: 'v0.44.4', // defaults to 'match'
+    excludes: ['node_modules', 'documentation', 'tests'],
+    outputType: '7z'
+  },
+  tasks: [
+    {}, // an empty object will inherit all the defaults and do a build of that
+    {
+      platform: 'lin',
+      arch: 'x64'
+    },
+    {
+      platform: 'osx',
+      arch: 'x64'
+    }
+  ]
+});
+```
+
 
 ### Top-level Settings
 

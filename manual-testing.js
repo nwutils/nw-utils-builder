@@ -63,6 +63,6 @@ const API_Example = {
   ]
 };
 
-// nwBuilder.build(API_EXAMPLE);
+// nwBuilder.build(API_Example);
 
 console.log(JSON.stringify(nwBuilder.dryRun({ tasks: [{}] }), null, 2));
