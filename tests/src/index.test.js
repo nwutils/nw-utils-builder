@@ -1,9 +1,6 @@
 // Needs to be required before anything else that effects Node's fs module
 const mockfs = require('mock-fs');
 
-const child_process = require('child_process');
-jest.mock('child_process');
-
 const fs = require('fs-extra');
 const _cloneDeep = require('lodash/cloneDeep');
 const fetch = require('node-fetch');
@@ -25,6 +22,7 @@ describe('nw-utils-builder', () => {
   let clock;
 
   beforeEach(() => {
+    nwBuilder.testHelpers.exec = jest.fn();
     clock = lolex.install();
     nwBuilder.resetState();
     consoleLog = console.log;
@@ -696,7 +694,7 @@ describe('nw-utils-builder', () => {
   });
 
   describe('processTasks', () => {
-    test('Tasks have been updated', () => {
+    test('Tasks have been processed', () => {
       const originalManifest = {
         name: 'test',
         version: '1.0.0',
@@ -788,7 +786,7 @@ describe('nw-utils-builder', () => {
           main: 'index.html'
         });
 
-      expect(child_process.execSync)
+      expect(nwBuilder.testHelpers.exec)
         .toHaveBeenCalledWith('npm install');
     });
   });
@@ -819,9 +817,13 @@ describe('nw-utils-builder', () => {
       expect(console.log)
         .not.toHaveBeenCalled();
 
+      // Restore fs so snapshots work
       mockfs.restore();
       expect(nwBuilder.settings)
         .toMatchSnapshot();
+
+      expect(nwBuilder.testHelpers.exec)
+        .toHaveBeenCalledWith('npm install');
     });
 
     test('No manifest found', async () => {
@@ -833,6 +835,9 @@ describe('nw-utils-builder', () => {
 
       expect(console.log)
         .toHaveBeenCalledWith(title, 'No package.json or manifest.json file found, cannot build.');
+
+      expect(nwBuilder.testHelpers.exec)
+        .not.toHaveBeenCalled();
     });
   });
 
@@ -845,6 +850,9 @@ describe('nw-utils-builder', () => {
 
       expect(result)
         .toEqual(undefined);
+
+      expect(nwBuilder.testHelpers.exec)
+        .not.toHaveBeenCalled();
     });
 
     test('Settings are empty', () => {
@@ -853,9 +861,13 @@ describe('nw-utils-builder', () => {
       expect(console.log)
         .not.toHaveBeenCalled();
 
+      // restore fs for snapshot
       mockfs.restore();
       expect(results)
         .toMatchSnapshot();
+
+      expect(nwBuilder.testHelpers.exec)
+        .not.toHaveBeenCalled();
     });
 
     test('Settings are applied correctly', () => {
@@ -866,6 +878,9 @@ describe('nw-utils-builder', () => {
 
       expect(result)
         .toEqual(_cloneDeep(customizedSettingsAndTasks));
+
+      expect(nwBuilder.testHelpers.exec)
+        .not.toHaveBeenCalled();
     });
   });
 });

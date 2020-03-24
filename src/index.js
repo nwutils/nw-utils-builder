@@ -2,6 +2,7 @@ const helpers = require('./helpers.js');
 const processTasks = require('./processTasks.js');
 const validator = require('./validator.js');
 
+const exec = require('child_process').execSync;
 const fs = require('fs-extra');
 const path = require('path');
 
@@ -16,6 +17,7 @@ const nwUtilsBuilder = {
   allNwVersions: undefined,
   settings: undefined,
   manifest: undefined,
+  testHelpers: {},
 
   /**
    * Console logs helper error messages if verbose mode is enabled.
@@ -176,6 +178,7 @@ const nwUtilsBuilder = {
       stable: 'v0.42.6',
       lts: 'v0.14.7'
     };
+    this.testHelpers = {};
   },
   applyManifestToTasks: function () {
     this.applyNwVersionMapToTasks();
@@ -185,7 +188,8 @@ const nwUtilsBuilder = {
   processTasks: function () {
     this.settings.tasks = processTasks.processTasks({
       settings: _cloneDeep(this.settings),
-      manifest: _cloneDeep(this.manifest)
+      manifest: _cloneDeep(this.manifest),
+      exec: this.testHelpers.exec || exec
     });
   },
   /**

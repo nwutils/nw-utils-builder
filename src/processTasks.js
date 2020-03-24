@@ -1,6 +1,5 @@
 const helpers = require('./helpers.js');
 
-const exec = require('child_process').execSync;
 const fs = require('fs-extra');
 const path = require('path');
 
@@ -108,7 +107,7 @@ const processTasks = {
    *
    * @param  {object} task  The settings for this specific task
    */
-  npmInstall: function (task) {
+  npmInstall: function (task, exec) {
     try {
       process.chdir(this.dist);
       exec('npm install');
@@ -153,7 +152,7 @@ const processTasks = {
       this.cleanDist();
       this.copyFiles(task);
       this.copyManifest(task);
-      this.npmInstall(task);
+      this.npmInstall(task, state.exec);
     });
 
     return this.settings.tasks;
