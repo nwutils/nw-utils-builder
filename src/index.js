@@ -178,7 +178,6 @@ const nwUtilsBuilder = {
       stable: 'v0.42.6',
       lts: 'v0.14.7'
     };
-    this.testHelpers = {};
   },
   applyManifestToTasks: function () {
     this.applyNwVersionMapToTasks();
@@ -193,7 +192,7 @@ const nwUtilsBuilder = {
     });
   },
   /**
-   * Resets state, checks for missing settings or manifest,
+   * Resets state, checks for missing settings or manifest.
    *
    * @return {boolean}  True if safe to continue build, false if settings or manifest are missing
    */
