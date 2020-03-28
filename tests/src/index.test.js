@@ -2,6 +2,7 @@
 const mockfs = require('mock-fs');
 
 const fs = require('fs-extra');
+const child_process = require('child_process');
 const _cloneDeep = require('lodash/cloneDeep');
 const fetch = require('node-fetch');
 const lolex = require('@sinonjs/fake-timers');
@@ -12,10 +13,6 @@ const testHelpers = require('../testHelpers.js');
 
 const customizedSettingsAndTasks = testHelpers.customizedSettingsAndTasks;
 const title = testHelpers.title;
-
-afterAll(() => {
-  jest.resetModules();
-});
 
 describe('nw-utils-builder', () => {
   let consoleLog;
@@ -791,11 +788,16 @@ describe('nw-utils-builder', () => {
     });
 
     test('Handles no tasks being passed in', () => {
+      const execSpy = jest.spyOn(child_process, 'execSync');
+
       nwBuilder.settings = { tasks: [] };
       nwBuilder.testHelpers = {};
 
       expect(nwBuilder.processTasks())
         .toEqual(undefined);
+
+      expect(execSpy)
+        .not.toHaveBeenCalled();
     });
   });
 

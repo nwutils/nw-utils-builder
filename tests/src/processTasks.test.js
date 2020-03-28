@@ -512,7 +512,7 @@ describe('Process Tasks', () => {
   describe('npmInstall', () => {
     test('Install fails', () => {
       const execMock = jest.fn(function () {
-        throw 'npm install did a bad';
+        throw 'npm install failed to run';
       });
 
       mockfs({
@@ -523,16 +523,16 @@ describe('Process Tasks', () => {
 
       processTasks.dist = './dist/test-1.0.0-win-x86';
 
-      processTasks.npmInstall({ name: 'oh no' }, execMock);
+      processTasks.npmInstall({ name: 'task' }, execMock);
 
       expect(console.log)
         .toHaveBeenCalledWith(title, 'Error during npm install on task.');
 
       expect(console.log)
-        .toHaveBeenCalledWith(title, { name: 'oh no' });
+        .toHaveBeenCalledWith(title, { name: 'task' });
 
       expect(console.log)
-        .toHaveBeenCalledWith(title, 'npm install did a bad');
+        .toHaveBeenCalledWith(title, 'npm install failed to run');
     });
   });
 
