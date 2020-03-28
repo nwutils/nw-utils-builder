@@ -2,6 +2,7 @@
 const mockfs = require('mock-fs');
 
 const fs = require('fs-extra');
+const child_process = require('child_process');
 const _cloneDeep = require('lodash/cloneDeep');
 const fetch = require('node-fetch');
 const lolex = require('@sinonjs/fake-timers');
@@ -18,6 +19,7 @@ describe('nw-utils-builder', () => {
   let clock;
 
   beforeEach(() => {
+    nwBuilder.testHelpers.exec = jest.fn();
     clock = lolex.install();
     nwBuilder.resetState();
     consoleLog = console.log;
@@ -689,7 +691,7 @@ describe('nw-utils-builder', () => {
   });
 
   describe('processTasks', () => {
-    test('Tasks have been updated', () => {
+    test('Tasks have been processed', () => {
       const originalManifest = {
         name: 'test',
         version: '1.0.0',
@@ -780,6 +782,22 @@ describe('nw-utils-builder', () => {
           version: '1.0.0',
           main: 'index.html'
         });
+
+      expect(nwBuilder.testHelpers.exec)
+        .toHaveBeenCalledWith('npm install');
+    });
+
+    test('Handles no tasks being passed in', () => {
+      const execSpy = jest.spyOn(child_process, 'execSync');
+
+      nwBuilder.settings = { tasks: [] };
+      nwBuilder.testHelpers = {};
+
+      expect(nwBuilder.processTasks())
+        .toEqual(undefined);
+
+      expect(execSpy)
+        .not.toHaveBeenCalled();
     });
   });
 
@@ -809,9 +827,13 @@ describe('nw-utils-builder', () => {
       expect(console.log)
         .not.toHaveBeenCalled();
 
+      // Restore fs so snapshots work
       mockfs.restore();
       expect(nwBuilder.settings)
         .toMatchSnapshot();
+
+      expect(nwBuilder.testHelpers.exec)
+        .toHaveBeenCalledWith('npm install');
     });
 
     test('No manifest found', async () => {
@@ -823,6 +845,9 @@ describe('nw-utils-builder', () => {
 
       expect(console.log)
         .toHaveBeenCalledWith(title, 'No package.json or manifest.json file found, cannot build.');
+
+      expect(nwBuilder.testHelpers.exec)
+        .not.toHaveBeenCalled();
     });
   });
 
@@ -835,6 +860,9 @@ describe('nw-utils-builder', () => {
 
       expect(result)
         .toEqual(undefined);
+
+      expect(nwBuilder.testHelpers.exec)
+        .not.toHaveBeenCalled();
     });
 
     test('Settings are empty', () => {
@@ -843,9 +871,13 @@ describe('nw-utils-builder', () => {
       expect(console.log)
         .not.toHaveBeenCalled();
 
+      // restore fs for snapshot
       mockfs.restore();
       expect(results)
         .toMatchSnapshot();
+
+      expect(nwBuilder.testHelpers.exec)
+        .not.toHaveBeenCalled();
     });
 
     test('Settings are applied correctly', () => {
@@ -856,6 +888,9 @@ describe('nw-utils-builder', () => {
 
       expect(result)
         .toEqual(_cloneDeep(customizedSettingsAndTasks));
+
+      expect(nwBuilder.testHelpers.exec)
+        .not.toHaveBeenCalled();
     });
   });
 });
