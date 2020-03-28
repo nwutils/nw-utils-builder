@@ -9,7 +9,16 @@ describe('downloadNW', () => {
     });
 
     test('Windows appData', () => {
-      global.process = Object.assign({}, realProcess, { platform: 'win32' });
+      global.process = Object.assign(
+        {},
+        realProcess,
+        {
+          platform: 'win32',
+          env: {
+            LOCALAPPDATA: 'C:\\Users\\test\\AppData\\Local',
+            USERNAME: 'test'
+          }
+        });
 
       const result = downloadNW.appData();
 
