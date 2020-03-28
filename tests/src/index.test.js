@@ -789,6 +789,14 @@ describe('nw-utils-builder', () => {
       expect(nwBuilder.testHelpers.exec)
         .toHaveBeenCalledWith('npm install');
     });
+
+    test('Handles no tasks being passed in', () => {
+      nwBuilder.settings = { tasks: [] };
+      nwBuilder.testHelpers = {};
+
+      expect(nwBuilder.processTasks())
+        .toEqual(undefined);
+    });
   });
 
   describe('build', () => {

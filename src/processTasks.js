@@ -106,6 +106,7 @@ const processTasks = {
    * Performs an `npm install` in the dist folder.
    *
    * @param  {object} task  The settings for this specific task
+   * @param  {object} exec  The child process execSync or a mock
    */
   npmInstall: function (task, exec) {
     try {
