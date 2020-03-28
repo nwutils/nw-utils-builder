@@ -23,8 +23,11 @@ const settings = {
     {
       excludes: [
         'node_modules',
-        'build.js',
-        'package-lock.json'
+        'build.js'
+      ],
+      strippedManifestProperties: [
+        'scripts.build',
+        'devDependencies'
       ]
     }
   ]

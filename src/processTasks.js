@@ -12,6 +12,7 @@ const processTasks = {
   settings: undefined,
   manifest: undefined,
   dist: undefined,
+  root: process.cwd(),
 
   /**
    * Console logs helper error messages if verbose mode is enabled.
@@ -101,6 +102,23 @@ const processTasks = {
       this.log(err);
     }
   },
+  /**
+   * Performs an `npm install` in the dist folder.
+   *
+   * @param  {object} task  The settings for this specific task
+   * @param  {object} exec  The child process execSync or a mock
+   */
+  npmInstall: function (task, exec) {
+    try {
+      process.chdir(this.dist);
+      exec('npm install');
+      process.chdir(this.root);
+    } catch (err) {
+      this.log('Error during npm install on task.');
+      this.log(task);
+      this.log(err);
+    }
+  },
 
   /**
    * Resets the state of the script so left over settings from previous runs
@@ -135,6 +153,7 @@ const processTasks = {
       this.cleanDist();
       this.copyFiles(task);
       this.copyManifest(task);
+      this.npmInstall(task, state.exec);
     });
 
     return this.settings.tasks;

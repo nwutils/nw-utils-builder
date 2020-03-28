@@ -1,7 +1,7 @@
 {
   "name": "sample-project",
   "version": "1.0.0",
-  "description": "",
+  "description": "sample project",
   "main": "index.html",
   "window": {
     "width": 380,
@@ -19,5 +19,6 @@
   "devDependencies": {
     "axios": "^0.19.0",
     "nw": "^0.42.6-sdk"
-  }
+  },
+  "repository": "none"
 }

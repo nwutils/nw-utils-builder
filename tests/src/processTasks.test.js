@@ -509,6 +509,33 @@ describe('Process Tasks', () => {
     });
   });
 
+  describe('npmInstall', () => {
+    test('Install fails', () => {
+      const execMock = jest.fn(function () {
+        throw 'npm install failed to run';
+      });
+
+      mockfs({
+        dist: {
+          'test-1.0.0-win-x86': {}
+        }
+      });
+
+      processTasks.dist = './dist/test-1.0.0-win-x86';
+
+      processTasks.npmInstall({ name: 'task' }, execMock);
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'Error during npm install on task.');
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, { name: 'task' });
+
+      expect(console.log)
+        .toHaveBeenCalledWith(title, 'npm install failed to run');
+    });
+  });
+
   describe('resetState', () => {
     test('Resets state', () => {
       processTasks.dist = 'asdf';
