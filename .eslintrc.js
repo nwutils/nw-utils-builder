@@ -1,6 +1,7 @@
 module.exports = {
   root: true,
   env: {
+    jest: true,
     node: true
   },
   globals: {
@@ -9,9 +10,11 @@ module.exports = {
     Set: true
   },
   plugins: [
+    'jsdoc',
     'jest'
   ],
   extends: [
+    'plugin:jsdoc/recommended',
     'eslint:recommended',
     'tjw-base',
     'tjw-jest'
@@ -21,5 +24,13 @@ module.exports = {
       'error',
       'Property[method="true"]'
     ]
+  },
+  settings: {
+    jsdoc: {
+      tagNamePreference: {
+        property: 'prop',
+        returns: 'return'
+      }
+    }
   }
 };
