@@ -23,7 +23,7 @@ describe('downloadNW', () => {
         }
       );
 
-      const result = downloadNW.appData();
+      const result = downloadNW.appDataFolders();
 
       expect(slasher(result.unzips))
         .toEqual('C:/Users/' + process.env.USERNAME + '/AppData/Local/nw-utils/nw-utils-builder/nw-unzips');
@@ -35,7 +35,7 @@ describe('downloadNW', () => {
     test('OSX appData', () => {
       global.process = Object.assign({}, realProcess, { platform: 'darwin' });
 
-      const result = downloadNW.appData();
+      const result = downloadNW.appDataFolders();
 
       expect(slasher(result.unzips))
         .toEqual('~/Library/Application Support/nw-utils/Default/nw-utils-builder/nw-unzips');
@@ -47,7 +47,7 @@ describe('downloadNW', () => {
     test('Linux appData', () => {
       global.process = Object.assign({}, realProcess, { platform: 'asdf' });
 
-      const result = downloadNW.appData();
+      const result = downloadNW.appDataFolders();
 
       expect(slasher(result.unzips))
         .toEqual('~/.config/nw-utils/nw-utils-builder/nw-unzips');

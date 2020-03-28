@@ -8,7 +8,7 @@ const downloadNW = {
    *
    * @return {object}     { unzips, zips} the paths to these locations
    */
-  appData: function () {
+  appDataFolders: function () {
     let name = 'nw-utils';
     let appData;
 
