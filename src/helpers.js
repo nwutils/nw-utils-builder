@@ -1,6 +1,7 @@
 const helpers = {
   /**
    * Console logs helper error messages if verbose mode is enabled.
+   *
    * @param  {any}      message   What should be logged
    * @param  {object}   settings  Settings object with the verbose option
    * @param  {boolean}  error     If true, will throw

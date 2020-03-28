@@ -16,6 +16,7 @@ const processTasks = {
 
   /**
    * Console logs helper error messages if verbose mode is enabled.
+   *
    * @param  {any}      message   What should be logged
    * @param  {boolean}  error     If true, will throw
    */
@@ -71,6 +72,7 @@ const processTasks = {
   },
   /**
    * Takes the user's manifest file and modifies it based on the settings of this particular task.
+   *
    * @param  {object} task  The settings for this specific task
    * @return {object}       A modified version of the manifest, to be saved in the output dir
    */
@@ -125,8 +127,8 @@ const processTasks = {
    * that occur in the same instance do not carry over.
    *
    * @param  {object} state               Current state of the app
-   * @param  {object} state.settings
-   * @param  {object} state.manifest
+   * @param  {object} state.settings      Settings object
+   * @param  {object} state.manifest      Package.json as an object
    */
   resetState: function (state) {
     this.dist = undefined;
@@ -137,9 +139,9 @@ const processTasks = {
    * Loops over each task, cleaning that task's dist folder and performing a build for that task.
    *
    * @param  {object} state               Current state of the app
-   * @param  {object} state.settings
-   * @param  {object} state.manifest
-   * @return {array}                      The array of modified tasks
+   * @param  {object} state.settings      Settings object
+   * @param  {object} state.manifest      Package.json as an object
+   * @return {Array}                      The array of modified tasks
    */
   processTasks: function (state) {
     if (!state || !state.settings) {
