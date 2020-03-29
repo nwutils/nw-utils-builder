@@ -1,3 +1,4 @@
+const downloadNW = require('./downloadNW.js');
 const helpers = require('./helpers.js');
 
 const fs = require('fs-extra');
@@ -121,6 +122,15 @@ const processTasks = {
       this.log(err);
     }
   },
+  /**
+   * Downloads the correct NW.js file to cache
+   *
+   * @param  {object}  task      The settings for this specific task
+   * @param  {object}  settings  Settings object
+   */
+  downloadNW: async function (task, settings) {
+    await downloadNW(task, settings);
+  },
 
   /**
    * Resets the state of the script so left over settings from previous runs
@@ -156,6 +166,7 @@ const processTasks = {
       this.copyFiles(task);
       this.copyManifest(task);
       this.npmInstall(task, state.exec);
+      this.downloadNW(task, state.settings);
     });
 
     return this.settings.tasks;
