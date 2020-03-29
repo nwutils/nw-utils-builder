@@ -4,7 +4,7 @@ const helpers = {
     options: {
       verbose: true,
       concurrent: false,
-      mirror: 'mirror',
+      mirror: 'mirror/',
       output: './built'
     },
     taskDefaults: {
