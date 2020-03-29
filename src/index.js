@@ -236,12 +236,17 @@ const nwUtilsBuilder = {
    * @param  {object} settings  Settings passed in by the user
    * @return {object}           The built settings
    */
-  dryRun: function (settings) {
+  dryRun: async function (settings) {
     const preBuildSuccess = this.preBuild(settings);
     if (!preBuildSuccess) {
       return;
     }
-    return validator.buildSettingsObject(settings);
+    this.buildSettingsObject(settings);
+
+    await this.getNwVersionDetails();
+    this.applyManifestToTasks();
+
+    return this.settings;
   }
 };
 
