@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const fetch = require('node-fetch');
+const sha256File = require('sha256-file');
 
 const helpers = require('./helpers.js');
 
@@ -164,6 +165,7 @@ const downloadNW = {
       }
     });
 
+    console.log('convertSHAtoJSON');
     this.shaJsonMap = fileHashMap;
     fs.writeFileSync(this.shaJsonFileLocation, JSON.stringify(fileHashMap, null, 2));
   },
@@ -218,6 +220,25 @@ const downloadNW = {
       return;
     }
   },
+  doesZipExist: async function () {
+    if (fs.existsSync(this.zipFileLocation)) {
+      let actualSHA = sha256File(this.zipFileLocation);
+      let expectedSHA = this.shaJsonMap[this.zipFileName];
+      if (actualSHA !== expectedSHA) {
+        // - FAIL - delete zip and SHA, re-download SHA and ZIP, retry
+        fs.unlinkSync(this.shaJsonFileLocation);
+        fs.unlinkSync(this.zipFileLocation);
+        await this.loadSHA();
+        await this.doesZipExist();
+        console.log('DID NOT MATCH');
+      } else {
+        console.log('MATCH');
+      }
+    } else {
+      // NO - download, re-run to validate SHA
+      await this.getAndSaveZip();
+    }
+  },
   /**
    * Downloads the correct NW.js file to cache
    *
@@ -231,13 +252,9 @@ const downloadNW = {
     fs.ensureDirSync(this.zipsFolder);
 
     await this.loadSHA();
+    await this.doesZipExist();
 
-    // does zip exist?
-    //   - YES - check its SHA, compare against state
-    //     - MATCH - CONTINUE
-    //     - FAIL - delete zip and SHA, re-download SHA and ZIP, retry
-    //   - NO - download, re-run to validate SHA
-    // await this.getAndSaveZip();
+
 
     // does extracted exist in unzips?
     //   - YES - check the SHA of all files recursively
