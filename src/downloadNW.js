@@ -172,15 +172,19 @@ const downloadNW = {
   getAndSaveSHA: function () {
     return fetch(this.shaURL)
       .then((response) => {
+        console.log('0 getAndSaveSHA status check');
         return helpers.checkStatus(response, this.settings);
       })
       .then((response) => {
+        console.log('1 getAndSaveSHA response.text()');
         return response.text();
       })
       .then((response) => {
-        this.convertSHAtoJSON(response);
+        console.log('2 getAndSaveSHA convertSHAtoJSON(response)');
+        return this.convertSHAtoJSON(response);
       })
       .catch((err) => {
+        console.log('3 getAndSaveSHA err');
         this.log(err);
       });
   },
@@ -192,13 +196,10 @@ const downloadNW = {
       .then((response) => {
         const destination = fs.createWriteStream(this.zipFileLocation);
         response.body.pipe(destination);
-        console.log('0');
-      })
-      .then(() => {
-        console.log('1');
+        console.log('0 saving zip');
       })
       .catch((err) => {
-        console.log('1 err');
+        console.log('1 err downloading zip');
         console.log(err);
       });
   },
@@ -216,27 +217,30 @@ const downloadNW = {
     if (typeof(data) === 'object' && Object.keys(data).length > 2) {
       this.shaJsonMap = data;
     } else {
-      await this.getAndSaveSHA();
-      return;
+      let promise = await this.getAndSaveSHA();
+      return promise;
     }
   },
   doesZipExist: async function () {
     if (fs.existsSync(this.zipFileLocation)) {
+
       let actualSHA = sha256File(this.zipFileLocation);
       let expectedSHA = this.shaJsonMap[this.zipFileName];
+
       if (actualSHA !== expectedSHA) {
-        // - FAIL - delete zip and SHA, re-download SHA and ZIP, retry
         fs.unlinkSync(this.shaJsonFileLocation);
         fs.unlinkSync(this.zipFileLocation);
         await this.loadSHA();
         await this.doesZipExist();
         console.log('DID NOT MATCH');
+      // remove else
       } else {
         console.log('MATCH');
       }
     } else {
-      // NO - download, re-run to validate SHA
+      console.log('NO - download, re-run to validate SHA');
       await this.getAndSaveZip();
+      await this.doesZipExist();
     }
   },
   /**
@@ -253,8 +257,6 @@ const downloadNW = {
 
     await this.loadSHA();
     await this.doesZipExist();
-
-
 
     // does extracted exist in unzips?
     //   - YES - check the SHA of all files recursively
