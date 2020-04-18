@@ -9,6 +9,45 @@ const title = testHelpers.title;
 describe('Validator', () => {
   let consoleLog;
 
+  /**
+   * Test helper.
+   *
+   * @param  {string} name   Property name in settings
+   * @param  {any}    value  Property value in settings
+   * @return {object}        Settings object
+   */
+  function settingsAny (name, value) {
+    const setting = {};
+    setting[name] = value;
+    return setting;
+  }
+
+  /**
+   * Test helper.
+   *
+   * @param  {string} name   Property name in settings
+   * @return {object}        Settings object with array of strings
+   */
+  function settingsArray (name) {
+    let setting = {};
+    setting[name] = ['A', 'B', 'A', 'A', 'D', 'B', 'C'];
+    return setting;
+  }
+
+  /**
+   * Test helper.
+   *
+   * @param  {string} name   Property name in settings
+   * @return {object}        Settings object with version object
+   */
+  function settingsVersion (name) {
+    const setting = {};
+    setting[name] = {
+      version: '1.0.0'
+    };
+    return setting;
+  }
+
   beforeEach(() => {
     validator.resetState();
     consoleLog = console.log;
@@ -56,14 +95,8 @@ describe('Validator', () => {
 
   describe('validateArrayOfStrings', () => {
     describe('settings[name] is not an array', () => {
-      function settings (name) {
-        let setting = {};
-        setting[name] = 'String';
-        return setting;
-      }
-
       test('junk', () => {
-        const result = validator.validateArrayOfStrings(settings('junk'), 'junk');
+        const result = validator.validateArrayOfStrings(settingsAny('junk', 'String'), 'junk');
 
         expect(console.log)
           .toHaveBeenCalledWith(title, 'The junk setting must be an array of strings, an empty array, or undefined.');
@@ -73,7 +106,7 @@ describe('Validator', () => {
       });
 
       test('files', () => {
-        const result = validator.validateArrayOfStrings(settings('files'), 'files');
+        const result = validator.validateArrayOfStrings(settingsAny('files', 'String'), 'files');
 
         expect(console.log)
           .toHaveBeenCalledWith(title, 'The files setting must be an array of strings, an empty array, or undefined.');
@@ -83,7 +116,7 @@ describe('Validator', () => {
       });
 
       test('asdf', () => {
-        const result = validator.validateArrayOfStrings(settings('asdf'), 'asdf');
+        const result = validator.validateArrayOfStrings(settingsAny('asdf', 'String'), 'asdf');
 
         expect(console.log)
           .toHaveBeenCalledWith(title, 'The asdf setting must be an array of strings, an empty array, or undefined.');
@@ -94,14 +127,8 @@ describe('Validator', () => {
     });
 
     describe('settings[name] is an empty array', () => {
-      function settings (name) {
-        let setting = {};
-        setting[name] = [];
-        return setting;
-      }
-
       test('junk', () => {
-        const result = validator.validateArrayOfStrings(settings('junk'), 'junk');
+        const result = validator.validateArrayOfStrings(settingsAny('junk', []), 'junk');
 
         expect(console.log)
           .not.toHaveBeenCalled();
@@ -111,7 +138,7 @@ describe('Validator', () => {
       });
 
       test('files', () => {
-        const result = validator.validateArrayOfStrings(settings('files'), 'files');
+        const result = validator.validateArrayOfStrings(settingsAny('files', []), 'files');
 
         expect(console.log)
           .not.toHaveBeenCalled();
@@ -121,7 +148,7 @@ describe('Validator', () => {
       });
 
       test('asdf', () => {
-        const result = validator.validateArrayOfStrings(settings('asdf'), 'asdf');
+        const result = validator.validateArrayOfStrings(settingsAny('asdf', []), 'asdf');
 
         expect(console.log)
           .not.toHaveBeenCalled();
@@ -132,14 +159,10 @@ describe('Validator', () => {
     });
 
     describe('settings[name] is array of numbers', () => {
-      function settings (name) {
-        let setting = {};
-        setting[name] = [10, 20, 30];
-        return setting;
-      }
+      const arr = [10, 20, 30];
 
       test('junk', () => {
-        const result = validator.validateArrayOfStrings(settings('junk'), 'junk');
+        const result = validator.validateArrayOfStrings(settingsAny('junk', arr), 'junk');
 
         expect(console.log)
           .toHaveBeenCalledWith(title, 'The junk setting must be an array of strings, an empty array, or undefined.');
@@ -149,7 +172,7 @@ describe('Validator', () => {
       });
 
       test('files', () => {
-        const result = validator.validateArrayOfStrings(settings('files'), 'files');
+        const result = validator.validateArrayOfStrings(settingsAny('files', arr), 'files');
 
         expect(console.log)
           .toHaveBeenCalledWith(title, 'The files setting must be an array of strings, an empty array, or undefined.');
@@ -159,7 +182,7 @@ describe('Validator', () => {
       });
 
       test('asdf', () => {
-        const result = validator.validateArrayOfStrings(settings('asdf'), 'asdf');
+        const result = validator.validateArrayOfStrings(settingsAny('asdf', arr), 'asdf');
 
         expect(console.log)
           .toHaveBeenCalledWith(title, 'The asdf setting must be an array of strings, an empty array, or undefined.');
@@ -170,14 +193,8 @@ describe('Validator', () => {
     });
 
     describe('Return deduped array', () => {
-      function settings (name) {
-        let setting = {};
-        setting[name] = ['A', 'B', 'A', 'A', 'D', 'B', 'C'];
-        return setting;
-      }
-
       test('junk', () => {
-        const result = validator.validateArrayOfStrings(settings('junk'), 'junk');
+        const result = validator.validateArrayOfStrings(settingsArray('junk'), 'junk');
 
         expect(console.log)
           .not.toHaveBeenCalled();
@@ -187,7 +204,7 @@ describe('Validator', () => {
       });
 
       test('files', () => {
-        const result = validator.validateArrayOfStrings(settings('files'), 'files');
+        const result = validator.validateArrayOfStrings(settingsArray('files'), 'files');
 
         expect(console.log)
           .not.toHaveBeenCalled();
@@ -197,7 +214,7 @@ describe('Validator', () => {
       });
 
       test('asdf', () => {
-        const result = validator.validateArrayOfStrings(settings('asdf'), 'asdf');
+        const result = validator.validateArrayOfStrings(settingsArray('asdf'), 'asdf');
 
         expect(console.log)
           .not.toHaveBeenCalled();
@@ -268,14 +285,8 @@ describe('Validator', () => {
     });
 
     describe('settings[name] is not a object', () => {
-      function settings (name) {
-        const setting = {};
-        setting[name] = 4;
-        return setting;
-      }
-
       test('manifestOverrides', () => {
-        const result = validator.validateObject(settings('manifestOverrides'), 'manifestOverrides');
+        const result = validator.validateObject(settingsAny('manifestOverrides', 4), 'manifestOverrides');
 
         expect(console.log)
           .toHaveBeenCalledWith(title, 'The manifestOverrides setting must be an object.');
@@ -285,7 +296,7 @@ describe('Validator', () => {
       });
 
       test('asdf', () => {
-        const result = validator.validateObject(settings('asdf'), 'asdf');
+        const result = validator.validateObject(settingsAny('asdf', 4), 'asdf');
 
         expect(console.log)
           .toHaveBeenCalledWith(title, 'The asdf setting must be an object.');
@@ -296,16 +307,8 @@ describe('Validator', () => {
     });
 
     describe('settings[name] is a object', () => {
-      function settings (name) {
-        const setting = {};
-        setting[name] = {
-          version: '1.0.0'
-        };
-        return setting;
-      }
-
       test('manifestOverrides', () => {
-        const result = validator.validateObject(settings('manifestOverrides'), 'manifestOverrides');
+        const result = validator.validateObject(settingsVersion('manifestOverrides'), 'manifestOverrides');
 
         expect(console.log)
           .not.toHaveBeenCalled();
@@ -315,7 +318,7 @@ describe('Validator', () => {
       });
 
       test('asdf', () => {
-        const result = validator.validateObject(settings('asdf'), 'asdf');
+        const result = validator.validateObject(settingsVersion('asdf'), 'asdf');
 
         expect(console.log)
           .not.toHaveBeenCalled();
@@ -352,14 +355,8 @@ describe('Validator', () => {
     });
 
     describe('settings[name] is not a boolean', () => {
-      function settings (name) {
-        const setting = {};
-        setting[name] = 0;
-        return setting;
-      }
-
       test('verbose', () => {
-        const result = validator.validateBoolean(settings('verbose'), 'verbose');
+        const result = validator.validateBoolean(settingsAny('verbose', 0), 'verbose');
 
         expect(console.log)
           .toHaveBeenCalledWith(title, 'The verbose setting must be a type of boolean.');
@@ -369,7 +366,7 @@ describe('Validator', () => {
       });
 
       test('asdf', () => {
-        const result = validator.validateBoolean(settings('asdf'), 'asdf');
+        const result = validator.validateBoolean(settingsAny('asdf', 0), 'asdf');
 
         expect(console.log)
           .toHaveBeenCalledWith(title, 'The asdf setting must be a type of boolean.');
@@ -381,10 +378,7 @@ describe('Validator', () => {
 
     describe('settings[name] is a boolean', () => {
       test('verbose', () => {
-        const settings = {
-          verbose: false
-        };
-        const result = validator.validateBoolean(settings, 'verbose');
+        const result = validator.validateBoolean(settingsAny('verbose', false), 'verbose');
 
         expect(console.log)
           .not.toHaveBeenCalled();
@@ -394,10 +388,7 @@ describe('Validator', () => {
       });
 
       test('asdf', () => {
-        const settings = {
-          asdf: true
-        };
-        const result = validator.validateBoolean(settings, 'asdf');
+        const result = validator.validateBoolean(settingsAny('asdf', true), 'asdf');
 
         expect(console.log)
           .not.toHaveBeenCalled();
@@ -434,14 +425,8 @@ describe('Validator', () => {
     });
 
     describe('settings[name] is not a string', () => {
-      function settings (name) {
-        const setting = {};
-        setting[name] = 4;
-        return setting;
-      }
-
       test('mirror', () => {
-        const result = validator.validateString(settings('mirror'), 'mirror');
+        const result = validator.validateString(settingsAny('mirror', 4), 'mirror');
 
         expect(console.log)
           .toHaveBeenCalledWith(title, 'The mirror setting must be a string.');
@@ -451,7 +436,7 @@ describe('Validator', () => {
       });
 
       test('asdf', () => {
-        const result = validator.validateString(settings('asdf'), 'asdf');
+        const result = validator.validateString(settingsAny('asdf', 4), 'asdf');
 
         expect(console.log)
           .toHaveBeenCalledWith(title, 'The asdf setting must be a string.');
@@ -462,14 +447,8 @@ describe('Validator', () => {
     });
 
     describe('settings[name] is a string', () => {
-      function settings (name) {
-        const setting = {};
-        setting[name] = 'qwer';
-        return setting;
-      }
-
       test('mirror', () => {
-        const result = validator.validateString(settings('mirror'), 'mirror');
+        const result = validator.validateString(settingsAny('mirror', 'qwer'), 'mirror');
 
         expect(console.log)
           .not.toHaveBeenCalled();
@@ -479,7 +458,7 @@ describe('Validator', () => {
       });
 
       test('asdf', () => {
-        const result = validator.validateString(settings('asdf'), 'asdf');
+        const result = validator.validateString(settingsAny('asdf', 'qwer'), 'asdf');
 
         expect(console.log)
           .not.toHaveBeenCalled();

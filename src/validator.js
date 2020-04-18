@@ -58,9 +58,9 @@ const validator = {
   /**
    * Validates the section is an array that only contains strings
    *
-   * @param  {object} settings  Settings object passed in by the user
-   * @param  {string} section   'junk', 'files', 'excludes', 'strippedManifestProperties'
-   * @return {array}            Returns the value from the user's setting, or null if check fails
+   * @param  {object} setting   Settings object passed in by the user
+   * @param  {string} name      'junk', 'files', 'excludes', 'strippedManifestProperties'
+   * @return {Array}            Returns the value from the user's setting, or null if check fails
    */
   validateArrayOfStrings: function (setting, name) {
     const message = 'The ' + name + ' setting must be an array of strings, an empty array, or undefined.';
@@ -392,7 +392,9 @@ const validator = {
   },
   /**
    * Loops over all settings objects passed in to combine them in this.settings
-   * @param  {object} arguments The JS arguments object of all arguments passed in
+   *
+   * @param  {object} settings  The JS arguments object of all arguments passed in
+   * @return {object}           The validated settings object with defaults built in
    */
   buildSettingsObject: function (settings) {
     this.resetState();

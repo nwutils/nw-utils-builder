@@ -21,6 +21,7 @@ const nwUtilsBuilder = {
 
   /**
    * Console logs helper error messages if verbose mode is enabled.
+   *
    * @param  {any}      message   What should be logged
    * @param  {boolean}  error     If true, will throw
    */
@@ -194,7 +195,8 @@ const nwUtilsBuilder = {
   /**
    * Resets state, checks for missing settings or manifest.
    *
-   * @return {boolean}  True if safe to continue build, false if settings or manifest are missing
+   * @param  {object}  settings  User settings and tasks
+   * @return {boolean}           True=safe to continue build, false=settings or manifest are missing
    */
   preBuild: function (settings) {
     this.resetState();
