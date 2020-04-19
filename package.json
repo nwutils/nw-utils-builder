@@ -16,7 +16,7 @@
     "travis": "npm run lint && npm run coverage"
   },
   "ManifestComments": [
-    "Waiting to update Jest until they fix issue #9459"
+    "Pinned jest to 24.9.0 until they fix issue #9459"
   ],
   "dependencies": {
     "fast-glob": "^3.2.2",
