@@ -12,7 +12,6 @@ const glob = require('fast-glob');
 const processTasks = {
   settings: undefined,
   manifest: undefined,
-  dist: undefined,
   root: process.cwd(),
 
   /**
@@ -28,13 +27,15 @@ const processTasks = {
 
   /**
    * Recursively deletes the dist folder of the current task.
+   *
+   * @param  {object} task  The settings for this specific task
    */
-  cleanDist: function () {
+  cleanDist: function (task) {
     try {
-      fs.removeSync(this.dist);
+      fs.removeSync(task.dist);
     } catch (err) {
       this.log('Error cleaning out task folder before build.');
-      this.log(this.dist);
+      this.log(task.dist);
       this.log(err);
     }
   },
@@ -63,7 +64,7 @@ const processTasks = {
 
     filesToCopy.forEach((file) => {
       try {
-        fs.copySync(file.path, path.join(this.dist, file.path));
+        fs.copySync(file.path, path.join(task.dist, file.path));
       } catch (err) {
         this.log('Error copying file.');
         this.log(file);
@@ -91,13 +92,14 @@ const processTasks = {
    * @param  {object} task  The settings for this specific task
    */
   copyManifest: function (task) {
-    const manifestLocation = path.join(this.dist, 'package.json');
+    // TODO: Maybe not hardcode this? Might need to be manifest.json or package.json
+    const manifestLocation = path.join(task.dist, 'package.json');
 
     let manifestData = this.tweakManifestForSpecificTask(task);
     manifestData = JSON.stringify(manifestData, null, 2);
 
     try {
-      fs.ensureDirSync(this.dist);
+      fs.ensureDirSync(task.dist);
       fs.writeFileSync(manifestLocation, manifestData);
     } catch (err) {
       this.log('Unable to save modifed manifest on task.');
@@ -113,7 +115,7 @@ const processTasks = {
    */
   npmInstall: function (task, exec) {
     try {
-      process.chdir(this.dist);
+      process.chdir(task.dist);
       exec('npm install');
       process.chdir(this.root);
     } catch (err) {
@@ -141,7 +143,6 @@ const processTasks = {
    * @param  {object} state.manifest      Package.json as an object
    */
   resetState: function (state) {
-    this.dist = undefined;
     this.settings = state.settings;
     this.manifest = state.manifest;
   },
@@ -161,8 +162,8 @@ const processTasks = {
     this.resetState(state);
 
     this.settings.tasks.forEach((task) => {
-      this.dist = path.join(this.settings.options.output, task.name);
-      this.cleanDist();
+      task.dist = path.join(this.settings.options.output, task.name);
+      this.cleanDist(task);
       this.copyFiles(task);
       this.copyManifest(task);
       this.npmInstall(task, state.exec);
