@@ -131,7 +131,7 @@ const processTasks = {
    * @param  {object}  settings  Settings object
    */
   downloadNW: async function (task, settings) {
-    await downloadNW(task, settings);
+    await downloadNW.downloadNW(task, settings);
   },
 
   /**
@@ -162,7 +162,6 @@ const processTasks = {
     this.resetState(state);
 
     this.settings.tasks.forEach((task) => {
-      task.dist = path.join(this.settings.options.output, task.name);
       this.cleanDist(task);
       this.copyFiles(task);
       this.copyManifest(task);
