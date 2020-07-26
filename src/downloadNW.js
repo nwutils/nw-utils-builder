@@ -258,6 +258,9 @@ const downloadNW = {
     await this.loadSHA();
     await this.doesZipExist();
 
+    // It is technically possible for doesZipExist to run recursively forever, downloading zip/sha repeatedly if they never match.
+    // Put in a limit for number of attempts.
+
     // does extracted exist in unzips?
     //   - YES - check the SHA of all files recursively
     //     - ALL PASS - CONTINUE
