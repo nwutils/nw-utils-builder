@@ -109,7 +109,7 @@ Object {
   "icon": "String",
   "junk": "ArrayOfStrings",
   "manifestOverrides": "Object",
-  "mirror": "String",
+  "mirror": "Mirror",
   "nwFlavor": "NwFlavor",
   "nwVersion": "NwVersion",
   "output": "String",

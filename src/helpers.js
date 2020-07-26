@@ -21,6 +21,21 @@ const helpers = {
         console.log(title, message);
       }
     }
+  },
+  /**
+   * Check the status on the results of node-fetch.
+   *
+   * @param  {object} response  The node-fetch network response.
+   * @param  {object} settings  Global settings
+   * @return {object}           The response if it is 200 OK
+   */
+  checkStatus: function (response, settings) {
+    // response.status >= 200 && response.status < 300
+    if (response.ok) {
+      return response;
+    } else {
+      this.log(response.statusText, settings);
+    }
   }
 };
 

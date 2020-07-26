@@ -4,7 +4,7 @@ exports[`nw-utils-builder build Settings are applied correctly 1`] = `
 Object {
   "options": Object {
     "concurrent": false,
-    "mirror": "mirror",
+    "mirror": "mirror/",
     "output": "./built",
     "verbose": true,
   },
