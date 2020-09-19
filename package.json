@@ -21,7 +21,7 @@
   "dependencies": {
     "fast-glob": "^3.2.2",
     "fs-extra": "^8.1.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "node-fetch": "^2.6.1",
     "semver": "^7.1.3"
   },
