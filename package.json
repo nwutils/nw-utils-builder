@@ -11,27 +11,24 @@
     "test": "jest --coverage --runInBand",
     "test-one": "cls & jest --coverage --runInBand -t \"validateTaskDefaults\"",
     "test-debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --no-cache --runInBand -t \"copyFiles\"",
-    "coverage": "jest --coverage --runInBand --coverageReporters=text-lcov | coveralls",
-    "validate": "npm run lint && npm test",
-    "travis": "npm run lint && npm run coverage"
+    "validate": "npm run lint && npm test"
   },
   "dependencies": {
-    "fast-glob": "^3.2.2",
-    "fs-extra": "^9.0.0",
-    "lodash": "^4.17.15",
-    "node-fetch": "^2.6.0",
+    "fast-glob": "^3.2.4",
+    "fs-extra": "^9.0.1",
+    "lodash": "^4.17.20",
+    "node-fetch": "^2.6.1",
     "semver": "^7.3.2"
   },
   "devDependencies": {
     "@sinonjs/fake-timers": "^6.0.1",
-    "coveralls": "^3.0.11",
-    "eslint": "^6.8.0",
+    "eslint": "^7.9.0",
     "eslint-config-tjw-base": "^1.0.0",
     "eslint-config-tjw-jest": "^1.0.0",
-    "eslint-plugin-jsdoc": "^23.0.0",
-    "fetch-mock": "^9.4.0",
-    "jest": "^25.3.0",
-    "mock-fs": "^4.11.0"
+    "eslint-plugin-jsdoc": "^30.5.1",
+    "fetch-mock": "^9.10.7",
+    "jest": "^26.4.2",
+    "mock-fs": "^4.13.0"
   },
   "repository": "https://github.com/nwutils/nw-utils-builder",
   "author": "The Jared Wilcurt",
