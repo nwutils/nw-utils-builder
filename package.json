@@ -13,9 +13,6 @@
     "test-debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --no-cache --runInBand -t \"copyFiles\"",
     "validate": "npm run lint && npm test"
   },
-  "ManifestComments": [
-    "Waiting to update Jest until they fix issue #9459"
-  ],
   "dependencies": {
     "fast-glob": "^3.2.4",
     "fs-extra": "^9.0.1",
@@ -30,7 +27,7 @@
     "eslint-config-tjw-jest": "^1.0.0",
     "eslint-plugin-jsdoc": "^30.5.1",
     "fetch-mock": "^9.10.7",
-    "jest": "24.9.0",
+    "jest": "^26.4.2",
     "mock-fs": "^4.13.0"
   },
   "repository": "https://github.com/nwutils/nw-utils-builder",
