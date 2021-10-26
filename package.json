@@ -14,13 +14,14 @@
     "validate": "npm run lint && npm test"
   },
   "ManifestComments": [
-    "Pinned jest to 24.9.0 until they fix issue #9459"
+    "Pinned jest to 24.9.0 until they fix issue #9459",
+    "Pinned node-fetch to 2.6.5 because v3+ only supports ESM imports and we want to support older versions of Node"
   ],
   "dependencies": {
     "fast-glob": "^3.2.7",
     "fs-extra": "^10.0.0",
     "lodash": "^4.17.21",
-    "node-fetch": "^2.6.5",
+    "node-fetch": "2.6.5",
     "semver": "^7.3.5"
   },
   "devDependencies": {
