@@ -24,7 +24,7 @@
     "semver": "^7.3.5"
   },
   "devDependencies": {
-    "@sinonjs/fake-timers": "^6.0.1",
+    "@sinonjs/fake-timers": "^8.0.1",
     "eslint": "^8.1.0",
     "eslint-config-tjw-base": "^1.0.0",
     "eslint-config-tjw-jest": "^1.0.0",
