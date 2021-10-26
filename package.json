@@ -14,14 +14,14 @@
     "validate": "npm run lint && npm test"
   },
   "ManifestComments": [
-    "Waiting to update Jest until they fix issue #9459"
+    "Pinned jest to 24.9.0 until they fix issue #9459"
   ],
   "dependencies": {
-    "fast-glob": "^3.2.4",
+    "fast-glob": "^3.2.7",
     "fs-extra": "^9.0.1",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "node-fetch": "^2.6.1",
-    "semver": "^7.3.2"
+    "semver": "^7.3.5"
   },
   "devDependencies": {
     "@sinonjs/fake-timers": "^6.0.1",
@@ -29,7 +29,7 @@
     "eslint-config-tjw-base": "^1.0.0",
     "eslint-config-tjw-jest": "^1.0.0",
     "eslint-plugin-jsdoc": "^30.5.1",
-    "fetch-mock": "^9.10.7",
+    "fetch-mock": "^9.11.0",
     "jest": "24.9.0",
     "mock-fs": "^4.13.0"
   },
