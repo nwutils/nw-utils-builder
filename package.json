@@ -15,6 +15,7 @@
   },
   "ManifestComments": [
     "Pinned jest to 24.9.0 until they fix issue #9459",
+    "Pinned mock-fs to 4.41.0 because v5 drops support for Node 10",
     "Pinned node-fetch to 2.6.5 because v3+ only supports ESM imports and we want to support older versions of Node"
   ],
   "dependencies": {
@@ -32,7 +33,7 @@
     "eslint-plugin-jsdoc": "^37.0.0",
     "fetch-mock": "^9.11.0",
     "jest": "24.9.0",
-    "mock-fs": "^5.1.1"
+    "mock-fs": "4.14.0"
   },
   "repository": "https://github.com/nwutils/nw-utils-builder",
   "author": "The Jared Wilcurt",
