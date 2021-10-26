@@ -23,14 +23,15 @@
     "fs-extra": "^10.0.0",
     "lodash": "^4.17.21",
     "node-fetch": "2.6.5",
-    "semver": "^7.3.5"
+    "semver": "^7.3.5",
+    "sha256-file": "^1.0.0"
   },
   "devDependencies": {
     "@sinonjs/fake-timers": "^8.0.1",
     "eslint": "^8.1.0",
     "eslint-config-tjw-base": "^1.0.0",
     "eslint-config-tjw-jest": "^1.0.0",
-    "eslint-plugin-jsdoc": "^37.0.0",
+    "eslint-plugin-jsdoc": "^37.0.1",
     "fetch-mock": "^9.11.0",
     "jest": "24.9.0",
     "mock-fs": "4.14.0"

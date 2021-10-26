@@ -38,7 +38,7 @@ const validator = {
   validationMap: {
     verbose: 'Boolean',
     concurrent: 'Boolean',
-    mirror: 'String',
+    mirror: 'Mirror',
     output: 'String',
     nwVersion: 'NwVersion',
     nwFlavor: 'NwFlavor',
@@ -200,6 +200,23 @@ const validator = {
       }
 
       this.log('The nwFlavor setting must be a string of "normal", "sdk", or "match".');
+    }
+
+    return null;
+  },
+  /**
+   * Validates the mirror setting is a string, adds '/' to end if not present.
+   *
+   * @param  {object} settings  Settings object passed in by user
+   * @return {string}           The value or null if check failed
+   */
+  validateMirror: function (settings) {
+    let mirror = this.validateString(settings, 'mirror');
+
+    if (mirror && mirror.endsWith('/')) {
+      return mirror;
+    } else if (mirror) {
+      return mirror + '/';
     }
 
     return null;

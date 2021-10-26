@@ -165,6 +165,14 @@ const nwUtilsBuilder = {
       task.name = name;
     });
   },
+  /**
+   * Loops over all tasks and generates a path to the dist folder that task will built to.
+   */
+  applyTaskDist: function () {
+    this.settings.tasks.forEach((task) => {
+      task.dist = path.join(this.settings.options.output, task.name);
+    });
+  },
 
 
   /**
@@ -184,6 +192,7 @@ const nwUtilsBuilder = {
     this.applyNwVersionMapToTasks();
     this.applyNwFlavorMapToTasks();
     this.applyTaskNames();
+    this.applyTaskDist();
   },
   processTasks: function () {
     this.settings.tasks = processTasks.processTasks({
@@ -236,12 +245,17 @@ const nwUtilsBuilder = {
    * @param  {object} settings  Settings passed in by the user
    * @return {object}           The built settings
    */
-  dryRun: function (settings) {
+  dryRun: async function (settings) {
     const preBuildSuccess = this.preBuild(settings);
     if (!preBuildSuccess) {
       return;
     }
-    return validator.buildSettingsObject(settings);
+    this.buildSettingsObject(settings);
+
+    await this.getNwVersionDetails();
+    this.applyManifestToTasks();
+
+    return this.settings;
   }
 };
 

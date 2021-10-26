@@ -4,7 +4,7 @@ const helpers = {
     options: {
       verbose: true,
       concurrent: false,
-      mirror: 'mirror',
+      mirror: 'mirror/',
       output: './built'
     },
     taskDefaults: {
@@ -43,6 +43,15 @@ const helpers = {
         unIcon: 'assets/filexp.ico'
       }
     ]
+  },
+  /**
+   * Converts from Windows Slashes to Unix slashes.
+   *
+   * @param  {string} str  Any string
+   * @return {string}      Converted string
+   */
+  slasher: function (str) {
+    return str.split('\\').join('/');
   }
 };
 
