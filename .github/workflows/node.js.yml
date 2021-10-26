@@ -5,9 +5,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
@@ -25,12 +25,13 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
-    - run: npm run lint
+    - if: ${{ matrix.node-version != '10.x' }}
+      run: npm run lint
     - run: npm test
 
-    # Master doesn't have a PR for comments so skip that branch
+    # main branch doesn't have a PR for comments so skip it
     # We don't want 4 comments about code coverage, just just run it once on 14
-    - if: ${{ github.ref != 'refs/heads/master' && matrix.node-version == '14.x' }}
+    - if: ${{ github.ref != 'refs/heads/main' && matrix.node-version == '14.x' }}
       uses: romeovs/lcov-reporter-action@v0.2.16
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}

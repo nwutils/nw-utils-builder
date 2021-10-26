@@ -14,24 +14,26 @@
     "validate": "npm run lint && npm test"
   },
   "ManifestComments": [
-    "Waiting to update Jest until they fix issue #9459"
+    "Pinned jest to 24.9.0 until they fix issue #9459",
+    "Pinned mock-fs to 4.41.0 because v5 drops support for Node 10",
+    "Pinned node-fetch to 2.6.5 because v3+ only supports ESM imports and we want to support older versions of Node"
   ],
   "dependencies": {
-    "fast-glob": "^3.2.4",
-    "fs-extra": "^9.0.1",
-    "lodash": "^4.17.20",
-    "node-fetch": "^2.6.1",
-    "semver": "^7.3.2"
+    "fast-glob": "^3.2.7",
+    "fs-extra": "^10.0.0",
+    "lodash": "^4.17.21",
+    "node-fetch": "2.6.5",
+    "semver": "^7.3.5"
   },
   "devDependencies": {
-    "@sinonjs/fake-timers": "^6.0.1",
-    "eslint": "^7.9.0",
+    "@sinonjs/fake-timers": "^8.0.1",
+    "eslint": "^8.1.0",
     "eslint-config-tjw-base": "^1.0.0",
     "eslint-config-tjw-jest": "^1.0.0",
-    "eslint-plugin-jsdoc": "^30.5.1",
-    "fetch-mock": "^9.10.7",
+    "eslint-plugin-jsdoc": "^37.0.0",
+    "fetch-mock": "^9.11.0",
     "jest": "24.9.0",
-    "mock-fs": "^4.13.0"
+    "mock-fs": "4.14.0"
   },
   "repository": "https://github.com/nwutils/nw-utils-builder",
   "author": "The Jared Wilcurt",
