@@ -31,7 +31,7 @@
     "eslint-plugin-jsdoc": "^37.0.0",
     "fetch-mock": "^9.11.0",
     "jest": "24.9.0",
-    "mock-fs": "^4.13.0"
+    "mock-fs": "^5.1.1"
   },
   "repository": "https://github.com/nwutils/nw-utils-builder",
   "author": "The Jared Wilcurt",
