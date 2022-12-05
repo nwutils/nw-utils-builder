@@ -2,6 +2,10 @@
 
 # WIP: Do not use
 
+This was in planning prior to the [nw-builder](https://github.com/nwutils/nw-builder) revitalization project. After that project is in a more finished state, we may use it as a dependency in this project to simplify both repos. `nw-builder` would be focused on doing a single build. `nw-utils-builder` would be focused on doing multiple builds, as tasks (see API ideas below).
+
+For now, this project is on hold.
+
 
 ## nw-utils-builder
 
